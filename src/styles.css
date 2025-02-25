@@ -1,1 +1,41 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+    --md-source-primary: #8C4A60;
+    --md-source-secondary: #904B3D;
+    --md-source-tertiary: #006874;
+    --md-source-background: #FFF8F8;
+    --md-source-surface: #FFF8F8;
+    --md-source-on-surface: #22191C;
+  }
+
+  html, body {
+    height: 100%;
+    background-color: var(--md-source-background);
+    color: var(--md-source-on-surface);
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+  }
+  
+  mat-toolbar {
+    background-color: var(--md-source-primary) !important;
+    color: var(--md-source-on-surface) !important;
+  }
+  
+  mat-sidenav {
+    background-color: var(--md-source-surface) !important;
+    color: var(--md-source-on-surface) !important;
+  }
+  
+  button {
+    background-color: var(--md-source-secondary);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  }
+  
