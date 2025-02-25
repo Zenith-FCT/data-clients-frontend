@@ -1,11 +1,24 @@
 <main class="main">
-  <header></header>
-
   <body>
-    <mat-card>
-      <h2>Tarjeta de Información</h2>
-      <p>Este es un contenido con el tema aplicado.</p>
-    </mat-card>
+    <mat-toolbar>
+      <h1>Dashboard</h1>
+    </mat-toolbar>
+    <div class="left_menu">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard" routerLinkActive="active"
+          >Dashboard</a
+        >
+        <a mat-list-item routerLink="/heroes" routerLinkActive="active"
+          >Heroes</a
+        >
+        <a mat-list-item routerLink="/heroes" routerLinkActive="active"
+          >Prueba</a
+        >
+        <a mat-list-item routerLink="/heroes" routerLinkActive="active"
+          >Hola</a
+        >
+      </mat-nav-list>
+    </div>
   </body>
 </main>
 
