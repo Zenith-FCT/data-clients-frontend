@@ -1,353 +1,393 @@
-/* dashboard-layout.component.css - versión pura CSS */
+/* Estados activo y hover */
+.sidenav mat-nav-list a.active,
+::ng-deep .sidenav .mat-mdc-list-item.active {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border-left: 4px solid #ff0000 !important;
+  padding-left: 12px !important; /* Compensar el borde izquierdo */
+}
+
+.sidenav mat-nav-list a:hover,
+::ng-deep .sidenav .mat-mdc-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
+}/* dashboard-layout.component.css - versión pura CSS */
 .dashboard-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  
-  /* Contenedor principal del sidenav */
-  .sidenav-container {
-    flex: 1;
-    height: 100%;
-  }
-  
-  /* Barra lateral */
-  .sidenav {
-    width: 280px;
-    background-color: #212121;
-    color: white;
-    border-right: none;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Nuevo contenedor de logo - mucho más simple y con !important */
-  .logo-wrapper {
-    padding: 20px !important;
-    height: 150px !important;
-    display: flex !important;
-    align-items: center !important;
-    background-color: #212121 !important;
-    box-sizing: border-box !important;
-  }
-  
-  .logo-wrapper img.logo {
-    max-width: 100% !important;
-    max-height: 110px !important;
-    object-fit: contain !important;
-    display: block !important;
-  }
-  
-  mat-divider {
-    margin: 0;
-    border-top-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  /* Personalizar Mat-nav-list */
-  mat-nav-list {
-    padding-top: 12px;
-    flex: 1;
-  }
-  
-  .sidenav mat-nav-list a {
-    height: 50px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 4px;
-    transition: all 0.3s ease;
-    cursor: pointer !important;
-  }
-  
-  .sidenav mat-nav-list a.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border-left: 4px solid #ff0000;
-  }
-  
-  .sidenav mat-nav-list a:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: white;
-  }
-  
-  .nav-icon {
-    margin-right: 12px;
-  }
-  
-  /* Barra superior */
-  .top-toolbar {
-    background-color: white;
-    color: rgba(0, 0, 0, 0.87);
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Contenedor principal del sidenav */
+.sidenav-container {
+  flex: 1;
+  height: 100%;
+}
+
+/* Barra lateral */
+.sidenav {
+  width: 280px;
+  background-color: #212121;
+  color: white;
+  border-right: none;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nuevo contenedor de logo - mucho más simple y con !important */
+.logo-wrapper {
+  padding: 20px !important;
+  height: 150px !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: #212121 !important;
+  box-sizing: border-box !important;
+}
+
+.logo-wrapper img.logo {
+  max-width: 100% !important;
+  max-height: 110px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+mat-divider {
+  margin: 0;
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Personalizar Mat-nav-list */
+mat-nav-list {
+  padding-top: 12px;
+  flex: 1;
+}
+
+/* Mejor alineación de los elementos de navegación en el sidenav */
+.sidenav mat-nav-list a,
+::ng-deep .sidenav .mat-mdc-list-item {
+  height: 48px !important;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 4px !important;
+  border-radius: 0 !important;
+}
+
+/* Contenido interno del elemento de lista */
+::ng-deep .sidenav .mat-mdc-list-item-content,
+::ng-deep .sidenav .mdc-list-item__content {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  padding: 0 !important;
+}
+
+/* Ajuste específico para el texto dentro de los elementos */
+::ng-deep .sidenav .mat-mdc-list-item-unscoped-content,
+::ng-deep .sidenav .mdc-list-item__primary-text {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Estilos para los iconos */
+.sidenav .nav-icon,
+.sidenav mat-icon,
+::ng-deep .sidenav .mat-icon {
+  margin-right: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 24px !important;
+  width: 24px !important;
+  font-size: 20px !important;
+}
+
+/* Estilos para el texto */
+.sidenav span,
+::ng-deep .sidenav .mat-mdc-list-item span {
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 24px !important;
+  line-height: 24px !important;
+}
+
+/* Barra superior */
+.top-toolbar {
+  background-color: white;
+  color: rgba(0, 0, 0, 0.87);
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.toolbar-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.notification-icon {
+  margin-right: 16px;
+}
+
+.notification-icon mat-icon {
+  color: #555;
+}
+
+.user-menu-button {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f5 !important;
+  border-radius: 4px !important;
+  padding: 4px 12px !important;
+  font-weight: 500 !important;
+  color: #333 !important;
+}
+
+.user-menu-button span {
+  margin-right: 8px;
+  color: #333 !important;
+}
+
+.user-menu-button mat-icon {
+  color: #555 !important;
+}
+
+/* Contenido principal */
+.main-content {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 64px);
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .main-content {
+    padding: 12px;
   }
   
   .toolbar-title {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #333;
+    font-size: 1rem;
   }
-  
-  .toolbar-spacer {
-    flex: 1 1 auto;
-  }
-  
-  .notification-icon {
-    margin-right: 16px;
-  }
-  
-  .notification-icon mat-icon {
-    color: #555;
-  }
-  
-  .user-menu-button {
-    display: flex;
-    align-items: center;
-    background-color: #f5f5f5 !important;
-    border-radius: 4px !important;
-    padding: 4px 12px !important;
-    font-weight: 500 !important;
-    color: #333 !important;
-  }
-  
-  .user-menu-button span {
-    margin-right: 8px;
-    color: #333 !important;
-  }
-  
-  .user-menu-button mat-icon {
-    color: #555 !important;
-  }
-  
-  /* Contenido principal */
-  .main-content {
-    padding: 20px;
-    background-color: #f5f5f5;
-    min-height: calc(100vh - 64px);
-  }
-  
-  /* Responsive */
-  @media screen and (max-width: 600px) {
-    .main-content {
-      padding: 12px;
-    }
-    
-    .toolbar-title {
-      font-size: 1rem;
-    }
-  }
-  
-  /* Estilos para las tarjetas de stats */
-  .stat-card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-    padding: 20px;
-    height: 100%;
-  }
-  
-  .stat-card .stat-title {
-    color: #666;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-  
-  .stat-card .stat-value {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 5px;
-    color: #333;
-  }
-  
-  .stat-card .stat-change {
-    font-size: 12px;
-    font-weight: 500;
-    border-radius: 4px;
-    padding: 2px 6px;
-    display: inline-flex;
-    align-items: center;
-  }
-  
-  .stat-card .positive {
-    color: #4caf50;
-    background-color: rgba(76, 175, 80, 0.1);
-  }
-  
-  .stat-card .negative {
-    color: #f44336;
-    background-color: rgba(244, 67, 54, 0.1);
-  }
-  
-  /* Estilos para la tabla de transacciones */
-  .transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-  }
-  
-  .transactions-table th {
-    text-align: left;
-    padding: 16px;
-    background-color: #f5f5f5;
-    color: #666;
-    font-weight: 500;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .transactions-table td {
-    padding: 16px;
-    border-bottom: 1px solid #f0f0f0;
-    color: #333;
-  }
-  
-  .transactions-table tr:hover {
-    background-color: #f9f9f9;
-  }
-  
-  .transactions-table tr:last-child td {
-    border-bottom: none;
-  }
-  
-  /* Estilos para los estados */
-  .status {
-    padding: 4px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    display: inline-block;
-  }
-  
-  .status-completed {
-    background-color: rgba(76, 175, 80, 0.1);
-    color: #4caf50;
-  }
-  
-  .status-pending {
-    background-color: rgba(255, 193, 7, 0.1);
-    color: #ff9800;
-  }
-  
-  .status-canceled {
-    background-color: rgba(244, 67, 54, 0.1);
-    color: #f44336;
-  }
-  
-  /* Estilos para los contenedores de gráficos */
-  .chart-container {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .chart-title {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  /* Grid layout para las tarjetas */
+}
+
+/* Estilos para las tarjetas de stats */
+.stat-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  height: 100%;
+}
+
+.stat-card .stat-title {
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.stat-card .stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.stat-card .stat-change {
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.stat-card .positive {
+  color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.stat-card .negative {
+  color: #f44336;
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+/* Estilos para la tabla de transacciones */
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.transactions-table th {
+  text-align: left;
+  padding: 16px;
+  background-color: #f5f5f5;
+  color: #666;
+  font-weight: 500;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.transactions-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.transactions-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.transactions-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Estilos para los estados */
+.status {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-completed {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+}
+
+.status-pending {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: #ff9800;
+}
+
+.status-canceled {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+/* Estilos para los contenedores de gráficos */
+.chart-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Grid layout para las tarjetas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1200px) {
   .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  @media (max-width: 1200px) {
-    .stats-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
-  
-  @media (max-width: 768px) {
-    .stats-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  /* Grid para gráficos */
+}
+
+/* Grid para gráficos */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 992px) {
   .charts-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
+    grid-template-columns: 1fr;
   }
-  
-  @media (max-width: 992px) {
-    .charts-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  /* CORRECCIONES PARA EL COLOR DE LOS ELEMENTOS DEL SIDENAV */
-  
-  /* Solución extremadamente agresiva para los colores del sidenav */
-  :root .sidenav {
-    --text-color: rgba(255, 255, 255, 0.7);
-    --text-color-active: white;
-  }
-  
-  /* Selección general de todos los elementos dentro del sidenav */
-  .sidenav * {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  
-  /* Selección directa de los elementos de texto en Angular Material */
-  ::ng-deep .sidenav .mat-mdc-list-item-unscoped-content,
-  ::ng-deep .sidenav .mat-mdc-list-item-content,
-  ::ng-deep .sidenav .mdc-list-item__primary-text,
-  ::ng-deep .sidenav .mat-mdc-list-item,
-  ::ng-deep .sidenav span,
-  ::ng-deep .sidenav .mat-mdc-list-item .mdc-list-item__content {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  
-  /* Sobrescritura forzada para los iconos */
-  ::ng-deep .sidenav mat-icon,
-  ::ng-deep .sidenav .mat-icon {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  
-  /* Sobrescribir todos los elementos de texto */
-  ::ng-deep .sidenav span,
-  ::ng-deep .sidenav p,
-  ::ng-deep .sidenav div {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  
-  /* Estilo de elemento activo */
-  ::ng-deep .sidenav .active *,
-  ::ng-deep .sidenav .active .mat-mdc-list-item-unscoped-content,
-  ::ng-deep .sidenav .active .mdc-list-item__primary-text,
-  ::ng-deep .sidenav .active span,
-  ::ng-deep .sidenav .active mat-icon {
-    color: white !important;
-  }
-  
-  /* Estilo al pasar por encima */
-  ::ng-deep .sidenav a:hover *,
-  ::ng-deep .sidenav a:hover .mat-mdc-list-item-unscoped-content,
-  ::ng-deep .sidenav a:hover .mdc-list-item__primary-text,
-  ::ng-deep .sidenav a:hover span,
-  ::ng-deep .sidenav a:hover mat-icon {
-    color: white !important;
-  }
-  
-  /* Estilo específico para Angular Material v15+ */
-  ::ng-deep .sidenav .mdc-list-item__primary-text {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  
-  ::ng-deep .sidenav .active .mdc-list-item__primary-text,
-  ::ng-deep .sidenav a:hover .mdc-list-item__primary-text {
-    color: white !important;
-  }
+}
+
+/* CORRECCIONES PARA EL COLOR DE LOS ELEMENTOS DEL SIDENAV */
+
+/* Solución extremadamente agresiva para los colores del sidenav */
+:root .sidenav {
+  --text-color: rgba(255, 255, 255, 0.7);
+  --text-color-active: white;
+}
+
+/* Selección general de todos los elementos dentro del sidenav */
+.sidenav * {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Selección directa de los elementos de texto en Angular Material */
+::ng-deep .sidenav .mat-mdc-list-item-unscoped-content,
+::ng-deep .sidenav .mat-mdc-list-item-content,
+::ng-deep .sidenav .mdc-list-item__primary-text,
+::ng-deep .sidenav .mat-mdc-list-item,
+::ng-deep .sidenav span,
+::ng-deep .sidenav .mat-mdc-list-item .mdc-list-item__content {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Sobrescritura forzada para los iconos */
+::ng-deep .sidenav mat-icon,
+::ng-deep .sidenav .mat-icon {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Sobrescribir todos los elementos de texto */
+::ng-deep .sidenav span,
+::ng-deep .sidenav p,
+::ng-deep .sidenav div {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Estilo de elemento activo */
+::ng-deep .sidenav .active *,
+::ng-deep .sidenav .active .mat-mdc-list-item-unscoped-content,
+::ng-deep .sidenav .active .mdc-list-item__primary-text,
+::ng-deep .sidenav .active span,
+::ng-deep .sidenav .active mat-icon {
+  color: white !important;
+}
+
+/* Estilo al pasar por encima */
+::ng-deep .sidenav a:hover *,
+::ng-deep .sidenav a:hover .mat-mdc-list-item-unscoped-content,
+::ng-deep .sidenav a:hover .mdc-list-item__primary-text,
+::ng-deep .sidenav a:hover span,
+::ng-deep .sidenav a:hover mat-icon {
+  color: white !important;
+}
+
+/* Estilo específico para Angular Material v15+ */
+::ng-deep .sidenav .mdc-list-item__primary-text {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+::ng-deep .sidenav .active .mdc-list-item__primary-text,
+::ng-deep .sidenav a:hover .mdc-list-item__primary-text {
+  color: white !important;
+}
