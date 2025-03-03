@@ -1,0 +1,68 @@
+<div class="dashboard-container">
+    <!-- Barra lateral con Material -->
+    <mat-sidenav-container class="sidenav-container">
+      <mat-sidenav #drawer class="sidenav" 
+                  fixedInViewport
+                  [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+                  [mode]="(isHandset$ | async) ? 'over' : 'side'"
+                  [opened]="(isHandset$ | async) === false">
+        <!-- Logo container con altura fija y atributos inline para mayor especificidad -->
+        <div class="logo-wrapper" style="padding: 20px; height: 150px; display: flex; align-items: center; box-sizing: border-box;">
+          <img src="assets/logo.png" alt="Logo" class="logo" style="max-width: 100%; max-height: 110px; object-fit: contain; display: block;">
+        </div>
+        
+        <!-- Separador -->
+        <mat-divider></mat-divider>
+        
+        <!-- Navegación -->
+        <mat-nav-list>
+          <a mat-list-item routerLink="/pedfact" routerLinkActive="active">
+            <mat-icon class="nav-icon">attach_money</mat-icon>
+            <span>Pedidos/Facturacion</span>
+          </a>
+          <a mat-list-item routerLink="/productos" routerLinkActive="active">
+            <mat-icon class="nav-icon">inventory_2</mat-icon>
+            <span>Productos</span>
+          </a>
+          <a mat-list-item routerLink="/clientes" routerLinkActive="active">
+            <mat-icon class="nav-icon">person</mat-icon>
+            <span>Clientes</span>
+          </a>
+          <a mat-list-item routerLink="/carritos" routerLinkActive="active">
+            <mat-icon class="nav-icon">shopping_cart</mat-icon>
+            <span>Carritos</span>
+          </a>
+          <a mat-list-item routerLink="/cupones" routerLinkActive="active">
+            <mat-icon class="nav-icon">confirmation_number</mat-icon>
+            <span>Cupones</span>
+          </a>
+          <a mat-list-item routerLink="/suscripciones" routerLinkActive="active">
+            <mat-icon class="nav-icon">subscriptions</mat-icon>
+            <span>Suscripciones</span>
+          </a>
+        </mat-nav-list>
+      </mat-sidenav>
+      
+      <mat-sidenav-content>
+        <!-- Barra superior -->
+        <mat-toolbar class="top-toolbar">
+          <button
+            type="button"
+            aria-label="Toggle sidenav"
+            mat-icon-button
+            (click)="drawer.toggle()"
+            *ngIf="isHandset$ | async">
+            <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+          </button>
+          <h1 class="toolbar-title">Dashboard</h1>
+          <div class="toolbar-spacer"></div>
+        
+        </mat-toolbar>
+        
+        <!-- Contenido principal - Router Outlet para las rutas hijo -->
+        <div class="main-content">
+          <router-outlet></router-outlet>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
