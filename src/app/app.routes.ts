@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { Component } from '@angular/core';
-import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
+import { DashboardLayoutComponent } from './core/dashboard-layout/dashboard-layout.component';
 import { PedidosFacturaComponent } from './features/pedidos-factura/components/pedidos-factura/pedidos-factura.component';
 
 export class SettingsComponent {}
