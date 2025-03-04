@@ -1,23 +1,94 @@
 <main class="main">
   <body>
-    <mat-toolbar>
-      <h1>Dashboard</h1>
-    </mat-toolbar>
-    <div class="left_menu">
-      <mat-nav-list>
-        <a mat-list-item routerLink="/dashboard" routerLinkActive="active"
-          >Dashboard</a
-        >
-        <a mat-list-item routerLink="/heroes" routerLinkActive="active"
-          >Heroes</a
-        >
-        <a mat-list-item routerLink="/heroes" routerLinkActive="active"
-          >Prueba</a
-        >
-        <a mat-list-item routerLink="/heroes" routerLinkActive="active"
-          >Hola</a
-        >
-      </mat-nav-list>
+    <div class="dashboard-container">
+      <div class="toolbar">
+        <button class="menu-toggle" (click)="toggleSideBar()">
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="logo">DASHBOARD-CF</div>
+        <div class="toolbar-spacer"></div>
+        <div class="toolbar-actions">
+          <button class="toolbar-button">
+            <i class="fa fa-bell"></i>
+          </button>
+          <button class="toolbar-button">
+            <i class="fa fa-bell"></i>
+          </button>
+          <button class="toolbar-button">
+            <i class="fa fa-bell"></i>
+          </button>
+        </div>
+      </div>
+      <div class="main-content">
+        <div class="sidebar" [class.sidebar-collapsed]="sideBarCollapsed">
+          <nav class="sidebar-nav">
+            <ul class="sidebar-menu">
+              <li
+                class="sidebar-menu-item"
+                [class.active]="activeMenu === 'pedidos'"
+              >
+                <a (click)="setActiveMenu('pedidos')">
+                  <i class="fa fa-fille-invoice-dollar"></i>
+                  <span class="menu-text">Pedidos/Facturación</span>
+                </a>
+              </li>
+              <li
+                class="sidebar-menu-item"
+                [class.active]="activeMenu === 'productos'"
+              >
+                <a (click)="setActiveMenu('productos')">
+                  <i class="fa fa-box"></i>
+                  <span class="menu-text">Productos</span>
+                </a>
+              </li>
+              <li
+                class="sidebar-menu-item"
+                [class.active]="activeMenu === 'clientes'"
+              >
+                <a (click)="setActiveMenu('clientes')">
+                  <i class="fa fa-users"></i>
+                  <span class="menu-text">Clientes</span>
+                </a>
+              </li>
+              <li
+                class="sidebar-menu-item"
+                [class.active]="activeMenu === 'carritos'"
+              >
+                <a (click)="setActiveMenu('carritos')">
+                  <i class="fa fa-shopping-cart"></i>
+                  <span class="menu-text">Carritos</span>
+                </a>
+              </li>
+              <li
+                class="sidebar-menu-item"
+                [class.active]="activeMenu === 'cupones'"
+              >
+                <a (click)="setActiveMenu('cupones')">
+                  <i class="fa fa-ticket-alt"></i>
+                  <span class="menu-text">Cupones</span>
+                </a>
+              </li>
+              <li
+                class="sidebar-menu-item"
+                [class.active]="activeMenu === 'suscripciones'"
+              >
+                <a (click)="setActiveMenu('suscripciones')">
+                  <i class="fa fa-sync"></i>
+                  <span class="menu-text">Suscripciones</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="content-area" [class.content-expanded]="sideBarCollapsed">
+          <!-- Aquí irá el contenido dinámico según la sección seleccionada -->
+          <div class="content-placeholder">
+            <h2>Dashboard {{ activeMenu | titlecase }}</h2>
+            <p>Contenido del dashboard para la sección de {{ activeMenu }}.</p>
+            <!-- Aquí irán los gráficos y demás elementos -->
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </main>
