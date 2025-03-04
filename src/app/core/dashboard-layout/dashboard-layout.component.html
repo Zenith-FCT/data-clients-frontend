@@ -1,68 +1,54 @@
+<!-- dashboard-layout.component.html -->
 <div class="dashboard-container">
-    <!-- Barra lateral con Material -->
-    <mat-sidenav-container class="sidenav-container">
-      <mat-sidenav #drawer class="sidenav" 
-                  fixedInViewport
-                  [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-                  [mode]="(isHandset$ | async) ? 'over' : 'side'"
-                  [opened]="(isHandset$ | async) === false">
-        <!-- Logo container con altura fija y atributos inline para mayor especificidad -->
-        <div class="logo-wrapper" style="padding: 20px; height: 150px; display: flex; align-items: center; box-sizing: border-box;">
-          <img src="assets/logo.png" alt="Logo" class="logo" style="max-width: 100%; max-height: 110px; object-fit: contain; display: block;">
-        </div>
-        
-        <!-- Separador -->
-        <mat-divider></mat-divider>
-        
-        <!-- Navegación -->
-        <mat-nav-list>
-          <a mat-list-item routerLink="/pedfact" routerLinkActive="active">
+  <!-- Barra superior - siempre visible y ocupa todo el ancho -->
+  <mat-toolbar class="top-toolbar">
+    <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="toggleSidenavExpanded()">
+      <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+    </button>
+    <div class="toolbar-logo">
+      <img src="assets/logo.png" alt="Zenith Sports" class="toolbar-logo-img">
+    </div>
+    <div class="toolbar-spacer"></div>
+    <!-- Aquí puedes agregar botones adicionales como notificaciones, perfil, etc. -->
+  </mat-toolbar>
+  
+  <div class="main-container">
+    <!-- Sidenav minimalista con solo iconos por defecto -->
+    <div class="sidenav" [class.expanded]="sidenavExpanded">
+      <div class="sidenav-content">
+        <!-- Navegación (ahora solo con iconos cuando está colapsado) -->
+        <div class="nav-items">
+          <a class="nav-item" routerLink="/pedfact" routerLinkActive="active">
             <mat-icon class="nav-icon">attach_money</mat-icon>
-            <span>Pedidos/Facturacion</span>
+            <span class="nav-label" *ngIf="sidenavExpanded">Pedidos/Facturación</span>
           </a>
-          <a mat-list-item routerLink="/productos" routerLinkActive="active">
+          <a class="nav-item" routerLink="/productos" routerLinkActive="active">
             <mat-icon class="nav-icon">inventory_2</mat-icon>
-            <span>Productos</span>
+            <span class="nav-label" *ngIf="sidenavExpanded">Productos</span>
           </a>
-          <a mat-list-item routerLink="/clientes" routerLinkActive="active">
+          <a class="nav-item" routerLink="/clientes" routerLinkActive="active">
             <mat-icon class="nav-icon">person</mat-icon>
-            <span>Clientes</span>
+            <span class="nav-label" *ngIf="sidenavExpanded">Clientes</span>
           </a>
-          <a mat-list-item routerLink="/carritos" routerLinkActive="active">
+          <a class="nav-item" routerLink="/carritos" routerLinkActive="active">
             <mat-icon class="nav-icon">shopping_cart</mat-icon>
-            <span>Carritos</span>
+            <span class="nav-label" *ngIf="sidenavExpanded">Carritos</span>
           </a>
-          <a mat-list-item routerLink="/cupones" routerLinkActive="active">
+          <a class="nav-item" routerLink="/cupones" routerLinkActive="active">
             <mat-icon class="nav-icon">confirmation_number</mat-icon>
-            <span>Cupones</span>
+            <span class="nav-label" *ngIf="sidenavExpanded">Cupones</span>
           </a>
-          <a mat-list-item routerLink="/suscripciones" routerLinkActive="active">
+          <a class="nav-item" routerLink="/suscripciones" routerLinkActive="active">
             <mat-icon class="nav-icon">subscriptions</mat-icon>
-            <span>Suscripciones</span>
+            <span class="nav-label" *ngIf="sidenavExpanded">Suscripciones</span>
           </a>
-        </mat-nav-list>
-      </mat-sidenav>
-      
-      <mat-sidenav-content>
-        <!-- Barra superior -->
-        <mat-toolbar class="top-toolbar">
-          <button
-            type="button"
-            aria-label="Toggle sidenav"
-            mat-icon-button
-            (click)="drawer.toggle()"
-            *ngIf="isHandset$ | async">
-            <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-          </button>
-          <h1 class="toolbar-title">Dashboard</h1>
-          <div class="toolbar-spacer"></div>
-        
-        </mat-toolbar>
-        
-        <!-- Contenido principal - Router Outlet para las rutas hijo -->
-        <div class="main-content">
-          <router-outlet></router-outlet>
         </div>
-      </mat-sidenav-content>
-    </mat-sidenav-container>
+      </div>
+    </div>
+    
+    <!-- Contenido principal -->
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
   </div>
+</div>

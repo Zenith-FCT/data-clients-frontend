@@ -1,171 +1,140 @@
-/* Estados activo y hover */
-.sidenav mat-nav-list a.active,
-::ng-deep .sidenav .mat-mdc-list-item.active {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  color: white !important;
-  border-left: 4px solid #ff0000 !important;
-  padding-left: 12px !important; /* Compensar el borde izquierdo */
-}
-
-.sidenav mat-nav-list a:hover,
-::ng-deep .sidenav .mat-mdc-list-item:hover {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  color: white !important;
-}/* dashboard-layout.component.css - versión pura CSS */
+/* dashboard-layout.component.css - versión con mini-sidenav */
 .dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100%;
 }
 
-/* Contenedor principal del sidenav */
-.sidenav-container {
-  flex: 1;
-  height: 100%;
-}
-
-/* Barra lateral */
-.sidenav {
-  width: 280px;
-  background-color: #212121;
-  color: white;
-  border-right: none;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Nuevo contenedor de logo - mucho más simple y con !important */
-.logo-wrapper {
-  padding: 20px !important;
-  height: 150px !important;
-  display: flex !important;
-  align-items: center !important;
-  background-color: #212121 !important;
-  box-sizing: border-box !important;
-}
-
-.logo-wrapper img.logo {
-  max-width: 100% !important;
-  max-height: 110px !important;
-  object-fit: contain !important;
-  display: block !important;
-}
-
-mat-divider {
-  margin: 0;
-  border-top-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Personalizar Mat-nav-list */
-mat-nav-list {
-  padding-top: 12px;
-  flex: 1;
-}
-
-/* Mejor alineación de los elementos de navegación en el sidenav */
-.sidenav mat-nav-list a,
-::ng-deep .sidenav .mat-mdc-list-item {
-  height: 48px !important;
-  padding: 0 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  margin-bottom: 4px !important;
-  border-radius: 0 !important;
-}
-
-/* Contenido interno del elemento de lista */
-::ng-deep .sidenav .mat-mdc-list-item-content,
-::ng-deep .sidenav .mdc-list-item__content {
-  display: flex !important;
-  align-items: center !important;
-  height: 100% !important;
-  padding: 0 !important;
-}
-
-/* Ajuste específico para el texto dentro de los elementos */
-::ng-deep .sidenav .mat-mdc-list-item-unscoped-content,
-::ng-deep .sidenav .mdc-list-item__primary-text {
-  display: flex !important;
-  align-items: center !important;
-}
-
-/* Estilos para los iconos */
-.sidenav .nav-icon,
-.sidenav mat-icon,
-::ng-deep .sidenav .mat-icon {
-  margin-right: 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 24px !important;
-  width: 24px !important;
-  font-size: 20px !important;
-}
-
-/* Estilos para el texto */
-.sidenav span,
-::ng-deep .sidenav .mat-mdc-list-item span {
-  font-size: 14px !important;
-  display: flex !important;
-  align-items: center !important;
-  height: 24px !important;
-  line-height: 24px !important;
-}
-
-/* Barra superior */
+/* Barra superior - ahora es la principal */
 .top-toolbar {
-  background-color: white;
-  color: rgba(0, 0, 0, 0.87);
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  background-color: #212121; /* Color negro para la toolbar */
+  color: white;
+  border-bottom: 1px solid #333;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1001;
+  height: 80px; /* Toolbar más alta */
+  display: flex;
+  align-items: center;
 }
 
-.toolbar-title {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #333;
+.toolbar-logo {
+  height: 100px; /* Logo más grande */
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.toolbar-logo-img {
+  height: 100%;
+  max-width: 180px; /* Logo más ancho */
+  object-fit: contain;
 }
 
 .toolbar-spacer {
   flex: 1 1 auto;
 }
 
-.notification-icon {
-  margin-right: 16px;
+/* Contenedor principal que contiene tanto el sidenav como el contenido */
+.main-container {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 80px); /* Ajustado a la nueva altura de toolbar */
+  overflow: hidden;
 }
 
-.notification-icon mat-icon {
-  color: #555;
+/* Sidenav minimalista */
+.sidenav {
+  background-color: #212121;
+  color: white;
+  overflow-x: hidden;
+  width: 60px; /* Ancho en modo colapsado (solo iconos) */
+  transition: width 0.3s ease;
+  height: 100%;
+  overflow-y: auto;
 }
 
-.user-menu-button {
+/* Sidenav expandido */
+.sidenav.expanded {
+  width: 240px; /* Ancho en modo expandido */
+}
+
+.sidenav-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Estilo para los items de navegación */
+.nav-items {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+}
+
+.nav-item {
   display: flex;
   align-items: center;
-  background-color: #f5f5f5 !important;
-  border-radius: 4px !important;
-  padding: 4px 12px !important;
-  font-weight: 500 !important;
-  color: #333 !important;
+  height: 48px;
+  padding: 0 16px;
+  margin-bottom: 4px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+  cursor: pointer;
 }
 
-.user-menu-button span {
-  margin-right: 8px;
-  color: #333 !important;
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: white;
 }
 
-.user-menu-button mat-icon {
-  color: #555 !important;
+.nav-item.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-left: 3px solid #ff0000; /* Color rosa como en la imagen */
+  padding-left: 13px; /* Compensar el borde */
+}
+
+.nav-icon {
+  margin-right: 16px;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.nav-label {
+  font-size: 14px;
+  opacity: 1;
+  transition: opacity 0.2s;
 }
 
 /* Contenido principal */
 .main-content {
+  flex: 1;
   padding: 20px;
   background-color: #f5f5f5;
-  min-height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+/* Asegurar que el color de los iconos y texto sea correcto */
+.nav-item .nav-icon,
+.nav-item .nav-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.nav-item:hover .nav-icon,
+.nav-item:hover .nav-label,
+.nav-item.active .nav-icon,
+.nav-item.active .nav-label {
+  color: white;
 }
 
 /* Responsive */
@@ -326,68 +295,4 @@ mat-nav-list {
   .charts-grid {
     grid-template-columns: 1fr;
   }
-}
-
-/* CORRECCIONES PARA EL COLOR DE LOS ELEMENTOS DEL SIDENAV */
-
-/* Solución extremadamente agresiva para los colores del sidenav */
-:root .sidenav {
-  --text-color: rgba(255, 255, 255, 0.7);
-  --text-color-active: white;
-}
-
-/* Selección general de todos los elementos dentro del sidenav */
-.sidenav * {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Selección directa de los elementos de texto en Angular Material */
-::ng-deep .sidenav .mat-mdc-list-item-unscoped-content,
-::ng-deep .sidenav .mat-mdc-list-item-content,
-::ng-deep .sidenav .mdc-list-item__primary-text,
-::ng-deep .sidenav .mat-mdc-list-item,
-::ng-deep .sidenav span,
-::ng-deep .sidenav .mat-mdc-list-item .mdc-list-item__content {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Sobrescritura forzada para los iconos */
-::ng-deep .sidenav mat-icon,
-::ng-deep .sidenav .mat-icon {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Sobrescribir todos los elementos de texto */
-::ng-deep .sidenav span,
-::ng-deep .sidenav p,
-::ng-deep .sidenav div {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Estilo de elemento activo */
-::ng-deep .sidenav .active *,
-::ng-deep .sidenav .active .mat-mdc-list-item-unscoped-content,
-::ng-deep .sidenav .active .mdc-list-item__primary-text,
-::ng-deep .sidenav .active span,
-::ng-deep .sidenav .active mat-icon {
-  color: white !important;
-}
-
-/* Estilo al pasar por encima */
-::ng-deep .sidenav a:hover *,
-::ng-deep .sidenav a:hover .mat-mdc-list-item-unscoped-content,
-::ng-deep .sidenav a:hover .mdc-list-item__primary-text,
-::ng-deep .sidenav a:hover span,
-::ng-deep .sidenav a:hover mat-icon {
-  color: white !important;
-}
-
-/* Estilo específico para Angular Material v15+ */
-::ng-deep .sidenav .mdc-list-item__primary-text {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-::ng-deep .sidenav .active .mdc-list-item__primary-text,
-::ng-deep .sidenav a:hover .mdc-list-item__primary-text {
-  color: white !important;
 }
