@@ -1,1 +1,30 @@
-<p>orders-invoice works!</p>
+<div>
+    <h2>Órdenes y Facturas</h2>
+    
+    <div>
+      @for (invoice of invoices$ | async; track invoice.id) {
+        <div>
+          <div>
+            <h3>{{ invoice.orderNumber }}</h3>
+            <span>{{ invoice.status }}</span>
+          </div>
+          <div>
+            <p>Cliente: {{ invoice.clientName }}</p>
+            <p>Fecha: {{ invoice.date | date:'shortDate' }}</p>
+            <p>Vencimiento: {{ invoice.dueDate | date:'shortDate' }}</p>
+            <div>
+              <p>Items:</p>
+              @for (item of invoice.items; track item.productId) {
+                <div>
+                  <p>{{ item.productName }} - {{ item.quantity }}x {{ item.unitPrice | currency }}</p>
+                </div>
+              }
+            </div>
+          </div>
+          <div>
+            <p>Total: {{ invoice.total | currency }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
