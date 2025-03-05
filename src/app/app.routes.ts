@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { Component } from '@angular/core';
-import { DashboardLayoutComponent } from './core/dashboard-layout/dashboard-layout.component';
-import { PedidosFacturaComponent } from './features/pedidos-factura/components/pedidos-factura/pedidos-factura.component';
+import { DashboardLayoutComponent } from './core/components/dashboard-layout/dashboard-layout.component';
+import { OrdersInvoiceComponent } from './features/orders-invoice/components/orders-invoice/orders-invoice.component';
 
 export class SettingsComponent {}
 
@@ -12,12 +12,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'pedfact',
+        redirectTo: 'orders',
         pathMatch: 'full'
       },
       {
-        path: 'pedfact',
-        component: PedidosFacturaComponent
+        path: 'orders',
+        component: OrdersInvoiceComponent
       },
       {
         path: 'productos',
@@ -33,7 +33,7 @@ export const routes: Routes = [
       },
       {
         path: 'cupones',
-        loadComponent: () => import('./features/cupones/components/cupones/cupones.component').then(m => m.CuponesComponent)
+        loadComponent: () => import('./features/coupons/components/coupons/coupons.component').then(m => m.CouponsComponent)
       },
       {
         path: 'suscripciones',
