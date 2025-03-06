@@ -1,22 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GetAllInvoicesUseCase } from '../../domain/use-cases/get-all-invoices.use-case';
-import { OrderInvoice } from '../../domain/models/order-invoice.model';
-import { Observable } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-orders-invoice',
   standalone: true,
-  imports: [CommonModule],
-  providers: [GetAllInvoicesUseCase],
-  templateUrl: `./orders-invoice.component.html`,
-  styleUrl: `./orders-invoice.component.css`
+  imports: [CommonModule, RouterModule],
+  templateUrl: './orders-invoice.component.html',
+  styleUrl: './orders-invoice.component.css'
 })
 export class OrdersInvoiceComponent {
-  private getAllInvoicesUseCase = inject(GetAllInvoicesUseCase);
-  invoices$: Observable<OrderInvoice[]>;
-
-  constructor() {
-    this.invoices$ = this.getAllInvoicesUseCase.execute();
-  }
+  // Este componente actúa como contenedor para las rutas de facturas
+  // No necesita lógica adicional ya que las funcionalidades están en los componentes hijos
 }

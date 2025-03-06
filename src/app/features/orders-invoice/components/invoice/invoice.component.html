@@ -1,1 +1,13 @@
-<p>invoice works!</p>
+<div class="invoice-container">
+  <h2>Facturas Mensuales</h2>
+  
+  <div class="chart-wrapper">
+    <div *ngIf="loading" class="loading">
+      <p>Cargando datos de facturación...</p>
+    </div>
+    
+    <div class="chart-container" *ngIf="!loading">
+      <canvas #chartCanvas></canvas>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<div class="container">
+  <div *ngIf="loading" class="loading-container">
+    <p>Cargando datos de facturas...</p>
+  </div>
+  
+  <div *ngIf="!loading" class="invoice-detail">
+    <div class="title-section">
+      <h2>Detalles de Facturación: {{ monthName }} {{ year }}</h2>
+      <button mat-icon-button color="primary" (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    </div>
+    
+    <div *ngIf="invoices.length === 0" class="no-data">
+      <p>No hay facturas disponibles para este mes.</p>
+    </div>
+    
+    <div *ngIf="invoices.length > 0" class="total-section">
+      <h3>Total Mensual: {{ totalAmount | currency:'EUR':'symbol':'1.2-2' }}</h3>
+    </div>
+    
+    <!-- List of invoices -->
+    <div *ngIf="invoices.length > 0" class="invoices-list">
+      <h3>Facturas de {{ monthName }}</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of invoices">
+              <td>{{ invoice.id || 'N/A' }}</td>
+              <td>{{ invoice.date | date:'dd/MM/yyyy' }}</td>
+              <td>{{ invoice.client }}</td>
+              <td>{{ getProductDisplayName(invoice.product) }}</td>
+              <td>{{ invoice.amount | currency:'EUR':'symbol':'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Product sales chart -->
+    <div *ngIf="productSales.length > 0" class="chart-container">
+      <h3>Distribución de Ventas por Producto</h3>
+      <div style="position: relative; width: 100%; height: 400px;">
+        <canvas id="monthlyDetailChart" #detailChartCanvas></canvas>
+      </div>
+    </div>
+    
+    <!-- Product sales table -->
+    <div *ngIf="productSales.length > 0" class="product-sales-table">
+      <h3>Resumen de Ventas por Producto</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of productSales">
+              <td>{{ product.productName }}</td>
+              <td>{{ product.quantity }}</td>
+              <td>{{ product.totalAmount | currency:'EUR':'symbol':'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Daily sales summary -->
+    <div *ngIf="dailySales.length > 0" class="daily-sales-table">
+      <h3>Resumen de Ventas por Día</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Cantidad de Ventas</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let day of dailySales">
+              <td>{{ day.date | date:'dd/MM/yyyy' }}</td>
+              <td>{{ day.quantity }}</td>
+              <td>{{ day.total | currency:'EUR':'symbol':'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

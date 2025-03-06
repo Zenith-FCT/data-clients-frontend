@@ -3,11 +3,14 @@ import { AppComponent } from './app.component';
 import { Component } from '@angular/core';
 import { DashboardLayoutComponent } from './core/components/dashboard-layout/dashboard-layout.component';
 import { OrdersInvoiceComponent } from './features/orders-invoice/components/orders-invoice/orders-invoice.component';
+import { InvoiceComponent } from './features/orders-invoice/components/invoice/invoice.component';
+import { ORDERS_INVOICE_ROUTES } from './features/orders-invoice/orders-invoice.routes';
 
 export class SettingsComponent {}
 
 export const routes: Routes = [
-  { path: '', 
+  { 
+    path: '', 
     component: DashboardLayoutComponent,  
     children: [
       {
@@ -17,7 +20,7 @@ export const routes: Routes = [
       },
       {
         path: 'orders',
-        component: OrdersInvoiceComponent
+        children: ORDERS_INVOICE_ROUTES
       },
       {
         path: 'productos',
@@ -45,5 +48,4 @@ export const routes: Routes = [
     path: '**',
     redirectTo: ''
   }
- 
 ];
