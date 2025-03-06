@@ -71,6 +71,14 @@ export class MockInvoicesService {
       date: new Date(this.currentYear, 5, 22), // Junio
       product: Product.MEMBRESIA,
       amount: 300
+    },
+    {
+      id: '9',
+      orderNumber: 'INV-2024-009',
+      client: Client.RECURRENTE,
+      date: new Date(this.currentYear, 2, 1),
+      product: Product.MEMBRESIA,
+      amount: 1500
     }
   ];
 

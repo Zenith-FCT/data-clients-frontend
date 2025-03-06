@@ -5,10 +5,11 @@
   
   <div *ngIf="!loading" class="invoice-detail">
     <div class="title-section">
+        <button mat-icon-button color="primary" (click)="goBack()" class="back-button">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
       <h2>Detalles de Facturación: {{ monthName }} {{ year }}</h2>
-      <button mat-icon-button color="primary" (click)="goBack()" class="back-button">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      
     </div>
     
     <div *ngIf="invoices.length === 0" class="no-data">
@@ -47,10 +48,18 @@
     </div>
     
     <!-- Product sales chart -->
-    <div *ngIf="productSales.length > 0" class="chart-container">
+    <div *ngIf="productSales.length > 0" class="chart-container pie-chart-container">
       <h3>Distribución de Ventas por Producto</h3>
       <div style="position: relative; width: 100%; height: 400px;">
-        <canvas id="monthlyDetailChart" #detailChartCanvas></canvas>
+        <canvas #detailChartCanvas></canvas>
+      </div>
+    </div>
+
+    <!-- Daily sales line chart -->
+    <div *ngIf="dailySales.length > 0" class="chart-container line-chart-container">
+      <h3>Tendencia de Ventas Diarias</h3>
+      <div style="position: relative; width: 100%; height: 400px;">
+        <canvas #dailySalesChartCanvas></canvas>
       </div>
     </div>
     
