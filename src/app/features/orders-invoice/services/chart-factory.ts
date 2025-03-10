@@ -1,7 +1,7 @@
 import { Chart, ChartEvent, ActiveElement } from "chart.js";
-import { ChartBuilder } from "./chart-builder";
 import { LineChartBuilder } from "./builders/line-chart.builder";
 import { PieChartBuilder } from "./builders/pie-chart.builder";
+import { BarChartBuilder } from "./builders/bar-chart.builder"; // Importar el nuevo BarChartBuilder
 import { 
   ChartTypes, 
   BarChartData, 
@@ -34,7 +34,8 @@ export class ChartFactory {
   ): Chart | null {
     try {
       this.destroyBuilder(ChartTypes.BAR);
-      const builder = new ChartBuilder(canvasId);
+      // Usar BarChartBuilder en lugar de ChartBuilder
+      const builder = new BarChartBuilder(canvasId);
       this.builders.set(ChartTypes.BAR, builder);
       return builder.createBarChart(data, title, onClick);
     } catch (error) {

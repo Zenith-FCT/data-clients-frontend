@@ -5,12 +5,19 @@ export interface ChartData {
   values: number[];
 }
 
+/**
+ * @deprecated Esta clase será eliminada en futuras versiones. 
+ * Por favor usar BarChartBuilder para gráficos de barras.
+ * La funcionalidad se ha reemplazado con builders específicos para cada tipo de gráfico.
+ */
 export class ChartBuilder {
   private canvas: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
   private _chart: Chart | null = null;
 
-  constructor(private canvasId: string) {}
+  constructor(private canvasId: string) {
+    console.warn('ChartBuilder está marcada como obsoleta. Por favor use BarChartBuilder para gráficos de barras.');
+  }
 
   get chart(): Chart | null {
     return this._chart;
@@ -40,11 +47,15 @@ export class ChartBuilder {
     return true;
   }
 
+  /**
+   * @deprecated Use BarChartBuilder.createBarChart() en su lugar
+   */
   public createBarChart(
     data: ChartData, 
     title: string,
     onClick?: (event: ChartEvent, elements: ActiveElement[], chart: Chart) => void
   ): Chart | null {
+    console.warn('ChartBuilder.createBarChart está marcado como obsoleto. Por favor use BarChartBuilder.createBarChart()');
     console.log('Creating bar chart with data:', data);
     
     if (!this.initializeCanvas()) {
