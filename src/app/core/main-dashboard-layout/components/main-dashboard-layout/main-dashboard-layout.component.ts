@@ -18,6 +18,7 @@ import { map, shareReplay } from 'rxjs/operators';
 export class MainDashboardLayoutComponent {
   sidenavExpanded = false;
   
+  
   isHandset$: Observable<boolean>;
 
   constructor(private breakpointObserver: BreakpointObserver) {
