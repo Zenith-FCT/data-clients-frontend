@@ -29,6 +29,6 @@ jobs:
 
       - name: Instalar dependencias
         run: npm install
-
+        
       - name: Construir la aplicación
-        run: npm run build -- --prod
+        run: npm run build -- --configuration=production
