@@ -27,7 +27,6 @@ export class MainDashboardLayoutComponent {
         shareReplay()
       );
   }
-  
   toggleSidenavExpanded(): void {
     this.sidenavExpanded = !this.sidenavExpanded;
   }
