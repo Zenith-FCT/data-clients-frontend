@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { MainGeneralComponent } from './features/general/components/main-general/main-general.component';
-import { MainDashboardLayoutComponent } from './core/main-dashboard-layout/components/main-dashboard-layout/main-dashboard-layout.component';
+import { MainDashboardLayoutComponent } from './core/components/main-dashboard-layout/main-dashboard-layout.component';
 
 
 export const routes: Routes = [
