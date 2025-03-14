@@ -32,10 +32,6 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/products/components/main-products/main-products.component').then(m => m.MainProductsComponent)
             },
             {
-                path: 'subscriptions',
-                loadComponent: () => import('./features/subscriptions/components/main-subscriptions/main-subscriptions.component').then(m => m.MainSubscriptionsComponent)
-            },
-            {
                 path: 'carts',
                 loadComponent: () => import('./features/carts/components/main-carts/main-carts.component').then(m => m.MainCartsComponent)
             },
