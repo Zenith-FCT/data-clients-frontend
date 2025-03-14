@@ -10,21 +10,13 @@ import { fileURLToPath } from 'node:url';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
+const indexHtml = resolve(browserDistFolder, 'index.html');
 
+// Create Express server
 const app = express();
-const angularApp = new AngularNodeAppEngine();
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/**', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+// Initialize Angular SSR engine
+const appEngine = new AngularNodeAppEngine();
 
 /**
  * Serve static files from /browser
@@ -40,13 +32,17 @@ app.use(
 /**
  * Handle all other requests by rendering the Angular application.
  */
-app.use('/**', (req, res, next) => {
-  angularApp
-    .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
-    .catch(next);
+app.get('*', async (req, res, next) => {
+  try {
+    const response = await appEngine.handle(req);
+    if (response) {
+      return writeResponseToNodeResponse(response, res);
+    }
+    next();
+  } catch (error) {
+    console.error('Error during SSR:', error);
+    next(error);
+  }
 });
 
 /**

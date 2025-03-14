@@ -1,0 +1,74 @@
+<div class="insights-container">
+    <!-- KPIs Principales -->
+    <div class="kpi-section">
+      <div class="kpi-grid">
+        <div class="kpi-card" *ngIf="kpis$ | async as kpis">
+          <div class="kpi-value">{{kpis.totalClients}}</div>
+          <div class="kpi-label">Clientes Totales</div>
+        </div>
+        <div class="kpi-card" *ngIf="kpis$ | async as kpis">
+          <div class="kpi-value">{{kpis.totalRevenue | currency:'EUR'}}</div>
+          <div class="kpi-label">Ingresos Totales</div>
+        </div>
+        <div class="kpi-card" *ngIf="kpis$ | async as kpis">
+          <div class="kpi-value">{{kpis.avgOrderValue | currency:'EUR'}}</div>
+          <div class="kpi-label">Valor Medio Pedido</div>
+        </div>
+        <div class="kpi-card" *ngIf="kpis$ | async as kpis">
+          <div class="kpi-value">{{kpis.totalOrders}}</div>
+          <div class="kpi-label">Pedidos Totales</div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Tabla de Insights de Clientes -->
+    <div class="insights-table-section">
+      <h3>Análisis Detallado de Clientes</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Pedidos</th>
+              <th>Ingresos</th>
+              <th>Valor Medio</th>
+              <th>Antigüedad</th>
+              <th>Frecuencia</th>
+              <th>Segmento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let insight of clientInsights$ | async">
+              <td>{{insight.email}}</td>
+              <td>{{insight.metricasGenerales.pedidosTotales}}</td>
+              <td>{{insight.metricasGenerales.ingresosTotales | currency:'EUR'}}</td>
+              <td>{{insight.metricasGenerales.valorMedioPedido | currency:'EUR'}}</td>
+              <td>{{insight.metricasGenerales.antiguedadDias}} días</td>
+              <td>
+                <span [class]="'badge ' + insight.tendencias.frecuenciaPedidos.toLowerCase()">
+                  {{insight.tendencias.frecuenciaPedidos}}
+                </span>
+              </td>
+              <td>
+                <span [class]="'segment-badge ' + insight.segmento.toLowerCase()">
+                  {{insight.segmento}}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <!-- Heatmap de Actividad -->
+    <div class="heatmap-section">
+      <h3>Distribución de Actividad de Clientes</h3>
+      <div class="heatmap-grid" *ngIf="activityHeatmap$ | async as heatmap">
+        <div *ngFor="let cell of heatmap" 
+             class="heatmap-cell"
+             [style.background-color]="cell.color"
+             [title]="cell.tooltip">
+        </div>
+      </div>
+    </div>
+  </div>

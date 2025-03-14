@@ -1,0 +1,30 @@
+<div class="clients-container">
+  <div class="clients-list">
+    <h2>Lista de Clientes</h2>
+    <ul>
+      <li *ngFor="let client of clients$ | async">
+        {{ client.email }} - {{ client.pais }} - {{ client.cantidad_pedidos }} pedidos
+      </li>
+    </ul>
+  </div>
+  
+  <div class="visualizations-section">
+    <div class="tabs">
+      <button 
+        [class.active]="activeTab === 'charts'"
+        (click)="setActiveTab('charts')">
+        Gráficos
+      </button>
+      <button 
+        [class.active]="activeTab === 'insights'"
+        (click)="setActiveTab('insights')">
+        Análisis Detallado
+      </button>
+    </div>
+
+    <div class="tab-content">
+      <app-clients-charts *ngIf="activeTab === 'charts'"></app-clients-charts>
+      <app-clients-data-insights *ngIf="activeTab === 'insights'"></app-clients-data-insights>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,109 @@
+<div class="products-dashboard">
+  <div class="dashboard-header">
+    <h1>Panel de Productos</h1>
+    <p>Análisis y métricas de productos</p>
+  </div>
+
+  <div class="grid-layout">
+    <!-- Gráfico de Ingresos por Producto -->
+    <div class="chart-box card-1">
+      <div class="chart-inner">
+        <h3>Ingresos por Producto</h3>
+        <div class="chart-container">
+          <canvas #revenueByProductChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico de Ventas por Producto -->
+    <div class="chart-box card-2">
+      <div class="chart-inner">
+        <h3>Ventas por Producto</h3>
+        <div class="chart-container">
+          <canvas #salesByProductChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico de Productos más Vendidos -->
+    <div class="chart-box card-3">
+      <div class="chart-inner">
+        <h3>Productos más Vendidos</h3>
+        <div class="chart-container">
+          <canvas #topProductsChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Productos por Mes -->
+    <div class="chart-box card-4">
+      <div class="chart-inner">
+        <h3>Top Productos por Mes</h3>
+        <div class="chart-header">
+          <select class="month-selector" (change)="onMonthSelect($event)">
+            <option *ngFor="let period of availablePeriods" [value]="period.value">
+              {{ period.label }}
+            </option>
+          </select>
+        </div>
+        <div class="chart-container">
+          <canvas #monthlyTopProductsChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evolución de Ingresos -->
+    <div class="chart-box card-5">
+      <div class="chart-inner">
+        <h3>Evolución de Ingresos</h3>
+        <div class="chart-container">
+          <canvas #revenueEvolutionChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Productos por Ingresos -->
+    <div class="chart-box card-6">
+      <div class="chart-inner">
+        <h3>Top Productos por Ingresos</h3>
+        <div class="chart-container">
+          <canvas #topRevenueProductsChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparativa de Productos -->
+    <div class="chart-box card-7">
+      <div class="chart-inner">
+        <h3>Comparativa de Productos</h3>
+        <div class="chart-container">
+          <canvas #productComparisonChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métricas Adicionales -->
+    <div class="chart-box card-8">
+      <div class="chart-inner">
+        <h3>Métricas Adicionales</h3>
+        <div class="chart-container">
+          <div class="table-responsive">
+            <table class="metrics-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Stock</th>
+                  <th>Ventas</th>
+                  <th>Ingresos</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Contenido dinámico de la tabla -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

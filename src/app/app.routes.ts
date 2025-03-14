@@ -1,13 +1,9 @@
 import { Routes } from '@angular/router';
-import { AppComponent } from './app.component';
-import { Component } from '@angular/core';
 import { DashboardLayoutComponent } from './core/dashboard-layout/dashboard-layout.component';
-import { PedidosFacturaComponent } from './features/pedidos-factura/components/pedidos-factura/pedidos-factura.component';
-
-export class SettingsComponent {}
 
 export const routes: Routes = [
-  { path: '', 
+  { 
+    path: '', 
     component: DashboardLayoutComponent,  
     children: [
       {
@@ -17,15 +13,11 @@ export const routes: Routes = [
       },
       {
         path: 'pedfact',
-        component: PedidosFacturaComponent
-      },
-      {
-        path: 'productos',
-        loadComponent: () => import('./features/productos/components/productos/productos.component').then(m => m.ProductosComponent)
+        loadComponent: () => import('./features/pedidos-factura/components/pedidos-factura/pedidos-factura.component').then(m => m.PedidosFacturaComponent)
       },
       {
         path: 'clientes',
-        loadComponent: () => import('./features/clientes/components/clientes/clientes.component').then(m => m.ClientesComponent)
+        loadComponent: () => import('./features/clientes/components/clients/clients.component').then(m => m.ClientsComponent)
       },
       {
         path: 'carritos',
@@ -38,6 +30,10 @@ export const routes: Routes = [
       {
         path: 'suscripciones',
         loadComponent: () => import('./features/suscripciones/components/suscripciones/suscripciones.component').then(m => m.SuscripcionesComponent)
+      },
+      {
+        path: 'productos',
+        loadComponent: () => import('./features/products/components/products.component').then(m => m.ProductsComponent)
       }
     ]
   },
@@ -45,5 +41,4 @@ export const routes: Routes = [
     path: '**',
     redirectTo: ''
   }
- 
 ];

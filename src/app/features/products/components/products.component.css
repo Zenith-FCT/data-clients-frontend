@@ -1,0 +1,248 @@
+.products-dashboard {
+  padding: 24px;
+  background-color: #1a1a1a;
+  min-height: 100vh;
+  color: #e0e0e0;
+}
+
+.dashboard-header {
+  margin-bottom: 32px;
+  text-align: center;
+  padding: 0 16px;
+}
+
+.dashboard-header h1 {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.dashboard-header p {
+  color: #a0a0a0;
+}
+
+/* Grid Layout con altura fija para los contenedores */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 40px;
+  padding: 16px;
+  grid-auto-rows: minmax(400px, auto); /* Altura mínima fija para cada celda */
+}
+
+/* Responsive breakpoints */
+@media (min-width: 768px) {
+  .grid-layout {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 40px;
+    padding: 24px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid-layout {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+      "card1 card2 card3 card4"
+      "card5 card5 card6 card6"
+      "card7 card7 card8 card8";
+    grid-gap: 48px;
+    padding: 32px;
+  }
+  
+  .card-1 { grid-area: card1; }
+  .card-2 { grid-area: card2; }
+  .card-3 { grid-area: card3; }
+  .card-4 { grid-area: card4; }
+  .card-5 { grid-area: card5; }
+  .card-6 { grid-area: card6; }
+  .card-7 { grid-area: card7; }
+  .card-8 { grid-area: card8; }
+}
+
+/* Tablet layout */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .grid-layout {
+    grid-template-areas:
+      "card1 card2"
+      "card3 card4"
+      "card5 card5"
+      "card6 card6"
+      "card7 card7"
+      "card8 card8";
+  }
+}
+
+.chart-box {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 400px; /* Altura mínima fija */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.chart-inner {
+  background-color: #2d2d2d;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* Para posicionamiento de elementos internos */
+  overflow: hidden; /* Previene desbordamiento */
+  border: 1px solid #3d3d3d;
+}
+
+.chart-inner h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: #ffffff;
+  font-weight: 600;
+  text-align: center;
+  flex-shrink: 0; /* Evita que el título se encoja */
+}
+
+.chart-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  flex-shrink: 0; /* Evita que el header se encoja */
+}
+
+.month-selector {
+  max-width: 200px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #404040;
+  font-size: 14px;
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.month-selector option {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.chart-container {
+  position: relative;
+  flex: 1;
+  min-height: 0; /* Importante para flexbox */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 8px 0;
+}
+
+canvas {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Ajustes específicos por tipo de gráfico */
+.card-1 .chart-container, 
+.card-4 .chart-container {
+  min-height: 300px;
+  height: 100%;
+}
+
+.card-2 .chart-container {
+  min-height: 300px;
+  height: 100%;
+}
+
+.card-3 .chart-container {
+  min-height: 300px;
+  height: 100%;
+}
+
+.card-5 .chart-container,
+.card-6 .chart-container {
+  min-height: 350px;
+  height: 100%;
+}
+
+.card-7 .chart-container,
+.card-8 .chart-container {
+  min-height: 350px;
+  height: 100%;
+}
+
+/* Para gráficos que ocupan dos columnas */
+.card-5,
+.card-6,
+.card-7,
+.card-8 {
+  min-height: 450px;
+}
+
+/* Tabla de métricas */
+.table-responsive {
+  overflow-x: auto;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: #e0e0e0;
+}
+
+.metrics-table th, 
+.metrics-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #404040;
+}
+
+.metrics-table th {
+  background-color: #333333;
+  color: #ffffff;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.metrics-table tr:hover {
+  background-color: #3d3d3d;
+}
+
+.metrics-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Indicadores de stock */
+.stock-indicator {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  text-align: center;
+  width: 60px;
+}
+
+.stock-indicator.low {
+  background-color: #411c1c;
+  color: #ff6b6b;
+}
+
+.stock-indicator.medium {
+  background-color: #413111;
+  color: #ffd43b;
+}
+
+.stock-indicator.high {
+  background-color: #1b412b;
+  color: #69db7c;
+}
