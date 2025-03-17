@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrdersViewModelService } from '../../view-model/orders-view-model.service';
+import { OrdersViewModelService } from '../../../../view-model/orders-view-model.service';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 
 @Component({
@@ -11,16 +11,19 @@ import { AsyncPipe, DecimalPipe } from '@angular/common';
   styleUrl: './information-box.component.css'
 })
 export class InformationBoxComponent implements OnInit, OnDestroy {
-  
-  constructor(public ordersViewModel: OrdersViewModelService) {
-  }
+  @Input() type: 'amount' | 'count' = 'amount';
+
+  constructor(public ordersViewModel: OrdersViewModelService) {}
 
   ngOnInit(): void {
-    // Cargar el total de pedidos al inicializar el componente
-    this.ordersViewModel.loadTotalOrdersAmount();
+    if (this.type === 'amount') {
+      this.ordersViewModel.loadTotalOrdersAmount();
+    } else {
+      this.ordersViewModel.loadTotalOrders();
+    }
   }
 
-  refreshTotalAmount(): void {
+  refreshDataOrders(): void {
     this.ordersViewModel.refreshData(true);
   }
 

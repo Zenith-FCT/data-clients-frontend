@@ -6,20 +6,17 @@ import { OrdersDataRepository } from "../../data/data-repositories/orders.data-r
 @Injectable({
     providedIn: 'root'
 })
-export class GetTotalAmountOrdersUseCase {
-    private ordersDataRepository = inject(OrdersDataRepository);
-    
-    constructor() { 
-    }
 
-    execute(): Observable<number> {
+export class GetTotalOrdersUseCase{
+    private ordersDataRepository = inject(OrdersDataRepository);
+
+    constructor(){}
+
+    execute(): Observable<number>{
         return this.ordersDataRepository.getOrders().pipe(
             map((orders: Order[]) => {
-                // Calcular el total de manera funcional con protección contra valores no numéricos
-                return orders.reduce((total, order) => {
-                    const orderValue = parseFloat(order.totalOrder || '0');
-                    return total + (isNaN(orderValue) ? 0 : orderValue);
-                }, 0);
+                // Devolvemos la longitud del array de pedidos
+                return orders.length;
             }),
             catchError(error => {
                 console.error('Error al obtener el total de pedidos en el caso de uso:', error);

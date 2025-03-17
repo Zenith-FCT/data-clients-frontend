@@ -1,14 +1,20 @@
 .orders-container {
   padding: 16px;
+  min-height: calc(100vh - 32px); /* Altura total menos el padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .orders-summary {
   margin-bottom: 24px;
+  width: 100%;
 }
 
 .summary-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   gap: 16px;
 }
 
