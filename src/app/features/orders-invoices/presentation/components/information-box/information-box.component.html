@@ -1,0 +1,31 @@
+<div class="information-box">
+  <div class="box-header">
+    <h3>Total de Pedidos</h3>
+    <button class="refresh-btn" (click)="refreshTotalAmount()" aria-label="Refrescar datos">
+      <span>↻</span>
+    </button>
+  </div>
+
+  <div class="box-content">
+    <!-- Estado de carga -->
+    <div *ngIf="ordersViewModel.isLoading$ | async" class="loading-state">
+      <div class="spinner"></div>
+      <span>Calculando...</span>
+    </div>
+
+    <!-- Estado de error -->
+    <div *ngIf="ordersViewModel.error$ | async as error" class="error-state">
+      <span>⚠</span>
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Estado con datos o vacío -->
+    <div *ngIf="!(ordersViewModel.isLoading$ | async) && !(ordersViewModel.error$ | async)" class="data-state">
+      <div class="amount">
+        <span class="currency">$</span>
+        <span class="value">{{ ordersViewModel.totalOrdersAmount$ | async | number:'1.2-2' }}</span>
+      </div>
+      <p class="description">Valor total de pedidos</p>
+    </div>
+  </div>
+</div>

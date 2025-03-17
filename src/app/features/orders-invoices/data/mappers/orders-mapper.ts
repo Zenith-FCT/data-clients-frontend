@@ -1,8 +1,8 @@
-import { Pedido } from "../../domain/models/orders-model";
+import { Order } from "../../domain/models/orders-model";
 
 export class OrdersMapper {
-    static toModel(data: any): Pedido {
-        return new Pedido(
+    static toModel(data: any): Order {
+        return new Order(
             data.id || '',
             data.numero_pedido || '',
             data.fecha_pedido || '',
@@ -15,8 +15,9 @@ export class OrdersMapper {
         );
     }
 
-    static toModelList(dataList: any[]): Pedido[] {
+    static toModelList(dataList: any[]): Order[] {
         if (!Array.isArray(dataList)) {
+            console.error("OrdersMapper: dataList no es un array:", dataList);
             return [];
         }
         return dataList.map(data => this.toModel(data));

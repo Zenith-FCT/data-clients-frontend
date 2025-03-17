@@ -1,0 +1,27 @@
+.orders-container {
+  padding: 16px;
+}
+
+.orders-summary {
+  margin-bottom: 24px;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.orders-details {
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+
+.orders-details h2 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #333;
+}
