@@ -1,1 +1,38 @@
-<p>main-clients works!</p>
+<div class="clients-container">
+  <h2 class="clients-title">Lista de Clientes</h2>
+  
+  <div *ngIf="isLoading" class="loading-text">
+    Cargando clientes...
+  </div>
+  
+  <div *ngIf="error" class="error-text">
+    {{ error }}
+  </div>
+  
+  <div *ngIf="!isLoading && !error" class="table-container">
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let client">{{client.email}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="orderCount">
+        <th mat-header-cell *matHeaderCellDef>Nº Pedidos</th>
+        <td mat-cell *matCellDef="let client">{{client.orderCount}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ltv">
+        <th mat-header-cell *matHeaderCellDef>LTV</th>
+        <td mat-cell *matCellDef="let client">{{client.ltv}}€</td>
+      </ng-container>
+
+      <ng-container matColumnDef="averageOrderValue">
+        <th mat-header-cell *matHeaderCellDef>Ticket Medio</th>
+        <td mat-cell *matCellDef="let client">{{client.averageOrderValue}}€</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>
