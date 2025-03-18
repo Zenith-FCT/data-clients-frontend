@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-
 import { Clients } from '../domain/clients.model';
 import { GetAllClientsUseCase } from '../domain/get-all-clients-use-case';
 import { clientsProviders } from '../clients.providers';
