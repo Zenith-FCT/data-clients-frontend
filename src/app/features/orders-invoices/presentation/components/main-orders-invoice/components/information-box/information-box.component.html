@@ -1,0 +1,34 @@
+<div class="information-box">
+  <div class="box-header">
+    <h3>{{ type === 'amount' ? 'Total de Ventas' : 'Número de Pedidos' }}</h3>
+    <button class="refresh-btn" (click)="refreshDataOrders()" aria-label="Refrescar datos">
+      <span>↻</span>
+    </button>
+  </div>
+
+  <div class="box-content">
+    <div *ngIf="ordersViewModel.isLoading$ | async" class="loading-state">
+      <div class="spinner"></div>
+      <span>Calculando...</span>
+    </div>
+
+    <div *ngIf="ordersViewModel.error$ | async as error" class="error-state">
+      <span>⚠</span>
+      <p>{{ error }}</p>
+    </div>
+
+    <div *ngIf="!(ordersViewModel.isLoading$ | async) && !(ordersViewModel.error$ | async)" class="data-state">
+      <div class="amount">
+        <ng-container *ngIf="type === 'amount'">
+          
+          <span class="value">{{ ordersViewModel.totalOrdersAmount$ | async | number:'1.2-2' }}</span>
+          <span class="currency">€</span>
+        </ng-container>
+        <ng-container *ngIf="type === 'count'">
+          <span class="value">{{ ordersViewModel.totalOrders$ | async | number:'1.0-0' }}</span>
+        </ng-container>
+      </div>
+      <p class="description">{{ type === 'amount' ? 'Monto total en ventas' : 'Total de pedidos realizados' }}</p>
+    </div>
+  </div>
+</div>
