@@ -10,16 +10,13 @@ export class OrdersViewModelService implements OnDestroy {
   private getTotalAmountOrdersUseCase = inject(GetTotalAmountOrdersUseCase);
   private getTotalOrdersUseCase = inject(GetTotalOrdersUseCase);
   
-  // Estados observables
   private _totalOrdersAmount = new BehaviorSubject<number>(0);
   private _totalOrders = new BehaviorSubject<number>(0);
   private _isLoading = new BehaviorSubject<boolean>(false);
   private _error = new BehaviorSubject<string | null>(null);
   
-  // Controlador para cancelar suscripciones
   private destroy$ = new Subject<void>();
 
-  // Observables públicos
   public totalOrdersAmount$: Observable<number> = this._totalOrdersAmount.asObservable();
   public totalOrders$: Observable<number> = this._totalOrders.asObservable();
   public isLoading$: Observable<boolean> = this._isLoading.asObservable();
@@ -29,28 +26,23 @@ export class OrdersViewModelService implements OnDestroy {
   }
 
   public loadTotalOrdersAmount(): void {
-    // Limpiar error previo
     this._error.next(null);
-    // Establecer estado de carga
     this._isLoading.next(true);
     
-    // Usar el caso de uso con RxJS para manejar asincronía
     this.getTotalAmountOrdersUseCase.execute()
       .pipe(
         tap(total => {
-          // Actualizar el valor del total
           this._totalOrdersAmount.next(total);
         }),
         catchError(error => {
-          // Manejar error específicamente en el ViewModel
           this._error.next('Error al cargar el total de pedidos. Intente nuevamente.');
-          return of(0); // Retornar un valor por defecto para continuar el flujo
+          return of(0); 
         }),
         finalize(() => {
-          // Siempre marcar como no cargando al finaliza
+          
           this._isLoading.next(false);
         }),
-        takeUntil(this.destroy$) // Cancelar suscripción cuando el componente se destruye
+        takeUntil(this.destroy$)
       )
       .subscribe();
   }
@@ -82,8 +74,6 @@ export class OrdersViewModelService implements OnDestroy {
     this.loadTotalOrders();
   }
 
-  // Limpia recursos al destruir el servicio
-  
   public ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

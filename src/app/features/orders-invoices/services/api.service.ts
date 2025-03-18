@@ -17,7 +17,6 @@ export class ApiService{
             return OrdersMapper.toModelList(data);
         }
         catch (error) {
-            // apartado para luego tratar errores
             console.error("Error obteniendo pedidos:", error);
             return [];
         }
@@ -35,7 +34,6 @@ export class ApiService{
             }
         }
         catch (error) {
-            // apartado para luego tratar errores
             console.error("Error obteniendo pedido específico:", error);
             return {} as Order;
         }

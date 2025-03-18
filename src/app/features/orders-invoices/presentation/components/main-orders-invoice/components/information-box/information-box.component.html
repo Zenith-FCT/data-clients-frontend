@@ -7,19 +7,16 @@
   </div>
 
   <div class="box-content">
-    <!-- Estado de carga -->
     <div *ngIf="ordersViewModel.isLoading$ | async" class="loading-state">
       <div class="spinner"></div>
       <span>Calculando...</span>
     </div>
 
-    <!-- Estado de error -->
     <div *ngIf="ordersViewModel.error$ | async as error" class="error-state">
       <span>⚠</span>
       <p>{{ error }}</p>
     </div>
 
-    <!-- Estado con datos o vacío -->
     <div *ngIf="!(ordersViewModel.isLoading$ | async) && !(ordersViewModel.error$ | async)" class="data-state">
       <div class="amount">
         <ng-container *ngIf="type === 'amount'">

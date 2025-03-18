@@ -28,6 +28,6 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // El servicio ya maneja la limpieza de suscripciones
+    
   }
 }
