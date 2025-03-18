@@ -1,29 +1,21 @@
-import { Observable, catchError, map, of } from "rxjs";
-import { Order } from "../models/orders-model";
-import { inject, Injectable } from "@angular/core";
-import { OrdersDataRepository } from "../../data/data-repositories/orders-repository.service";
+import { Observable, map } from 'rxjs';
+import { OrdersRepository } from '../repositories/orders-repository';
 
-@Injectable({
-    providedIn: 'root'
-})
 export class GetTotalAmountOrdersUseCase {
-    private ordersDataRepository = inject(OrdersDataRepository);
-    
-    constructor() { 
-    }
+  constructor(private ordersRepository: OrdersRepository) {}
 
-    execute(): Observable<number> {
-        return this.ordersDataRepository.getOrders().pipe(
-            map((orders: Order[]) => {
-               return orders.reduce((total, order) => {
-                    const orderValue = parseFloat(order.totalOrder || '0');
-                    return total + (isNaN(orderValue) ? 0 : orderValue);
-                }, 0);
-            }),
-            catchError(error => {
-                console.error('Error al obtener el total de pedidos en el caso de uso:', error);
-                return of(0); 
-            })
-        );
-    }
+  execute(): Observable<number> {
+    return this.ordersRepository.getOrders().pipe(
+      map(orders => {
+        if (!orders || orders.length === 0) {
+          return 0;
+        }
+        
+        return orders.reduce((total, order) => {
+          const orderAmount = parseFloat(order.totalOrder);
+          return total + (isNaN(orderAmount) ? 0 : orderAmount);
+        }, 0);
+      })
+    );
+  }
 }

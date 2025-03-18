@@ -2,15 +2,17 @@ import { Observable } from "rxjs";
 import { Order } from "../../domain/models/orders-model";
 import { OrdersRepository } from "../../domain/repositories/orders-repository";
 import { ApiService } from "../../services/api.service";
-import { Injectable, inject } from "@angular/core";
+import { Injectable } from "@angular/core";
 
 @Injectable({
     providedIn: 'root'
 })
-export class OrdersDataRepository implements OrdersRepository {
-    private apiService = inject(ApiService);
+export class OrdersDataRepository extends OrdersRepository {
+    constructor(private apiService: ApiService) {
+        super();
+    }
 
-    getOrders(): Observable<Order[]> {
+    override getOrders(): Observable<Order[]> {
         return new Observable(subscriber => {
             this.apiService.getOrders().then(data => {
                 subscriber.next(data);
@@ -22,7 +24,7 @@ export class OrdersDataRepository implements OrdersRepository {
         });
     }
 
-    getOrderById(id: string): Observable<Order> {
+    override getOrderById(id: string): Observable<Order> {
         return new Observable(subscriber => {
             this.apiService.getOrder(id).then(data => {
                 subscriber.next(data);

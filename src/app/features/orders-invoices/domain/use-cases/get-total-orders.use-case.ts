@@ -1,26 +1,16 @@
-import { Observable, catchError, map, of } from "rxjs";
-import { Order } from "../models/orders-model";
-import { inject, Injectable } from "@angular/core";
-import { OrdersDataRepository } from "../../data/data-repositories/orders-repository.service";
+import { Observable, map, catchError, of } from 'rxjs';
+import { OrdersRepository } from '../repositories/orders-repository';
 
-@Injectable({
-    providedIn: 'root'
-})
+export class GetTotalOrdersUseCase {
+  constructor(private ordersRepository: OrdersRepository) {}
 
-export class GetTotalOrdersUseCase{
-    private ordersDataRepository = inject(OrdersDataRepository);
-
-    constructor(){}
-
-    execute(): Observable<number>{
-        return this.ordersDataRepository.getOrders().pipe(
-            map((orders: Order[]) => {
-                return orders.length;
-            }),
-            catchError(error => {
-                console.error('Error al obtener el total de pedidos en el caso de uso:', error);
-                return of(0); 
-            })
-        );
-    }
+  execute(): Observable<number> {
+    return this.ordersRepository.getOrders().pipe(
+      map(orders => orders?.length || 0),
+      catchError(error => {
+        console.error('Error al obtener el total de pedidos en el caso de uso:', error);
+        return of(0);
+      })
+    );
+  }
 }
