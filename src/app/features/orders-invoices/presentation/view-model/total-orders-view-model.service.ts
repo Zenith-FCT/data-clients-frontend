@@ -1,10 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, catchError, finalize, of, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, finalize, of, takeUntil } from 'rxjs';
 import { GetTotalAmountOrdersUseCase } from '../../domain/use-cases/get-total-amount-orders.use-case';
 import { GetTotalOrdersUseCase } from '../../domain/use-cases/get-total-orders.use-case';
-import { OrdersRepository } from '../../domain/repositories/orders-repository';
 import { OrdersDataRepository } from '../../data/data-repositories/orders-repository.service';
-import { GetMonthlySalesUseCase } from '../../domain/use-cases/get-monthly-sales.use-cases';
 
 @Injectable({
   providedIn: 'root'
@@ -14,25 +12,21 @@ export class OrdersViewModelService implements OnDestroy {
   private _error = new BehaviorSubject<string | null>(null);
   private _totalOrdersAmount = new BehaviorSubject<number>(0);
   private _totalOrders = new BehaviorSubject<number>(0);
-  private _monthlySales = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
 
   public isLoading$: Observable<boolean> = this._isLoading.asObservable();
   public error$: Observable<string | null> = this._error.asObservable();
   public totalOrdersAmount$: Observable<number> = this._totalOrdersAmount.asObservable();
   public totalOrders$: Observable<number> = this._totalOrders.asObservable();
-  public monthlySales$: Observable<number> = this._monthlySales.asObservable();
 
   private getTotalAmountOrdersUseCase: GetTotalAmountOrdersUseCase;
   private getTotalOrdersUseCase: GetTotalOrdersUseCase;
-  private getMonthlySalesUseCase: GetMonthlySalesUseCase;
 
   constructor(
     private ordersRepository: OrdersDataRepository
   ) {
     this.getTotalAmountOrdersUseCase = new GetTotalAmountOrdersUseCase(this.ordersRepository);
     this.getTotalOrdersUseCase = new GetTotalOrdersUseCase(this.ordersRepository);
-    this.getMonthlySalesUseCase = new GetMonthlySalesUseCase(this.ordersRepository);
   }
 
   public loadTotalOrdersAmount(): void {
@@ -71,27 +65,9 @@ export class OrdersViewModelService implements OnDestroy {
       .subscribe(total => this._totalOrders.next(total));
   }
 
-  loadMonthlySales(month: number, year: number): Observable<number> {
-    this._error.next(null);
-    this._isLoading.next(true);
-
-    return this.getMonthlySalesUseCase.execute(month, year).pipe(
-      tap((total: number) => this._monthlySales.next(total)),
-      catchError(error => {
-        this._error.next('Error al cargar las ventas mensuales. Intente nuevamente.');
-        return of(0);
-      }),
-      takeUntil(this.destroy$),
-      finalize(() => {
-        this._isLoading.next(false);
-      })
-    );
-  }
-
   public refreshData(forceRefresh: boolean = false): void {
     this.loadTotalOrdersAmount();
     this.loadTotalOrders();
-    this.loadMonthlySales(new Date().getMonth(), new Date().getFullYear());
   }
 
   public ngOnDestroy(): void {

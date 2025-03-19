@@ -1,20 +1,28 @@
 .orders-container {
-  padding: 16px;
+  padding: 8px;
   min-height: calc(100vh - 32px); 
   flex-direction: column;
   justify-content: space-between;
 }
 
 .orders-summary {
-  margin-bottom: 24px;
   width: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .summary-cards {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 2%;
+  padding: 8px 0;
+}
+
+.summary-cards > * {
+  flex: 0 0 23.5%;
+  max-width: 23.5%;
 }
 
 .orders-details {

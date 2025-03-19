@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrdersViewModelService } from '../../../../view-model/orders-view-model.service';
+import { OrdersViewModelService } from '../../../../view-model/total-orders-view-model.service';
+import { MonthlySalesViewModelService } from '../../../../view-model/monthly-orders-viewmodel.service';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
@@ -35,13 +36,13 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     { value: 11, name: 'Diciembre' }
   ];
 
-  constructor(public ordersViewModel: OrdersViewModelService) {}
+  constructor(
+    public ordersViewModel: OrdersViewModelService,
+    public monthlySalesViewModel: MonthlySalesViewModelService
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
-    if (this.type === 'monthly') {
-      this.ordersViewModel.loadMonthlySales(this.selectedMonth, this.selectedYear).subscribe();
-    }
   }
 
   loadData(): void {
@@ -50,24 +51,28 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     } else if (this.type === 'count') {
       this.ordersViewModel.loadTotalOrders();
     } else if (this.type === 'monthly') {
-      this.ordersViewModel.loadMonthlySales(this.selectedMonth, this.selectedYear).subscribe();
+      this.monthlySalesViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
     }
   }
 
   onMonthChange(): void {
     if (this.type === 'monthly') {
-      this.ordersViewModel.loadMonthlySales(this.selectedMonth, this.selectedYear).subscribe();
+      this.monthlySalesViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
     }
   }
 
   onYearChange(): void {
     if (this.type === 'monthly') {
-      this.ordersViewModel.loadMonthlySales(this.selectedMonth, this.selectedYear).subscribe();
+      this.monthlySalesViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
     }
   }
 
   refreshDataOrders(): void {
-    this.ordersViewModel.refreshData(true);
+    if (this.type === 'monthly') {
+      this.monthlySalesViewModel.refreshData(true);
+    } else {
+      this.ordersViewModel.refreshData(true);
+    }
   }
 
   ngOnDestroy(): void {

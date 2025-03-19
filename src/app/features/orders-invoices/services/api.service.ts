@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Order } from '../domain/models/orders-model';
 import { OrdersMapper } from '../data/mappers/orders-mapper';
+import { MonthlySalesModel } from '../domain/models/monthly-sales.model';
+import { MonthlySalesMapper } from '../data/mappers/monthly-sales-mapper';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +38,22 @@ export class ApiService{
         catch (error) {
             console.error("Error obteniendo pedido específico:", error);
             return {} as Order;
+        }
+    }
+    async getMonthlySales(): Promise<any[]> { 
+        try {
+            const response = await fetch(`${this.url}monthly-totals`);
+            const data = await response.json();
+            if(data){
+                return MonthlySalesMapper.toModelList(data);
+            }
+            else{
+                return [] as MonthlySalesModel[];
+            }
+        }
+        catch (error) {
+            console.error("Error obteniendo ventas mensuales:", error);
+            return [];
         }
     }
 }

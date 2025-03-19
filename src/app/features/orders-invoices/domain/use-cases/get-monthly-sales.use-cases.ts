@@ -1,26 +1,20 @@
 import { Observable, map } from 'rxjs';
-import { OrdersRepository } from '../repositories/orders-repository';
-import { Order } from '../models/orders-model';
+import { MonthlySalesRepository } from '../repositories/monthly-sales-repository';
+import { MonthlySalesModel } from '../models/monthly-sales.model';
 
 export class GetMonthlySalesUseCase {
-    constructor(private ordersRepository: OrdersRepository) {}
+    constructor(private monthlySalesRepository: MonthlySalesRepository) {}
     
-    execute(month: number, year: number): Observable<number> {
-        return this.ordersRepository.getOrders().pipe(
-            map(orders => {
-                if (!orders || orders.length === 0) {
-                    return 0;
-                }
-                return orders
-                    .filter(order => {
-                        const orderDate = new Date(order.orderDate);
-                        return orderDate.getMonth() === month && 
-                               orderDate.getFullYear() === year;
-                    })
-                    .reduce((total, order) => {
-                        const orderAmount = parseFloat(order.totalOrder);
-                        return total + (isNaN(orderAmount) ? 0 : orderAmount);
-                    }, 0);
+    execute(year: number, month: number): Observable<number> {
+        let monthlySales= this.monthlySalesRepository.getMonthlySales();
+        return monthlySales.pipe(
+            map((monthlySales: MonthlySalesModel[]) => {
+                const monthNumber = month + 1;
+                const formattedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
+                const searchFormat = `${year}-${formattedMonth}`;
+                const monthlySale = monthlySales.find(sale => sale.date === searchFormat);
+                
+                return monthlySale ? parseFloat(monthlySale.totalSales) : 0;
             })
         );
     }
