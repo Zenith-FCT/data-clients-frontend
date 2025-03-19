@@ -5,7 +5,7 @@ import { Order } from '../models/orders-model';
 export class GetMonthlySalesUseCase {
     constructor(private ordersRepository: OrdersRepository) {}
     
-    execute(month: number): Observable<number> {
+    execute(month: number, year: number): Observable<number> {
         return this.ordersRepository.getOrders().pipe(
             map(orders => {
                 if (!orders || orders.length === 0) {
@@ -14,7 +14,8 @@ export class GetMonthlySalesUseCase {
                 return orders
                     .filter(order => {
                         const orderDate = new Date(order.orderDate);
-                        return orderDate.getMonth() === month;
+                        return orderDate.getMonth() === month && 
+                               orderDate.getFullYear() === year;
                     })
                     .reduce((total, order) => {
                         const orderAmount = parseFloat(order.totalOrder);

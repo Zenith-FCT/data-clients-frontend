@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, catchError, finalize, of, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, finalize, of, takeUntil, tap } from 'rxjs';
 import { GetTotalAmountOrdersUseCase } from '../../domain/use-cases/get-total-amount-orders.use-case';
 import { GetTotalOrdersUseCase } from '../../domain/use-cases/get-total-orders.use-case';
 import { OrdersRepository } from '../../domain/repositories/orders-repository';
@@ -14,12 +14,14 @@ export class OrdersViewModelService implements OnDestroy {
   private _error = new BehaviorSubject<string | null>(null);
   private _totalOrdersAmount = new BehaviorSubject<number>(0);
   private _totalOrders = new BehaviorSubject<number>(0);
+  private _monthlySales = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
 
   public isLoading$: Observable<boolean> = this._isLoading.asObservable();
   public error$: Observable<string | null> = this._error.asObservable();
   public totalOrdersAmount$: Observable<number> = this._totalOrdersAmount.asObservable();
   public totalOrders$: Observable<number> = this._totalOrders.asObservable();
+  public monthlySales$: Observable<number> = this._monthlySales.asObservable();
 
   private getTotalAmountOrdersUseCase: GetTotalAmountOrdersUseCase;
   private getTotalOrdersUseCase: GetTotalOrdersUseCase;
@@ -69,25 +71,27 @@ export class OrdersViewModelService implements OnDestroy {
       .subscribe(total => this._totalOrders.next(total));
   }
 
-  loadMonthlySales(month: number): Observable<number> {
+  loadMonthlySales(month: number, year: number): Observable<number> {
     this._error.next(null);
     this._isLoading.next(true);
 
-    return this.getMonthlySalesUseCase.execute(month).pipe(
+    return this.getMonthlySalesUseCase.execute(month, year).pipe(
+      tap((total: number) => this._monthlySales.next(total)),
       catchError(error => {
         this._error.next('Error al cargar las ventas mensuales. Intente nuevamente.');
         return of(0);
       }),
+      takeUntil(this.destroy$),
       finalize(() => {
         this._isLoading.next(false);
-      }),
-      takeUntil(this.destroy$)
+      })
     );
   }
 
   public refreshData(forceRefresh: boolean = false): void {
     this.loadTotalOrdersAmount();
     this.loadTotalOrders();
+    this.loadMonthlySales(new Date().getMonth(), new Date().getFullYear());
   }
 
   public ngOnDestroy(): void {
