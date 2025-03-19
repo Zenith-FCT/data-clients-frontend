@@ -1,0 +1,13 @@
+<div class="chart-container">
+  <div class="chart-header">
+    <h2 class="chart-title">Facturación Mensual</h2>
+    <mat-form-field appearance="outline" class="year-selector">
+      <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
+        <mat-option *ngFor="let year of years" [value]="year">
+          {{year}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <canvas #chartCanvas></canvas>
+</div>
