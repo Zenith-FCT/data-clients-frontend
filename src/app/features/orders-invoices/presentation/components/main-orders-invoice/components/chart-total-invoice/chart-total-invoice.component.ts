@@ -18,7 +18,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   private chart: any;
   private destroy$ = new Subject<void>();
-  selectedYear = new Date().getFullYear();
+  selectedYear!: number;
   years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
   private currentData: MonthlySalesModel[] = [];
   private isBrowser: boolean;
@@ -31,6 +31,15 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
   }
 
   ngOnInit(): void {
+    this.monthlySalesViewModel.selectedYear$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(year => {
+        this.selectedYear = year;
+        if (this.chart && this.currentData) {
+          this.updateChart(this.filterDataByYear(this.currentData));
+        }
+      });
+
     this.monthlySalesViewModel.allMonthlySales$
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
@@ -49,6 +58,9 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
   }
 
   onYearChange(): void {
+    if (this.selectedYear) {
+      this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
+    }
     if (this.chart && this.currentData) {
       this.updateChart(this.filterDataByYear(this.currentData));
     }
@@ -71,23 +83,55 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
         datasets: [{
           label: 'Ventas Mensuales',
           data: [],
-          borderColor: '#8C4A60',
+          borderColor: '#FE2800',
           backgroundColor: 'transparent',
           tension: 0,
           fill: false,
-          pointRadius: 4,
-          pointBackgroundColor: '#8C4A60'
+          pointRadius: 5,
+          pointBackgroundColor: '#FE2800'
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'nearest',
+          axis: 'xy'
+        },
         plugins: {
           title: {
             display: false
           },
           legend: {
             display: false
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: {
+              size: 12
+            },
+            bodyFont: {
+              size: 12
+            },
+            padding: 10,
+            callbacks: {
+              label: function(context: any) {
+                let value = context.parsed.y;
+                return value.toLocaleString('es-ES') + ' €';
+              }
+            }
+          }
+        },
+        elements: {
+          point: {
+            hitRadius: 15,
+            hoverRadius: 7,
+            radius: 5
+          },
+          line: {
+            tension: 0.2
           }
         },
         scales: {

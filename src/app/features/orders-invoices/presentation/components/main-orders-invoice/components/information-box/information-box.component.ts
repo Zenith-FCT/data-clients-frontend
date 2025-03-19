@@ -5,6 +5,8 @@ import { MonthlySalesViewModelService } from '../../../../view-model/monthly-ord
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-information-box',
@@ -17,7 +19,8 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   @Input() type: 'amount' | 'count' | 'monthly' = 'amount';
   
   selectedMonth = new Date().getMonth();
-  selectedYear = new Date().getFullYear();
+  selectedYear!: number;
+  private destroy$ = new Subject<void>();
   
   years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
   
@@ -42,6 +45,15 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.monthlySalesViewModel.selectedYear$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(year => {
+        if (this.selectedYear !== year) {
+          this.selectedYear = year;
+          this.loadData();
+        }
+      });
+
     this.loadData();
   }
 
@@ -63,6 +75,7 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
 
   onYearChange(): void {
     if (this.type === 'monthly') {
+      this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
       this.monthlySalesViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
     }
   }
@@ -76,5 +89,7 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

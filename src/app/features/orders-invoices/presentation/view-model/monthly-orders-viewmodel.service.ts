@@ -14,12 +14,14 @@ export class MonthlySalesViewModelService implements OnDestroy {
   private _error = new BehaviorSubject<string | null>(null);
   private _monthlySales = new BehaviorSubject<number>(0);
   private _allMonthlySales = new BehaviorSubject<MonthlySalesModel[]>([]);
+  private _selectedYear = new BehaviorSubject<number>(new Date().getFullYear());
   private destroy$ = new Subject<void>();
 
   public isLoading$: Observable<boolean> = this._isLoading.asObservable();
   public error$: Observable<string | null> = this._error.asObservable();
   public monthlySales$: Observable<number> = this._monthlySales.asObservable();
   public allMonthlySales$: Observable<MonthlySalesModel[]> = this._allMonthlySales.asObservable();
+  public selectedYear$: Observable<number> = this._selectedYear.asObservable();
 
   private getMonthlySalesUseCase: GetMonthlySalesUseCase;
   private getAllMonthWithTotalsUseCase: GetAllMonthWithTotalsUseCase;
@@ -30,10 +32,14 @@ export class MonthlySalesViewModelService implements OnDestroy {
     this.getAllMonthWithTotalsUseCase = new GetAllMonthWithTotalsUseCase(this.monthlySalesRepository);
   }
 
+  public setSelectedYear(year: number): void {
+    this._selectedYear.next(year);
+  }
+
   public loadMonthlySales(year: number, month: number): void {
     this._error.next(null);
     this._isLoading.next(true);
-
+    this._selectedYear.next(year);
 
     this.getMonthlySalesUseCase.execute(year, month).pipe(
       tap((total: number) => {
@@ -56,6 +62,11 @@ export class MonthlySalesViewModelService implements OnDestroy {
     this.getAllMonthWithTotalsUseCase.execute().pipe(
       tap((monthlyTotals: MonthlySalesModel[]) => {
         this._allMonthlySales.next(monthlyTotals);
+        if (monthlyTotals.length > 0) {
+          const years = monthlyTotals.map(sale => parseInt(sale.date.split('-')[0]));
+          const mostRecentYear = Math.max(...years);
+          this._selectedYear.next(mostRecentYear);
+        }
       }),
       catchError(error => {
         this._error.next('Error al cargar las ventas mensuales. Intente nuevamente.');
@@ -71,7 +82,7 @@ export class MonthlySalesViewModelService implements OnDestroy {
 
   public refreshData(forceRefresh: boolean = false): void {
     const currentDate = new Date();
-    this.loadMonthlySales(currentDate.getFullYear(), currentDate.getMonth() + 1);
+    this.loadMonthlySales(this._selectedYear.value, currentDate.getMonth());
     this.loadAllMonthWithTotals();
   }
 
