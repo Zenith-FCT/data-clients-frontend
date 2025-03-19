@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { Clients } from '../domain/clients.model';
 import { GetAllClientsUseCase } from '../domain/get-all-clients-use-case';
 import { clientsProviders } from '../clients.providers';
+import { ClientsViewModel } from './clients.view-model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-clients',
@@ -14,37 +16,26 @@ import { clientsProviders } from '../clients.providers';
   ],
   providers: [
     GetAllClientsUseCase,
-    ...clientsProviders
+    ...clientsProviders,
+    ClientsViewModel
   ],
   templateUrl: './main-clients.component.html',
-  styleUrls: ['./main-clients.component.scss']
+  styleUrls: ['./main-clients.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class ClientsComponent implements OnInit {
   dataSource = new MatTableDataSource<Clients>([]);
   displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];
-  isLoading = true;
-  error: string | null = null;
 
-  constructor(private getAllClientsUseCase: GetAllClientsUseCase) {}
+  public viewModel = inject(ClientsViewModel);
 
-  ngOnInit(): void {
-    this.loadClients();
+  constructor() {
+    effect(() => {
+      this.dataSource.data = this.viewModel.clients();
+    });
   }
 
-  loadClients(): void {
-    this.isLoading = true;
-    this.error = null;
-    
-    this.getAllClientsUseCase.execute().subscribe({
-      next: (data) => {
-        this.dataSource.data = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading clients:', err);
-        this.error = 'Error al cargar los clientes: ' + (err.message || 'Error desconocido');
-        this.isLoading = false;
-      }
-    });
+  ngOnInit(): void {
+    this.viewModel.loadClients();
   }
 }
