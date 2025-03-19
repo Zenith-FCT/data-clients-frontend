@@ -1,5 +1,5 @@
 import { Observable, from } from "rxjs";
-import { ApiService } from "../../services/api.service";
+import { ApiService } from "./remote/api.service";
 import { Injectable } from "@angular/core";
 import { MonthlySalesRepository } from "../../domain/repositories/monthly-sales-repository";
 import { MonthlySalesModel } from "../../domain/models/monthly-sales.model";

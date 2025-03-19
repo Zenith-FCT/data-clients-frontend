@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Order } from '../domain/models/orders-model';
-import { OrdersMapper } from '../data/mappers/orders-mapper';
-import { MonthlySalesModel } from '../domain/models/monthly-sales.model';
-import { MonthlySalesMapper } from '../data/mappers/monthly-sales-mapper';
+import { Order } from '../../../domain/models/orders-model';
+import { OrdersMapper } from '../../mappers/orders-mapper';
+import { MonthlySalesModel } from '../../../domain/models/monthly-sales.model';
+import { MonthlySalesMapper } from '../../mappers/monthly-sales-mapper';
 
 @Injectable({
   providedIn: 'root'

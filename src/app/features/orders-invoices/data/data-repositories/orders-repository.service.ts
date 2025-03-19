@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { Order } from "../../domain/models/orders-model";
 import { OrdersRepository } from "../../domain/repositories/orders-repository";
-import { ApiService } from "../../services/api.service";
+import { ApiService } from "./remote/api.service";
 import { Injectable } from "@angular/core";
 
 @Injectable({
