@@ -1,4 +1,4 @@
-import {Injectable,computed,inject,signal} from "@angular/core";
+import {Injectable,computed,signal} from "@angular/core";
 import {Coupon} from "../../../../domain/models/coupons.models";
 import {GetMostUsedCouponsUseCase} from "../../../../domain/useCases/getMOstUsedCouponsUseCase";
 
@@ -14,6 +14,8 @@ export interface CouponsUIState {
 })
 export class MonthlySalesViewModel {
 
+  constructor(private getMostUsedCouponsUseCase: GetMostUsedCouponsUseCase) {}
+
   private uiState = signal<CouponsUIState>({
     coupons: [],
     isLoading: false,
@@ -23,8 +25,6 @@ export class MonthlySalesViewModel {
   readonly coupons = computed(() => this.uiState().coupons);
   readonly isLoading = computed(() => this.uiState().isLoading);
   readonly error = computed(() => this.uiState().error);
-
-  private getMostUsedCouponsUseCase = inject(GetMostUsedCouponsUseCase);
 
 
   getMostUsedCoupons(): void {
