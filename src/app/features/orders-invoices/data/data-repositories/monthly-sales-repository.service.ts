@@ -7,17 +7,15 @@ import { MonthlySalesModel } from "../../domain/models/monthly-sales.model";
 @Injectable({
     providedIn: 'root'
 })
-export class MonthlySalesDataRepository extends MonthlySalesRepository {
+export class MonthlySalesDataRepository implements MonthlySalesRepository {
     
-    constructor(private apiService: ApiService) {
-        super();
-    }
+    constructor(private apiService: ApiService) {}
 
-    override getMonthlySales(): Observable<MonthlySalesModel[]> {
+    getMonthlySales(): Observable<MonthlySalesModel[]> {
         return from(this.apiService.getMonthlySales());
     }
-    override getOrders(): Observable<MonthlySalesModel[]> {
+    
+    getOrders(): Observable<MonthlySalesModel[]> {
         return from(this.apiService.getMonthlySales());
     }
-
 }
