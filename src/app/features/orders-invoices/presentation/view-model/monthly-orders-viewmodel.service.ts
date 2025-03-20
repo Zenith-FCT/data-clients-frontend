@@ -7,7 +7,6 @@ import { MonthlySalesDataRepository } from '../../data/data-repositories/monthly
 import { GetTotalAmountOrdersUseCase } from '../../domain/use-cases/get-total-amount-orders.use-case';
 import { GetTotalOrdersUseCase } from '../../domain/use-cases/get-total-orders.use-case';
 
-// Define UIState interface to consolidate all state properties
 export interface MonthlySalesUIState {
   isLoading: boolean;
   error: string | null;

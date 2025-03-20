@@ -32,7 +32,6 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   months = Array.from({length: 12}, (_, i) => ({ value: i }));
 
   constructor(public monthlySalesViewModel: MonthlySalesViewModelService) {
-    // Crear un effect para sincronizar el selectedYear con el del ViewModel
     effect(() => {
       const year = this.monthlySalesViewModel.selectedYear$();
       if (year !== this.selectedYear) {
@@ -57,7 +56,6 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     this.selectedYear = currentYear;
     this.selectedMonth = currentMonth;
     
-    // Cargar los datos según el tipo de caja
     if (this.type === 'monthly') {
       this.monthlySalesViewModel.loadMonthlySales(currentYear, currentMonth);
     } else if (this.type === 'amount') {

@@ -54,8 +54,9 @@
 }
 
 canvas {
-  display: block !important; /* Importante para evitar espacio extra */
+  display: block !important; 
   width: 100% !important;
   height: 100% !important;
-  max-height: 420px !important; /* Ajusta este valor según necesites */
+  max-height: 420px !important; 
+  
 }

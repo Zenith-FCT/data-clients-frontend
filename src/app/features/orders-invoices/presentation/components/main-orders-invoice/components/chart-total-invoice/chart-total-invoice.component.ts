@@ -166,22 +166,18 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
     });
   }
 
-  // Método mejorado para destruir y recrear el gráfico completamente
   private destroyAndRecreateChart(data: MonthlySalesModel[]): void {
     if (!this.isBrowser) return;
     
-    // Destruir el gráfico actual si existe
     if (this.chart) {
       this.chart.destroy();
       this.chart = null;
     }
     
-    // No recreamos el canvas, simplemente obtenemos el contexto del canvas existente
     if (this.chartCanvas && this.chartCanvas.nativeElement) {
       const ctx = this.chartCanvas.nativeElement.getContext('2d');
       if (!ctx) return;
       
-      // Inicializar el gráfico nuevamente con el mismo canvas
       this.chart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -270,15 +266,8 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
         }
       });
       
-      // Establecer los datos actualizados
       if (this.chart) {
-        const values = Array(12).fill(0);
-        data.forEach(item => {
-          const month = parseInt(item.date.split('-')[1]) - 1;
-          values[month] = parseFloat(item.totalSales);
-        });
-        this.chart.data.datasets[0].data = values;
-        this.chart.update();
+        this.updateChart(data);
       }
     }
   }
