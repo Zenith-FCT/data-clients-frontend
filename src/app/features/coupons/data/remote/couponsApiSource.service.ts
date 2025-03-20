@@ -18,7 +18,7 @@ export class CouponsApiSourceService{
             return CouponsMapper.toModelList(data);
         }
         catch (error) {
-            return [];
+          throw new Error("Error al recoger los datos");
         }
     }
 

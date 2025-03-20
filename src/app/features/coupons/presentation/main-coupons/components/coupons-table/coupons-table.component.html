@@ -1,15 +1,15 @@
 <div>
   <h2 class="coupons-title">Cupones mas usados</h2>
 
-  <div *ngIf="isLoading" class="loading-text">
-    Cargando clientes...
+  <div *ngIf="viewModel.isLoading()">
+    Cargando...
   </div>
 
-  <div *ngIf="error" class="error-text">
-    {{ error }}
+  <div *ngIf="viewModel.error()" class="error-text">
+    {{ viewModel.error() }}
   </div>
 
-  <div *ngIf="!isLoading && !error" class="table-container">
+  <div *ngIf="!viewModel.isLoading() && !viewModel.error()" class="coupons-table">
     <table mat-table [dataSource]="dataSource">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Cupon</th>

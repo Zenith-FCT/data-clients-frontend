@@ -17,7 +17,9 @@ export class CouponsDataRepository implements CouponsRepository {
         this.dataSource.getMostUsedCoupons().then(coupons => {
           obs.next(coupons);
           obs.complete();
-        })
+        }).catch((error) =>
+          obs.error(error)
+        )
       })
     }
 }

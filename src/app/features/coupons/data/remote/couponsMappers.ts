@@ -12,7 +12,6 @@ export class CouponsMapper {
       if (!Array.isArray(dataList)) {
           return [];
       }
-      console.log(dataList.map(data => this.toModel(data)));
 
       return dataList.map(data => this.toModel(data));
   }
