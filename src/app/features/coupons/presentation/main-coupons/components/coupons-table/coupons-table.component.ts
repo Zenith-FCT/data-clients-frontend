@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {Component,OnInit,effect,inject} from '@angular/core';
 import {MatTableDataSource,MatTableModule} from '@angular/material/table';
 import {Coupon} from '../../../../domain/models/coupons.models';
-import {MonthlySalesViewModel} from './coupons-table.view-model';
+import {TableCouponsViewModel} from './coupons-table.view-model';
 
 @Component({
     selector: 'app-coupons-table',
@@ -18,7 +18,7 @@ export class CouponsTableComponent implements OnInit  {
   dataSource = new MatTableDataSource<Coupon>([]);
   displayedColumns: string[] = ['name', 'count'];
 
-  viewModel = inject(MonthlySalesViewModel)
+  viewModel = inject(TableCouponsViewModel)
 
   constructor() {
     effect(() => {
