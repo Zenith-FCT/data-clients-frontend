@@ -17,31 +17,28 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <button class="refresh-btn" (click)="refreshDataOrders()" aria-label="Refrescar datos">
-      <span>↻</span>
-    </button>
   </div>
 
   <div class="box-content">
     <ng-container *ngIf="type === 'amount' || type === 'count'">
-      <div *ngIf="ordersViewModel.isLoading$ | async" class="loading-state">
+      <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
         <div class="spinner"></div>
         <span>Calculando...</span>
       </div>
 
-      <div *ngIf="ordersViewModel.error$ | async as error" class="error-state">
+      <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
         <span>⚠</span>
-        <p>{{ error }}</p>
+        <p>{{ monthlySalesViewModel.error$() }}</p>
       </div>
 
-      <div *ngIf="!(ordersViewModel.isLoading$ | async) && !(ordersViewModel.error$ | async)" class="data-state">
+      <div *ngIf="!monthlySalesViewModel.isLoading$() && !monthlySalesViewModel.error$()" class="data-state">
         <div class="amount">
           <ng-container *ngIf="type === 'amount'">
-            <span class="value">{{ ordersViewModel.totalOrdersAmount$ | async | number:'1.2-2' }}</span>
+            <span class="value">{{ monthlySalesViewModel.totalOrdersAmount$() | number:'1.2-2' }}</span>
             <span class="currency">€</span>
           </ng-container>
           <ng-container *ngIf="type === 'count'">
-            <span class="value">{{ ordersViewModel.totalOrders$ | async | number:'1.0-0' }}</span>
+            <span class="value">{{ monthlySalesViewModel.totalOrders$() | number:'1.0-0' }}</span>
           </ng-container>
         </div>
         <p class="description">{{ type === 'amount' ? 'Monto total en ventas' : 'Total de pedidos realizados' }}</p>
@@ -49,19 +46,19 @@
     </ng-container>
 
     <ng-container *ngIf="type === 'monthly'">
-      <div *ngIf="monthlySalesViewModel.isLoading$ | async" class="loading-state">
+      <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
         <div class="spinner"></div>
         <span>Calculando...</span>
       </div>
 
-      <div *ngIf="monthlySalesViewModel.error$ | async as error" class="error-state">
+      <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
         <span>⚠</span>
-        <p>{{ error }}</p>
+        <p>{{ monthlySalesViewModel.error$() }}</p>
       </div>
 
-      <div *ngIf="!(monthlySalesViewModel.isLoading$ | async) && !(monthlySalesViewModel.error$ | async)" class="data-state">
+      <div *ngIf="!monthlySalesViewModel.isLoading$() && !monthlySalesViewModel.error$()" class="data-state">
         <div class="amount">
-          <span class="value">{{ monthlySalesViewModel.monthlySales$ | async | number:'1.2-2' }}</span>
+          <span class="value">{{ monthlySalesViewModel.monthlySales$() | number:'1.2-2' }}</span>
           <span class="currency">€</span>
         </div>
         <p class="description">Ventas de mes {{selectedMonth + 1}} {{ selectedYear }}</p>

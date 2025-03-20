@@ -1,18 +1,18 @@
 import { Observable, map } from 'rxjs';
-import { OrdersRepository } from '../repositories/orders-repository';
+import { MonthlySalesRepository } from '../repositories/monthly-sales-repository';
 
 export class GetTotalAmountOrdersUseCase {
-  constructor(private ordersRepository: OrdersRepository) {}
+  constructor(private monthlySalesRepository: MonthlySalesRepository) {}
 
   execute(): Observable<number> {
-    return this.ordersRepository.getOrders().pipe(
+    return this.monthlySalesRepository.getOrders().pipe(
       map(orders => {
         if (!orders || orders.length === 0) {
           return 0;
         }
         
         return orders.reduce((total, order) => {
-          const orderAmount = parseFloat(order.totalOrder);
+          const orderAmount = parseFloat(order.totalSales);
           return total + (isNaN(orderAmount) ? 0 : orderAmount);
         }, 0);
       })

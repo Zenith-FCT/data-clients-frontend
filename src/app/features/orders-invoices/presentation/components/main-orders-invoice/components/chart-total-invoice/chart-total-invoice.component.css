@@ -1,6 +1,6 @@
 .chart-container {
   position: relative;
-  height: 550px;
+  height: 500px;
   width: 47.25%;
   background-color: white;
   border-radius: 6px;
@@ -47,7 +47,15 @@
   min-height: unset !important;
 }
 
+.chart-content {
+  position: relative;
+  height: calc(100% - 56px);
+  width: 100%;
+}
+
 canvas {
+  display: block !important; /* Importante para evitar espacio extra */
   width: 100% !important;
-  height: calc(100% - 56px) !important;
+  height: 100% !important;
+  max-height: 420px !important; /* Ajusta este valor según necesites */
 }
