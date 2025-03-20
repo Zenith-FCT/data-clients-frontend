@@ -1,10 +1,10 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, catchError, finalize, tap } from 'rxjs';
-import { Clients } from '../domain/clients.model';
+import { ClientsList } from '../domain/clients-list.model';
 import { GetAllClientsUseCase } from '../domain/get-all-clients-use-case';
 
 interface ClientsState {
-  clients: Clients[];
+  clients: ClientsList[];
   loading: boolean;
   error: string | null;
 }

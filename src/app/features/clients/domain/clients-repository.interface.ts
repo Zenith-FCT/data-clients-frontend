@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
-import { Clients } from "./clients.model";
+import { ClientsList } from "./clients-list.model";
 
 export interface IClientsRepository {
-    getAllClients(): Observable<Clients[]>;
+    getAllClientsList(): Observable<ClientsList[]>;
 }

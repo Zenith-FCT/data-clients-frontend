@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
+import { ClientsListApi } from './clients-list-api.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,27 +13,46 @@ export class ClientsApiService {
 
   constructor(private http: HttpClient) {}
 
-  getAllClients(): Observable<any[]> {
+  getAllClientsList(): Observable<ClientsListApi[]> {
     console.log('ClientsApiService: Fetching clients from:', this.apiUrl);
     
-    return this.http.get<any[]>(this.apiUrl).pipe(
-      tap(response => console.log('ClientsApiService: Received response:', response)),
+    return this.http.get<ClientsListApi[]>(this.apiUrl).pipe(
+      map(response => response.map(item => ({
+        id: item.id,
+        email: item.email,
+        nº_pedidos: item.nº_pedidos,
+        ltv: item.ltv,
+        tm: item.tm
+      }))),
+      tap(clients => console.log('ClientsApiService: Received response:', clients)),
       catchError(this.handleError)
     );
   }
 
-  private handleError(error: HttpErrorResponse) {
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    const errorMessage = this.getErrorMessage(error);
     console.error('ClientsApiService Error:', error);
-    let errorMessage = 'Error desconocido en el servidor';
-    
+    return throwError(() => new Error(errorMessage));
+  }
+
+  private getErrorMessage(error: HttpErrorResponse): string {
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // Error del lado del servidor
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      return `Error de red: ${error.error.message}`;
     }
     
-    return throwError(() => new Error(errorMessage));
+    return this.getServerErrorMessage(error);
+  }
+
+  private getServerErrorMessage(error: HttpErrorResponse): string {
+    switch (error.status) {
+      case 404:
+        return 'Recurso no encontrado';
+      case 400:
+        return 'Solicitud incorrecta';
+      case 500:
+        return 'Error interno del servidor';
+      default:
+        return `Error del servidor: ${error.status} - ${error.message}`;
+    }
   }
 }
