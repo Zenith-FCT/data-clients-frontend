@@ -6,7 +6,11 @@ import { isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterOutlet],
+  imports: [
+    CommonModule, 
+    RouterModule,
+    RouterOutlet
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -22,7 +26,6 @@ export class AppComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.removeMargins(document.documentElement);
       this.removeMargins(document.body);
-      
       this.detectAndRemoveMargins();
     }
   }
@@ -33,17 +36,16 @@ export class AppComponent implements OnInit {
   }
 
   private detectAndRemoveMargins() {
-    const elements = document.querySelectorAll('body > *');
-    elements.forEach(el => {
-      const style = window.getComputedStyle(el);
-      const margin = style.margin;
-      const padding = style.padding;
-      
-      if (margin !== '0px' || padding !== '0px') {
-        console.log('Elemento con margen/padding detectado:', el);
-        this.renderer.setStyle(el, 'margin', '0');
-        this.renderer.setStyle(el, 'padding', '0');
-      }
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      const observer = new MutationObserver(() => {
+        this.removeMargins(document.documentElement);
+        this.removeMargins(document.body);
+      });
+
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['style']
+      });
+    }
   }
 }

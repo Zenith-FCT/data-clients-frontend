@@ -1,5 +1,5 @@
-<div class="dashboard-container" style="margin: 0 !important; padding: 0 !important; overflow: hidden;">
-    <mat-toolbar class="top-toolbar" style="margin: 0 !important; padding: 0 !important;">
+<div class="dashboard-container">
+    <mat-toolbar class="top-toolbar">
         <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="toggleSidenavExpanded()">
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
@@ -8,8 +8,8 @@
         </div>   
         <div class="toolbar-spacer"></div>
     </mat-toolbar>
-    <div class="main-container" style="margin: 0 !important; padding: 0 !important;">
-        <div class="sidenav" [class.expanded]="sidenavExpanded" style="margin: 0 !important; padding: 0 !important;">
+    <div class="main-container">
+        <div class="sidenav" [class.expanded]="sidenavExpanded">
             <div class="sidenav-content">
                 <div class="nav-items">
                     <a class="nav-item" routerLink="/general" routerLinkActive="active">

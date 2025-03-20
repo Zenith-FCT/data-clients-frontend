@@ -1,0 +1,90 @@
+:host ::ng-deep .mat-mdc-table {
+  background-color: #212121 !important;
+}
+
+:host ::ng-deep .mdc-data-table__row {
+  background-color: #212121 !important;
+}
+
+:host ::ng-deep .mdc-data-table__content {
+  color: white !important;
+}
+
+:host ::ng-deep .mat-mdc-table .mdc-data-table__row {
+  color: white !important;
+}
+
+:host ::ng-deep .mat-mdc-table .mdc-data-table__cell {
+  color: white !important;
+}
+
+:host ::ng-deep .mat-mdc-cell {
+  color: white !important;
+}
+
+:host ::ng-deep .mat-mdc-header-cell {
+  color: white !important;
+}
+
+:host ::ng-deep .mat-mdc-table .mat-mdc-cell {
+  color: white !important;
+}
+
+:host ::ng-deep tbody, :host ::ng-deep td, :host ::ng-deep tfoot, :host ::ng-deep th, :host ::ng-deep thead, :host ::ng-deep tr {
+  border-color: #333 !important;
+}
+
+.clients-container {
+  padding: 20px;
+  background-color: #212121;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  width: 50%;
+  margin: 0;
+  color: white;
+}
+
+.loading-text, .error-text {
+  color: white;
+  padding: 20px;
+}
+
+h2 {
+  color: white;
+  margin-bottom: 20px;
+}
+
+.clients-title {
+  color: white;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+  border: 1px solid #333;
+  color: white;
+}
+
+th.mat-header-cell {
+  background-color: #1a1a1a;
+  color: white !important;
+  font-weight: bold;
+  padding: 12px 8px;
+  border-bottom: 1px solid #333;
+}
+
+td.mat-cell {
+  padding: 8px;
+  color: white !important;
+  border-bottom: 1px solid #333;
+}
+
+tr.mat-row:hover {
+  background-color: #383838;
+}
