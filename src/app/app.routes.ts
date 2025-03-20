@@ -20,7 +20,7 @@ export const routes: Routes = [
             },
             {
                 path: 'orders-invoices',
-                loadComponent: () => import('./features/orders-invoices/components/main-orders-invoice/main-orders-invoice.component').then(m => m.MainOrdersInvoiceComponent)
+                loadComponent: () => import('./features/orders-invoices/presentation/components/main-orders-invoice/main-orders-invoice.component').then(m => m.MainOrdersInvoiceComponent)
             },
             {
                 path: 'clients',
