@@ -1,0 +1,10 @@
+.coupon-element {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #faf9fd;
+}
+
+.coupons-table {
+  width: 50%;
+}
