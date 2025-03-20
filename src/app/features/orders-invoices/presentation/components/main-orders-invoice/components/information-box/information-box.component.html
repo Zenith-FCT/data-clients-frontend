@@ -1,34 +1,68 @@
 <div class="information-box">
   <div class="box-header">
-    <h3>{{ type === 'amount' ? 'Total de Ventas' : 'Número de Pedidos' }}</h3>
-    <button class="refresh-btn" (click)="refreshDataOrders()" aria-label="Refrescar datos">
-      <span>↻</span>
-    </button>
+    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos' : 'Ventas Mensuales' }}</h3>
+    <div class="selectors-container" *ngIf="type === 'monthly'">
+      <mat-form-field appearance="outline" class="month-selector">
+        <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onMonthChange()">
+          <mat-option *ngFor="let month of months" [value]="month.value">
+            {{month.value + 1}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="year-selector">
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
+          <mat-option *ngFor="let year of years" [value]="year">
+            {{year}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
 
   <div class="box-content">
-    <div *ngIf="ordersViewModel.isLoading$ | async" class="loading-state">
-      <div class="spinner"></div>
-      <span>Calculando...</span>
-    </div>
-
-    <div *ngIf="ordersViewModel.error$ | async as error" class="error-state">
-      <span>⚠</span>
-      <p>{{ error }}</p>
-    </div>
-
-    <div *ngIf="!(ordersViewModel.isLoading$ | async) && !(ordersViewModel.error$ | async)" class="data-state">
-      <div class="amount">
-        <ng-container *ngIf="type === 'amount'">
-          
-          <span class="value">{{ ordersViewModel.totalOrdersAmount$ | async | number:'1.2-2' }}</span>
-          <span class="currency">€</span>
-        </ng-container>
-        <ng-container *ngIf="type === 'count'">
-          <span class="value">{{ ordersViewModel.totalOrders$ | async | number:'1.0-0' }}</span>
-        </ng-container>
+    <ng-container *ngIf="type === 'amount' || type === 'count'">
+      <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
+        <div class="spinner"></div>
+        <span>Calculando...</span>
       </div>
-      <p class="description">{{ type === 'amount' ? 'Monto total en ventas' : 'Total de pedidos realizados' }}</p>
-    </div>
+
+      <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
+        <span>⚠</span>
+        <p>{{ monthlySalesViewModel.error$() }}</p>
+      </div>
+
+      <div *ngIf="!monthlySalesViewModel.isLoading$() && !monthlySalesViewModel.error$()" class="data-state">
+        <div class="amount">
+          <ng-container *ngIf="type === 'amount'">
+            <span class="value">{{ monthlySalesViewModel.totalOrdersAmount$() | number:'1.2-2' }}</span>
+            <span class="currency">€</span>
+          </ng-container>
+          <ng-container *ngIf="type === 'count'">
+            <span class="value">{{ monthlySalesViewModel.totalOrders$() | number:'1.0-0' }}</span>
+          </ng-container>
+        </div>
+        <p class="description">{{ type === 'amount' ? 'Monto total en ventas' : 'Total de pedidos realizados' }}</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="type === 'monthly'">
+      <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
+        <div class="spinner"></div>
+        <span>Calculando...</span>
+      </div>
+
+      <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
+        <span>⚠</span>
+        <p>{{ monthlySalesViewModel.error$() }}</p>
+      </div>
+
+      <div *ngIf="!monthlySalesViewModel.isLoading$() && !monthlySalesViewModel.error$()" class="data-state">
+        <div class="amount">
+          <span class="value">{{ monthlySalesViewModel.monthlySales$() | number:'1.2-2' }}</span>
+          <span class="currency">€</span>
+        </div>
+        <p class="description">Ventas de mes {{selectedMonth + 1}} {{ selectedYear }}</p>
+      </div>
+    </ng-container>
   </div>
 </div>
