@@ -29,7 +29,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
-    // Usar effect para reaccionar a cambios en los signals
+    // Solo usar selectedYear$ para la gráfica
     effect(() => {
       const year = this.monthlySalesViewModel.selectedYear$();
       this.selectedYear = year;

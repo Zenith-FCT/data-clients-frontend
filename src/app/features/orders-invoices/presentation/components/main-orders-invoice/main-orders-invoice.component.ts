@@ -20,5 +20,5 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.monthlySalesViewModel.loadAllMonthWithTotals();
     this.monthlySalesViewModel.loadTotalOrdersAmount();
     this.monthlySalesViewModel.loadTotalOrders();
-  }
+    }
 }
