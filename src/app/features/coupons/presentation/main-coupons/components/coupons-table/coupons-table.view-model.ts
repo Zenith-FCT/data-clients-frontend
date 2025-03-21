@@ -1,4 +1,5 @@
 import {Injectable,computed,signal} from "@angular/core";
+import {CouponsDataRepository} from "../../../../data/couponsDataRepository";
 import {Coupon} from "../../../../domain/models/coupons.models";
 import {GetMostUsedCouponsUseCase} from "../../../../domain/useCases/getMOstUsedCouponsUseCase";
 
@@ -12,9 +13,14 @@ export interface CouponsUIState {
 @Injectable({
   providedIn: 'root'
 })
-export class MonthlySalesViewModel {
+export class TableCouponsViewModel {
 
-  constructor(private getMostUsedCouponsUseCase: GetMostUsedCouponsUseCase) {}
+  private getMostUsedCouponsUseCase: GetMostUsedCouponsUseCase
+
+  constructor(private couponsDataRepository: CouponsDataRepository) {
+    this.getMostUsedCouponsUseCase = new GetMostUsedCouponsUseCase(this.couponsDataRepository)
+  }
+
 
   private uiState = signal<CouponsUIState>({
     coupons: [],

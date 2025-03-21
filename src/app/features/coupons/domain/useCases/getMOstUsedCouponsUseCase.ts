@@ -1,13 +1,11 @@
-import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {CouponsDataRepository} from "../../data/couponsDataRepository";
 import {Coupon} from "../models/coupons.models";
+import {CouponsRepository} from "../repositories/coupons.repository";
 
-@Injectable({
-  providedIn: 'root'
-})
 export class GetMostUsedCouponsUseCase {
-  constructor(private couponService: CouponsDataRepository) {}
+
+  constructor(private couponService :CouponsRepository) {}
+
 
   execute(): Observable<Coupon[]> {
       return this.couponService.getMostUsedCoupons()
