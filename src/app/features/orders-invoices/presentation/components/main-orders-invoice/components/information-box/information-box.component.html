@@ -1,6 +1,6 @@
 <div class="information-box">
   <div class="box-header">
-    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos' : type === 'monthly' ? 'Ventas Mensuales' : 'Órdenes Mensuales' }}</h3>
+    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos totales' : type === 'monthly' ? 'Ventas Mensuales' : 'Pedidos Mensuales' }}</h3>
     <div class="selectors-container" *ngIf="type === 'monthly' || type === 'monthly-order'">
       <mat-form-field appearance="outline" class="month-selector">
         <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onMonthChange()">
@@ -61,7 +61,7 @@
           <span class="value">{{ monthlySalesViewModel.monthlySales$() | number:'1.2-2' }}</span>
           <span class="currency">€</span>
         </div>
-        <p class="description">Ventas de mes {{selectedMonth + 1}} {{ selectedYear }}</p>
+        <p class="description">Ventas del mes {{selectedMonth + 1}} de {{ selectedYear }}</p>
       </div>
     </ng-container>
     

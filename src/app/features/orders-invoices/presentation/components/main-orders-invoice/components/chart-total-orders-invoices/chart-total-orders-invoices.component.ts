@@ -8,13 +8,13 @@ import { FormsModule } from '@angular/forms';
 declare const Chart: any;
 
 @Component({
-  selector: 'app-chart-total-invoice',
+  selector: 'app-chart-total-orders-invoices',
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
-  templateUrl: './chart-total-invoice.component.html',
-  styleUrl: './chart-total-invoice.component.css'
+  templateUrl: './chart-total-orders-invoices.component.html',
+  styleUrl: './chart-total-orders-invoices.component.css'
 })
-export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   private chart: any;
   private destroy$ = new Subject<void>();
@@ -51,15 +51,12 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
   }
 
   ngAfterViewInit(): void {
-    if (this.isBrowser) {
-      this.initChart();
-    }
     this.monthlySalesViewModel.loadAllMonthWithTotals();
   }
 
   onYearChange(): void {
     if (this.selectedYear) {
-      this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
+      this.monthlySalesViewModel.setSelectedOrderYear(this.selectedYear);
       if (this.currentData.length > 0) {
         this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
       }
@@ -68,101 +65,6 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
 
   private filterDataByYear(data: MonthlySalesModel[]): MonthlySalesModel[] {
     return data.filter(item => item.date.startsWith(this.selectedYear.toString()));
-  }
-
-  private initChart(): void {
-    if (!this.isBrowser) return;
-    
-    const ctx = this.chartCanvas.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    this.chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        datasets: [{
-          label: 'Ventas Mensuales',
-          data: [],
-          borderColor: '#FE2800',
-          backgroundColor: 'transparent',
-          tension: 0,
-          fill: false,
-          pointRadius: 5,
-          pointBackgroundColor: '#FE2800'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          intersect: false,
-          mode: 'nearest',
-          axis: 'xy'
-        },
-        plugins: {
-          title: {
-            display: false
-          },
-          legend: {
-            display: false
-          },
-          tooltip: {
-            enabled: true,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleFont: {
-              size: 12
-            },
-            bodyFont: {
-              size: 12
-            },
-            padding: 10,
-            callbacks: {
-              label: function(context: any) {
-                let value = context.parsed.y;
-                return value.toLocaleString('es-ES') + ' €';
-              }
-            }
-          }
-        },
-        elements: {
-          point: {
-            hitRadius: 15,
-            hoverRadius: 7,
-            radius: 5
-          },
-          line: {
-            tension: 0.2
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: {
-              display: true,
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            ticks: {
-              callback: function(value: number): string {
-                return  value.toLocaleString('es-ES')+ '€';
-              },
-              font: {
-                size: 11
-              }
-            }
-          },
-          x: {
-            grid: {
-              display: false
-            },
-            ticks: {
-              font: {
-                size: 11
-              }
-            }
-          }
-        }
-      }
-    });
   }
 
   private destroyAndRecreateChart(data: MonthlySalesModel[]): void {
@@ -178,34 +80,59 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
       if (!ctx) return;
       
       this.chart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          datasets: [{
-            label: 'Ventas Mensuales',
-            data: [],
-            borderColor: '#FE2800',
-            backgroundColor: 'transparent',
-            tension: 0,
-            fill: false,
-            pointRadius: 5,
-            pointBackgroundColor: '#FE2800'
-          }]
+          datasets: [
+            {
+              type: 'line',
+              label: 'Total Facturas',
+              data: [],
+              borderColor: '#FE2800',
+              backgroundColor: 'transparent',
+              tension: 0,
+              yAxisID: 'y',
+              order: 0,
+              pointRadius: 5,
+              pointBackgroundColor: '#FE2800'
+            },
+            {
+              type: 'bar',
+              label: 'Número de Ventas',
+              data: [],
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              yAxisID: 'y1',
+              order: 1
+            }
+          ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           interaction: {
             intersect: false,
-            mode: 'nearest',
-            axis: 'xy'
+            mode: 'index'
           },
           plugins: {
             title: {
-              display: false
+              display: true,
+              text: 'Análisis de Ventas y Facturas',
+              font: {
+                size: 16,
+                weight: 'bold'
+              },
+              padding: 20
             },
             legend: {
-              display: false
+              display: true,
+              position: 'top',
+              labels: {
+                font: {
+                  weight: 'bold',
+                  size: 12
+                },
+                padding: 15
+              }
             },
             tooltip: {
               enabled: true,
@@ -216,49 +143,72 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
               bodyFont: {
                 size: 12
               },
-              padding: 10,
               callbacks: {
                 label: function(context: any) {
-                  let value = context.parsed.y;
-                  return value.toLocaleString('es-ES') + ' €';
+                  const value = context.parsed.y;
+                  if (context.datasetIndex === 0) {
+                    return `Total Facturas: ${value.toLocaleString('es-ES')} €`;
+                  } else {
+                    return `Número de Ventas: ${value.toLocaleString('es-ES')}`;
+                  }
                 }
               }
             }
           },
-          elements: {
-            point: {
-              hitRadius: 15,
-              hoverRadius: 7,
-              radius: 5
-            },
-            line: {
-              tension: 0.2
-            }
-          },
           scales: {
             y: {
-              beginAtZero: true,
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Total Facturas (€)',
+                font: {
+                  weight: 'bold',
+                  size: 14
+                }
+              },
               grid: {
                 display: true,
                 color: 'rgba(0, 0, 0, 0.1)'
               },
               ticks: {
-                callback: function(value: number): string {
-                  return value.toLocaleString('es-ES') + '€';
+                callback: function(value: any) {
+                  return value.toLocaleString('es-ES') + ' €';
                 },
                 font: {
-                  size: 11
+                  weight: '600'
+                }
+              }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: {
+                display: true,
+                text: 'Número de Ventas',
+                font: {
+                  weight: 'bold',
+                  size: 14
+                }
+              },
+              grid: {
+                display: false
+              },
+              ticks: {
+                stepSize: 1,
+                callback: function(value: any) {
+                  return Math.round(value);
+                },
+                font: {
+                  weight: '600'
                 }
               }
             },
             x: {
               grid: {
                 display: false
-              },
-              ticks: {
-                font: {
-                  size: 11
-                }
               }
             }
           }
@@ -274,13 +224,17 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
   private updateChart(data: MonthlySalesModel[]): void {
     if (!this.isBrowser || !this.chart) return;
 
-    const values = Array(12).fill(0);
+    const invoiceValues = Array(12).fill(0);
+    const salesNumberValues = Array(12).fill(0);
+
     data.forEach(item => {
       const month = parseInt(item.date.split('-')[1]) - 1;
-      values[month] = parseFloat(item.totalSales);
+      invoiceValues[month] = parseFloat(item.totalSales);
+      salesNumberValues[month] = parseInt(item.totalSalesNumber);
     });
 
-    this.chart.data.datasets[0].data = values;
+    this.chart.data.datasets[0].data = invoiceValues;
+    this.chart.data.datasets[1].data = salesNumberValues;
     this.chart.update();
   }
 
