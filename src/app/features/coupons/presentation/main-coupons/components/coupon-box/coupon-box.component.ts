@@ -18,12 +18,10 @@ export class CouponBoxComponent implements OnInit {
     switch (this.boxType()) {
       case "coupons":
         this.viewModel.getTotalCoupons();
-        if(title != null) title.textContent = "Total de cupones";
         break;
 
       case "discount":
         this.viewModel.getTotalDiscount();
-        if(title != null) title.textContent = "Total de descuento";
         break;
     }
   }
