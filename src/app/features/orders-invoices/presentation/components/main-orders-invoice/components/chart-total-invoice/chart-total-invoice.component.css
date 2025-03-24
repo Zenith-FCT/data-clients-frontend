@@ -1,0 +1,62 @@
+.chart-container {
+  position: relative;
+  height: 500px;
+  width: 47.25%;
+  background-color: white;
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+
+.chart-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.year-selector {
+  width: 100px !important;
+  margin-bottom: -16px;
+}
+
+::ng-deep .year-selector .mat-mdc-form-field-infix {
+  padding: 8px 0 !important;
+  min-height: 32px !important;
+}
+
+::ng-deep .year-selector .mat-mdc-text-field-wrapper {
+  padding-left: 8px;
+  padding-right: 8px;
+  height: 40px !important;
+}
+
+::ng-deep .year-selector .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+::ng-deep .year-selector .mat-mdc-form-field-flex {
+  min-height: unset !important;
+}
+
+.chart-content {
+  position: relative;
+  height: calc(100% - 56px);
+  width: 100%;
+}
+
+canvas {
+  display: block !important; 
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 420px !important; 
+  
+}
