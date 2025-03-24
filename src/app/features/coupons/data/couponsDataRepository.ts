@@ -21,4 +21,26 @@ export class CouponsDataRepository implements CouponsRepository {
         )
       })
     }
+
+    getTotalCoupons(): Observable<number> {
+      return new Observable(obs => {
+        this.dataSource.getTotalCoupons().then(totalDiscount => {
+          obs.next(totalDiscount);
+          obs.complete();
+        }).catch((error) =>
+          obs.error(error)
+        )
+      })
+    }
+
+    getTotalDiscount(): Observable<number> {
+      return new Observable(obs => {
+        this.dataSource.getTotalDiscount().then(totalDiscount => {
+          obs.next(totalDiscount);
+          obs.complete();
+        }).catch((error) =>
+          obs.error(error)
+        )
+      })
+    }
 }

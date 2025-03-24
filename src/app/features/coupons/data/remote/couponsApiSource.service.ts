@@ -22,4 +22,27 @@ export class CouponsApiSourceService{
         }
     }
 
+    async getTotalCoupons(): Promise<number> {
+      try {
+        const response = await fetch(`${this.url}cupones/total`);
+        const data = await response.json();
+        return data.total;
+      }
+      catch (error) {
+        throw new Error("Error al recoger los datos");
+      }
+    }
+
+
+    async getTotalDiscount(): Promise<number> {
+      try {
+        const response = await fetch(`${this.url}cupones/totalDiscount`);
+        const data = await response.json();
+        return data.total;
+      }
+      catch (error) {
+        throw new Error("Error al recoger los datos");
+      }
+    }
+
 }

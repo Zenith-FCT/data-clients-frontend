@@ -5,6 +5,22 @@
   background-color: #faf9fd;
 }
 
+.coupon-container {
+  display: flex;
+  align-items: flex-start;
+}
+
 .coupons-table {
   width: 50%;
+  margin: 1%;
+}
+
+.coupon-box-container {
+  width: 50%;
+  display: flex;
+}
+
+.coupon-box {
+  width: 50%;
+  margin: 2%;
 }
