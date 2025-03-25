@@ -6,4 +6,5 @@ export interface IClientsRepository {
     getTotalClients(): Observable<number>;
     getTotalAverageOrders(): Observable<number>;
     getAverageTicket(): Observable<number>;
+    getClientsPerProduct(): Observable<{name: string, value: number}[]>;
 }

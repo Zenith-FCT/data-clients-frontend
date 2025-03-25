@@ -10,6 +10,7 @@ import { ClientsListApi } from './clients-list-api.model';
 })
 export class ClientsApiService {
   private apiUrl = `${environment.apiUrl}/clientes`;
+  private pedidosUrl = `${environment.apiUrl}/pedidos`;
 
   constructor(private http: HttpClient) {}
 
@@ -57,6 +58,30 @@ export class ClientsApiService {
         return count > 0 ? sum / count : 0;
       }),
       tap(averageTicket => console.log('ClientsApiService: Average ticket per client:', averageTicket)),
+      catchError(this.handleError)
+    );
+  }
+
+  getClientsPerProduct(): Observable<{name: string, value: number}[]> {
+    return this.http.get<any[]>(this.pedidosUrl).pipe(
+      map(orders => {
+        const categoryClientsMap = new Map<string, Set<string>>();
+        
+        orders.forEach(order => {
+          order.productos.forEach((product: any) => {
+            if (!categoryClientsMap.has(product.categoria)) {
+              categoryClientsMap.set(product.categoria, new Set());
+            }
+            categoryClientsMap.get(product.categoria)?.add(order.email);
+          });
+        });
+
+        return Array.from(categoryClientsMap.entries()).map(([name, clients]) => ({
+          name,
+          value: clients.size
+        }));
+      }),
+      tap(distribution => console.log('ClientsApiService: Clients per category distribution:', distribution)),
       catchError(this.handleError)
     );
   }

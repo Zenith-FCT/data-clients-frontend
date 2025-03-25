@@ -54,4 +54,14 @@ export class ClientsDataRepository implements IClientsRepository {
             })
         );
     }
+
+    getClientsPerProduct(): Observable<{ name: string; value: number; }[]> {
+        return this.apiClients.getClientsPerProduct().pipe(
+            tap(distribution => console.log('ClientsDataRepository: Clients per product distribution:', distribution)),
+            catchError(error => {
+                console.error('ClientsDataRepository: Error getting clients per product:', error);
+                throw error;
+            })
+        );
+    }
 }
