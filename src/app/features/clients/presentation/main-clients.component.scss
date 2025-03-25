@@ -44,11 +44,12 @@
 
 .clients-container {
   flex: 0 0 50%;
-  padding: 0;
-  background-color: transparent;
+  background-color: #212121;
   border-radius: 8px;
-  margin: 0;
   color: white;
+  display: flex;
+  flex-direction: column;
+  height: 504px; /* (112px + 40px padding) * 3 recuadros + (24px * 2) gaps = 504px */
 }
 
 .loading-text, .error-text {
@@ -60,13 +61,13 @@
 
 h2 {
   color: white;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reducido de 20px a 10px */
 }
 
 .clients-title {
   color: white;
   margin: 0;
-  padding: 15px 20px;
+  padding: 10px 20px;  /* Reducido de 15px a 10px */
   text-align: center;
   background-color: #212121;
   border-top-left-radius: 8px;
@@ -79,14 +80,17 @@ h2 {
   background-color: #212121;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  padding: 20px;
+  padding: 10px 20px;
+  overflow-y: auto;
+  height: calc(100% - 41px); /* Resta la altura del título */
+  min-height: 0; /* Esto asegura que el scroll funcione correctamente */
 }
 
 table {
   width: 100%;
-  margin-top: 20px;
   border: 1px solid #333;
   color: white;
+  margin: 0;
 }
 
 th.mat-header-cell {
@@ -116,27 +120,24 @@ tr.mat-row:hover {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px; /* Aumentado de 16px a 24px */
   max-width: 40%;
-  padding-top: 0;
-  margin-top: 0;
   align-items: center;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
 }
 
 .info-box {
   background-color: #212121;
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 0; /* Quitamos el margin-bottom que teníamos antes */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   width: 80%;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 112px; /* Altura fija para cada recuadro */
 
   .info-box-icon {
     margin-bottom: 10px;

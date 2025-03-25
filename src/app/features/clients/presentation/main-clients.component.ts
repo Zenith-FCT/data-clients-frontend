@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, ChangeDetectionStrategy, effect } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon'; 
@@ -8,6 +8,7 @@ import { clientsProviders } from '../clients.providers';
 import { ClientsViewModel } from './clients.view-model';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
 import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders-use-case';
+import { GetAverageTicketUseCase } from '../domain/get-average-ticket-use-case';
 
 @Component({
   selector: 'app-clients',
@@ -21,6 +22,7 @@ import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders
     GetClientsListUseCase,
     GetTotalClientsUseCase,
     GetTotalAverageOrdersUseCase,
+    GetAverageTicketUseCase,
     ...clientsProviders,
     ClientsViewModel
   ],

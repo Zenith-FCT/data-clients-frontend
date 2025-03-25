@@ -4,11 +4,13 @@ import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
 import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders-use-case';
+import { GetAverageTicketUseCase } from '../domain/get-average-ticket-use-case';
 
 interface ClientsState {
   clients: ClientsList[];
   totalClients: number;
   totalAverageOrders: number;
+  averageTicket: number;
   loading: boolean;
   error: string | null;
 }
@@ -19,6 +21,7 @@ export class ClientsViewModel {
     clients: [],
     totalClients: 0,
     totalAverageOrders: 0,
+    averageTicket: 0,
     loading: false,
     error: null,
   });
@@ -26,17 +29,24 @@ export class ClientsViewModel {
   readonly clients = computed(() => this._state().clients);
   readonly totalClients = computed(() => this._state().totalClients);
   readonly totalAverageOrders = computed(() => this._state().totalAverageOrders);
+  readonly averageTicket = computed(() => this._state().averageTicket);
   readonly loading = computed(() => this._state().loading);
   readonly error = computed(() => this._state().error);
 
   private getClientsListUseCase = inject(GetClientsListUseCase);
   private getTotalClientsUseCase = inject(GetTotalClientsUseCase);
   private getTotalAverageOrdersUseCase = inject(GetTotalAverageOrdersUseCase);
+  private getAverageTicketUseCase = inject(GetAverageTicketUseCase);
+
+  getAverageTicket(): number {
+    return this.averageTicket();
+  }
 
   loadData(): void {
     this.loadClients();
     this.loadTotalClients();
     this.loadTotalAverageOrders();
+    this.loadAverageTicket();
   }
 
   loadClients(): void {
@@ -113,6 +123,31 @@ export class ClientsViewModel {
           ...state,
           loading: false,
           error: 'Error loading average orders'
+        }));
+      }
+    });
+  }
+
+  private loadAverageTicket(): void {
+    this._state.update(state => ({
+      ...state,
+      loading: true,
+      error: null
+    }));
+
+    this.getAverageTicketUseCase.execute().subscribe({
+      next: (average) => {
+        this._state.update(state => ({
+          ...state,
+          averageTicket: average,
+          loading: false
+        }));
+      },
+      error: (err) => {
+        this._state.update(state => ({
+          ...state,
+          loading: false,
+          error: 'Error loading average ticket'
         }));
       }
     });
