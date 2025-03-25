@@ -5,6 +5,7 @@ import { InformationBoxComponent } from './components/information-box/informatio
 import { MonthlySalesViewModelService } from '../../view-model/monthly-orders-viewmodel.service';
 import { ChartTotalInvoiceComponent } from './components/chart-total-invoice/chart-total-invoice.component';
 import { ChartTotalOrdersInvoicesComponent } from './components/chart-total-orders-invoices/chart-total-orders-invoices.component';
+import { ChartTmComponent } from './components/chart-tm/chart-tm.component';
 
 @Component({
   selector: 'app-main-orders-invoice',
@@ -14,7 +15,8 @@ import { ChartTotalOrdersInvoicesComponent } from './components/chart-total-orde
     RouterModule, 
     InformationBoxComponent, 
     ChartTotalInvoiceComponent,
-    ChartTotalOrdersInvoicesComponent
+    ChartTotalOrdersInvoicesComponent,
+    ChartTmComponent
   ],
   providers: [MonthlySalesViewModelService],
   templateUrl: './main-orders-invoice.component.html',
@@ -27,5 +29,6 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.monthlySalesViewModel.loadAllMonthWithTotals();
     this.monthlySalesViewModel.loadTotalOrdersAmount();
     this.monthlySalesViewModel.loadTotalOrders();
+    this.monthlySalesViewModel.loadMonthlyTmList();
   }
 }
