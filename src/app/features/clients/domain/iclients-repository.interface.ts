@@ -4,4 +4,5 @@ import { ClientsList } from "./clients-list.model";
 export interface IClientsRepository {
     getAllClientsList(): Observable<ClientsList[]>;
     getTotalClients(): Observable<number>;
+    getTotalAverageOrders(): Observable<number>;
 }
