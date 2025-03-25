@@ -7,6 +7,8 @@ import { MonthlySalesDataRepository } from '../../data/data-repositories/monthly
 import { GetTotalAmountOrdersUseCase } from '../../domain/use-cases/get-total-amount-orders.use-case';
 import { GetTotalOrdersUseCase } from '../../domain/use-cases/get-total-orders.use-case';
 import { GetTotalMonthOrdersUseCase } from '../../domain/use-cases/get-total-month-orders.use-case';
+import { GetMonthlyTMUseCase } from '../../domain/use-cases/get-monthly-tm.use-case';
+import { TmModel } from '../../domain/use-cases/get-monthly-tm.use-case';
 
 export interface MonthlySalesUIState {
   isLoading: boolean;
@@ -18,6 +20,8 @@ export interface MonthlySalesUIState {
   totalOrdersAmount: number;
   totalOrders: number;
   monthlyOrders: number;
+  // Nueva propiedad para la lista de TM
+  monthlyTmList: TmModel[];
 }
 
 @Injectable({
@@ -35,7 +39,9 @@ export class MonthlySalesViewModelService implements OnDestroy {
     selectedOrderYear: new Date().getFullYear(),
     totalOrdersAmount: 0,
     totalOrders: 0,
-    monthlyOrders: 0
+    monthlyOrders: 0,
+    // Inicializar la lista de TM
+    monthlyTmList: []
   });
 
   public readonly uiState$ = this.uiState.asReadonly();
@@ -49,12 +55,16 @@ export class MonthlySalesViewModelService implements OnDestroy {
   public readonly totalOrdersAmount$ = computed(() => this.uiState().totalOrdersAmount);
   public readonly totalOrders$ = computed(() => this.uiState().totalOrders);
   public readonly monthlyOrders$ = computed(() => this.uiState().monthlyOrders);
+  // Nuevo signal para acceder a la lista de TM
+  public readonly monthlyTmList$ = computed(() => this.uiState().monthlyTmList);
 
   private getMonthlySalesUseCase: GetMonthlySalesUseCase;
   private getAllMonthWithTotalsUseCase: GetAllMonthWithTotalsUseCase;
   private getTotalAmountOrdersUseCase: GetTotalAmountOrdersUseCase;
   private getTotalOrdersUseCase: GetTotalOrdersUseCase;
   private getTotalMonthOrdersUseCase: GetTotalMonthOrdersUseCase;
+  // Nuevo caso de uso para TM
+  private getMonthlyTMUseCase: GetMonthlyTMUseCase;
 
   constructor(private monthlySalesRepository: MonthlySalesDataRepository) {
     this.getMonthlySalesUseCase = new GetMonthlySalesUseCase(this.monthlySalesRepository);
@@ -62,6 +72,8 @@ export class MonthlySalesViewModelService implements OnDestroy {
     this.getTotalAmountOrdersUseCase = new GetTotalAmountOrdersUseCase(this.monthlySalesRepository);
     this.getTotalOrdersUseCase = new GetTotalOrdersUseCase(this.monthlySalesRepository);
     this.getTotalMonthOrdersUseCase = new GetTotalMonthOrdersUseCase(this.monthlySalesRepository);
+    // Inicializar el caso de uso para TM
+    this.getMonthlyTMUseCase = new GetMonthlyTMUseCase(this.monthlySalesRepository);
   }
 
   public setSelectedYear(year: number): void {
@@ -103,6 +115,26 @@ export class MonthlySalesViewModelService implements OnDestroy {
       this.updateState({
         error: 'Error al cargar las órdenes mensuales. Intente nuevamente.',
         monthlyOrders: 0
+      });
+    } finally {
+      this.updateState({ isLoading: false });
+    }
+  }
+
+  // Nuevo método para cargar la lista de TM
+  public async loadMonthlyTmList(): Promise<void> {
+    try {
+      this.updateState({ 
+        isLoading: true, 
+        error: null
+      });
+      
+      const tmList = await firstValueFrom(this.getMonthlyTMUseCase.execute());
+      this.updateState({ monthlyTmList: tmList });
+    } catch (error) {
+      this.updateState({
+        error: 'Error al cargar el ticket medio mensual. Intente nuevamente.',
+        monthlyTmList: []
       });
     } finally {
       this.updateState({ isLoading: false });
@@ -183,7 +215,9 @@ export class MonthlySalesViewModelService implements OnDestroy {
     
     await Promise.all([
       this.loadMonthlySales(this.selectedYear$(), currentMonth),
-      this.loadMonthlyOrders(this.selectedOrderYear$(), currentMonth)
+      this.loadMonthlyOrders(this.selectedOrderYear$(), currentMonth),
+      // Añadir la carga de la lista de TM al refrescar los datos
+      this.loadMonthlyTmList()
     ]);
   }
 
