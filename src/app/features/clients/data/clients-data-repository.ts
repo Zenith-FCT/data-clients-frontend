@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { Observable, catchError, tap, map } from "rxjs";
 import { ClientsList } from "../domain/clients-list.model";
-import { IClientsRepository } from "../domain/clients-repository.interface";
+import { IClientsRepository } from "../domain/iclients-repository.interface";
 import { ClientsApiMapper } from "./remote/api-json/clients-api.mapper";
 import { ClientsApiService } from "./remote/api-json/clients-api.service";
 
@@ -20,6 +20,16 @@ export class ClientsDataRepository implements IClientsRepository {
             map((apiClients: any[]) => apiClients.map(client => ClientsApiMapper.toDomain(client))),
             catchError(error => {
                 console.error('ClientsDataRepository: Error getting clients:', error);
+                throw error;
+            })
+        );
+    }
+
+    getTotalClients(): Observable<number> {
+        return this.apiClients.getTotalClients().pipe(
+            tap(total => console.log('ClientsDataRepository: Total clients:', total)),
+            catchError(error => {
+                console.error('ClientsDataRepository: Error getting total clients:', error);
                 throw error;
             })
         );

@@ -1,10 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, catchError, finalize, tap } from 'rxjs';
 import { ClientsList } from '../domain/clients-list.model';
-import { GetAllClientsUseCase } from '../domain/get-all-clients-use-case';
+import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
+import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
 
 interface ClientsState {
   clients: ClientsList[];
+  totalClients: number;
   loading: boolean;
   error: string | null;
 }
@@ -13,15 +15,23 @@ interface ClientsState {
 export class ClientsViewModel {
   private _state = signal<ClientsState>({
     clients: [],
+    totalClients: 0,
     loading: false,
     error: null,
   });
 
   readonly clients = computed(() => this._state().clients);
+  readonly totalClients = computed(() => this._state().totalClients);
   readonly loading = computed(() => this._state().loading);
   readonly error = computed(() => this._state().error);
 
-  private getAllClientsUseCase = inject(GetAllClientsUseCase);
+  private getClientsListUseCase = inject(GetClientsListUseCase);
+  private getTotalClientsUseCase = inject(GetTotalClientsUseCase);
+
+  loadData(): void {
+    this.loadClients();
+    this.loadTotalClients();
+  }
 
   loadClients(): void {
     this._state.update(state => ({
@@ -31,7 +41,7 @@ export class ClientsViewModel {
         error: null,
     }));
     
-    this.getAllClientsUseCase
+    this.getClientsListUseCase
       .execute()
       .subscribe({
         next: (clients) => {
@@ -50,5 +60,30 @@ export class ClientsViewModel {
             }));
         }
       });
+  }
+
+  private loadTotalClients(): void {
+    this._state.update(state => ({
+      ...state,
+      loading: true,
+      error: null
+    }));
+
+    this.getTotalClientsUseCase.execute().subscribe({
+      next: (total) => {
+        this._state.update(state => ({
+          ...state,
+          totalClients: total,
+          loading: false
+        }));
+      },
+      error: (err) => {
+        this._state.update(state => ({
+          ...state,
+          loading: false,
+          error: 'Error loading total clients'
+        }));
+      }
+    });
   }
 }

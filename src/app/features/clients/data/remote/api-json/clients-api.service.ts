@@ -29,6 +29,14 @@ export class ClientsApiService {
     );
   }
 
+  getTotalClients(): Observable<number> {
+    return this.getAllClientsList().pipe(
+      map(clients => clients.length),
+      tap(total => console.log('ClientsApiService: Total clients:', total)),
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
     console.error('ClientsApiService Error:', error);

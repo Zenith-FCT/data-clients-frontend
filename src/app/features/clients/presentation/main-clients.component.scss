@@ -34,12 +34,19 @@
   border-color: #333 !important;
 }
 
-.clients-container {
+.main-container {
+  display: flex;
+  gap: 20px;
   padding: 20px;
-  background-color: #212121;
+  background-color: transparent;
+  align-items: flex-start; /* Alinea los elementos al inicio verticalmente */
+}
+
+.clients-container {
+  flex: 0 0 50%;
+  padding: 0; /* Quitamos el padding general */
+  background-color: transparent;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  width: 50%;
   margin: 0;
   color: white;
 }
@@ -47,6 +54,8 @@
 .loading-text, .error-text {
   color: white;
   padding: 20px;
+  background-color: #212121;
+  border-radius: 8px;
 }
 
 h2 {
@@ -56,12 +65,21 @@ h2 {
 
 .clients-title {
   color: white;
-  margin-bottom: 20px;
+  margin: 0;
+  padding: 15px 20px;
   text-align: center;
+  background-color: #212121; /* Mismo color que la tabla */
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom: 1px solid #333;
 }
 
 .table-container {
   overflow-x: auto;
+  background-color: #212121;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 20px;
 }
 
 table {
@@ -87,4 +105,83 @@ td.mat-cell {
 
 tr.mat-row:hover {
   background-color: #383838;
+}
+
+.info-section {
+  flex: 1;
+  padding: 20px;
+}
+
+.info-panel {
+  flex: 1; /* Toma el espacio restante */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 40%; /* Reducido de 50% a 40% */
+  padding-top: 0; /* Quitamos padding superior */
+  margin-top: 0; /* Nos aseguramos que no hay margen superior */
+  align-items: center; /* Centrar elementos horizontalmente */
+  justify-content: center; /* Centrar en el eje principal */
+  margin-left: auto; /* Empuja el panel a la derecha */
+  margin-right: auto; /* Empuja el panel a la izquierda */
+}
+
+.info-box {
+  background-color: #212121;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 80%; /* Incrementado para ocupar más espacio dentro del panel */
+  text-align: center; /* Centramos el texto */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .info-box-icon {
+    margin-bottom: 10px;
+    
+    mat-icon {
+      font-size: 32px;
+      height: 32px;
+      width: 32px;
+      color: #64B5F6; /* Azul claro para que destaque */
+    }
+  }
+
+  .info-box-title {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  .info-box-value {
+    color: white;
+    font-size: 2rem;
+    font-weight: 500;
+  }
+}
+
+// Media queries para responsividad
+@media (max-width: 1200px) {
+  .main-container {
+    flex-direction: column;
+  }
+  
+  .clients-container, .info-panel {
+    width: 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .info-panel {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .info-box {
+    flex: 1;
+    min-width: 250px;
+    width: auto; /* Reseteamos el ancho en pantallas pequeñas */
+  }
 }
