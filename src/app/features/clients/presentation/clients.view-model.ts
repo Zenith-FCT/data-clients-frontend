@@ -5,12 +5,14 @@ import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
 import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders-use-case';
 import { GetAverageTicketUseCase } from '../domain/get-average-ticket-use-case';
+import { GetClientsPerProductUseCase } from '../domain/get-clients-per-product-use-case';
 
 interface ClientsState {
   clients: ClientsList[];
   totalClients: number;
   totalAverageOrders: number;
   averageTicket: number;
+  clientsPerProduct: { name: string; value: number; }[];
   loading: boolean;
   error: string | null;
 }
@@ -22,6 +24,7 @@ export class ClientsViewModel {
     totalClients: 0,
     totalAverageOrders: 0,
     averageTicket: 0,
+    clientsPerProduct: [],
     loading: false,
     error: null,
   });
@@ -30,6 +33,7 @@ export class ClientsViewModel {
   readonly totalClients = computed(() => this._state().totalClients);
   readonly totalAverageOrders = computed(() => this._state().totalAverageOrders);
   readonly averageTicket = computed(() => this._state().averageTicket);
+  readonly clientsPerProduct = computed(() => this._state().clientsPerProduct);
   readonly loading = computed(() => this._state().loading);
   readonly error = computed(() => this._state().error);
 
@@ -37,6 +41,7 @@ export class ClientsViewModel {
   private getTotalClientsUseCase = inject(GetTotalClientsUseCase);
   private getTotalAverageOrdersUseCase = inject(GetTotalAverageOrdersUseCase);
   private getAverageTicketUseCase = inject(GetAverageTicketUseCase);
+  private getClientsPerProductUseCase = inject(GetClientsPerProductUseCase);
 
   getAverageTicket(): number {
     return this.averageTicket();
@@ -47,6 +52,7 @@ export class ClientsViewModel {
     this.loadTotalClients();
     this.loadTotalAverageOrders();
     this.loadAverageTicket();
+    this.loadClientsPerProduct();
   }
 
   loadClients(): void {
@@ -148,6 +154,32 @@ export class ClientsViewModel {
           ...state,
           loading: false,
           error: 'Error loading average ticket'
+        }));
+      }
+    });
+  }
+
+  private loadClientsPerProduct(): void {
+    this._state.update(state => ({
+      ...state,
+      loading: true,
+      error: null
+    }));
+
+    this.getClientsPerProductUseCase.execute().subscribe({
+      next: (distribution: {name: string, value: number}[]) => {
+        this._state.update(state => ({
+          ...state,
+          clientsPerProduct: distribution,
+          loading: false
+        }));
+      },
+      error: (err: Error) => {
+        console.error('Error loading clients per product:', err);
+        this._state.update(state => ({
+          ...state,
+          loading: false,
+          error: 'Error loading clients per product distribution'
         }));
       }
     });
