@@ -1,21 +1,24 @@
 import { Component, inject, OnInit, OnDestroy, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon'; // Importar el módulo de iconos
 import { ClientsList } from '../domain/clients-list.model';
-import { GetAllClientsUseCase } from '../domain/get-all-clients-use-case';
+import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { clientsProviders } from '../clients.providers';
 import { ClientsViewModel } from './clients.view-model';
-import { Subscription } from 'rxjs';
+import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
 
 @Component({
   selector: 'app-clients',
   standalone: true,
   imports: [
     CommonModule, 
-    MatTableModule
+    MatTableModule,
+    MatIconModule // Añadir MatIconModule a los imports
   ],
   providers: [
-    GetAllClientsUseCase,
+    GetClientsListUseCase,
+    GetTotalClientsUseCase,
     ...clientsProviders,
     ClientsViewModel
   ],
@@ -36,6 +39,6 @@ export class ClientsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.viewModel.loadClients();
+    this.viewModel.loadData();
   }
 }
