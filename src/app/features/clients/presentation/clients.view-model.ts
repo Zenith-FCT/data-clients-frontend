@@ -6,13 +6,14 @@ import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
 import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders-use-case';
 import { GetAverageTicketUseCase } from '../domain/get-average-ticket-use-case';
 import { GetClientsPerProductUseCase } from '../domain/get-clients-per-product-use-case';
+import { ProductClientDistribution } from '../domain/product-distribution.model';
 
 interface ClientsState {
   clients: ClientsList[];
   totalClients: number;
   totalAverageOrders: number;
   averageTicket: number;
-  clientsPerProduct: { name: string; value: number; }[];
+  clientsPerProduct: ProductClientDistribution[];
   loading: boolean;
   error: string | null;
 }
@@ -167,7 +168,7 @@ export class ClientsViewModel {
     }));
 
     this.getClientsPerProductUseCase.execute().subscribe({
-      next: (distribution: {name: string, value: number}[]) => {
+      next: (distribution: ProductClientDistribution[]) => {
         this._state.update(state => ({
           ...state,
           clientsPerProduct: distribution,

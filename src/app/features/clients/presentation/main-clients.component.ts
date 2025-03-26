@@ -55,15 +55,53 @@ export class ClientsComponent implements OnInit {
   private updateChartOption(): void {
     const distribution = this.viewModel.clientsPerProduct();
     
+    if (!distribution || distribution.length === 0) {
+      this.chartOption = {
+        title: {
+          text: 'No hay datos disponibles',
+          left: 'center',
+          textStyle: {
+            color: '#ffffff'
+          }
+        }
+      };
+      return;
+    }
+
+    // Ordenar los datos por valor descendente para mejor visualización
+    const sortedData = [...distribution].sort((a, b) => b.value - a.value);
+    
+    // Limitar a las top 5 categorías para mejor visualización
+    const topCategories = sortedData.slice(0, 5);
+    
+    // Agregar "Otros" si hay más categorías
+    if (sortedData.length > 5) {
+      const otherCategories = sortedData.slice(5);
+      const otherValue = otherCategories.reduce((sum, item) => sum + item.value, 0);
+      
+      if (otherValue > 0) {
+        topCategories.push({
+          name: 'Otros',
+          value: otherValue
+        });
+      }
+    }
+    
     this.chartOption = {
       tooltip: {
         trigger: 'item',
-        formatter: '{b}: {c} clientes ({d}%)'
+        formatter: '{b}: {c} clientes ({d}%)',
+        backgroundColor: 'rgba(33, 33, 33, 0.9)',
+        borderColor: '#444',
+        textStyle: {
+          color: '#ffffff'
+        }
       },
       legend: {
+        type: 'scroll',
         orient: 'horizontal',
         bottom: 10,
-        data: distribution.map(item => item.name),
+        data: topCategories.map(item => item.name),
         textStyle: {
           color: '#ffffff'
         }
@@ -85,6 +123,11 @@ export class ClientsComponent implements OnInit {
               fontSize: '16',
               fontWeight: 'bold',
               color: '#ffffff'
+            },
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
             }
           },
           label: {
@@ -99,7 +142,7 @@ export class ClientsComponent implements OnInit {
               color: '#ffffff'
             }
           },
-          data: distribution.sort((a, b) => b.value - a.value)
+          data: topCategories
         }
       ]
     };
