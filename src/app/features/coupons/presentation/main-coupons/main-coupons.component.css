@@ -18,9 +18,11 @@
 .coupon-box-container {
   width: 50%;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .coupon-box {
-  width: 50%;
+  width: 46%;
   margin: 2%;
+  box-sizing: border-box;
 }

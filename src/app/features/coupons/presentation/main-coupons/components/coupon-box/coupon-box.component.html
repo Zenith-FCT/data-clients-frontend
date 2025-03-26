@@ -40,4 +40,54 @@
       </p>
     </div>
   </ng-container>
+
+  <ng-container *ngSwitchCase="'couponsMonth'">
+    <div>
+      <h2 class="coupons-box-title">Nº cupones mensuales</h2>
+      <input type="month" [(ngModel)]="date" (ngModelChange)="changeDate()">
+    </div>
+
+    <div *ngIf="viewModel.isLoadingCouponsMonth()">
+      Cargando...
+    </div>
+
+    <div *ngIf="viewModel.errorCouponsMonth()" class="error-text">
+      {{ viewModel.errorCouponsMonth() }}
+    </div>
+
+    <div *ngIf="!viewModel.isLoadingCouponsMonth() && !viewModel.errorCouponsMonth()" class="coupons-total">
+      <p class="coupons-info">
+        {{ viewModel.totalCouponsMonth() }}
+      </p>
+      <p>
+        Cantidad total de cupones utilizados por mes
+      </p>
+
+    </div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'discountMonth'">
+    <div>
+      <h2 class="coupons-box-title">Descuento mensual</h2>
+      <input type="month" [(ngModel)]="date" (ngModelChange)="changeDate()">
+    </div>
+
+    <div *ngIf="viewModel.isLoadingDiscountMonth()">
+      Cargando...
+    </div>
+
+    <div *ngIf="viewModel.errorDiscountMonth()" class="error-text">
+      {{ viewModel.errorDiscountMonth() }}
+    </div>
+
+    <div *ngIf="!viewModel.isLoadingDiscountMonth() && !viewModel.errorDiscountMonth()" class="coupons-total">
+      <p class="coupons-info">
+        {{ viewModel.totalDiscountMonth() }}€
+      </p>
+      <p>
+        Total descuento por mes
+      </p>
+
+    </div>
+  </ng-container>
 </div>

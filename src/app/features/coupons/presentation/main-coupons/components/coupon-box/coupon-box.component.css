@@ -5,7 +5,7 @@
 h2 {
   margin-top: 0;
   margin-bottom: 15px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
 }
 
@@ -26,4 +26,14 @@ h2 {
 
 .error-text {
   color: red;
+}
+
+.couponsBox div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.couponsBox div:first-child input {
+  width: 120px;
 }

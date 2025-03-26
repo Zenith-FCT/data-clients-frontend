@@ -45,4 +45,26 @@ export class CouponsApiSourceService{
       }
     }
 
+    async getTotalCouponsByMonth(month: string, year: string): Promise<number> {
+      try {
+        const response = await fetch(`${this.url}cupones/month?month=${month}&year=${year}`);
+        const data = await response.json();
+        return data.total;
+      }
+      catch (error) {
+        throw new Error("Error al recoger los datos");
+      }
+    }
+
+    async getTotalDiscountByMonth(month: string, year: string): Promise<number> {
+      try {
+        const response = await fetch(`${this.url}cupones/discountMonth?month=${month}&year=${year}`);
+        const data = await response.json();
+        return data.total;
+      }
+      catch (error) {
+        throw new Error("Error al recoger los datos");
+      }
+    }
+
 }
