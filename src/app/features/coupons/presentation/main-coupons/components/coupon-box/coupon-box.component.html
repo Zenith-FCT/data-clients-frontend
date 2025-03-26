@@ -1,0 +1,43 @@
+<div [ngSwitch]="boxType()" class="couponsBox">
+  <ng-container *ngSwitchCase="'coupons'">
+    <h2 class="coupons-box-title">Numero cupones</h2>
+
+    <div *ngIf="viewModel.isLoadingCoupons()">
+      Cargando...
+    </div>
+
+    <div *ngIf="viewModel.errorCoupons()" class="error-text">
+      {{ viewModel.errorCoupons() }}
+    </div>
+
+    <div *ngIf="!viewModel.isLoadingCoupons() && !viewModel.errorCoupons()" class="coupons-total">
+      <p class="coupons-info">
+        {{ viewModel.totalCoupons() }}
+      </p>
+      <p>
+        Cantidad total de cupones utilizados
+      </p>
+
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'discount'">
+    <h2 class="coupons-box-title">Total descuento</h2>
+
+    <div *ngIf="viewModel.isLoadingDiscount()">
+      Cargando...
+    </div>
+
+    <div *ngIf="viewModel.errorDiscount()" class="error-text">
+      {{ viewModel.errorDiscount() }}
+    </div>
+
+    <div *ngIf="!viewModel.isLoadingDiscount() && !viewModel.errorDiscount()" class="coupons-total">
+      <p class="coupons-info">
+        {{ viewModel.totalDiscount() }}€
+      </p>
+      <p>
+        Total descuento realizado
+      </p>
+    </div>
+  </ng-container>
+</div>

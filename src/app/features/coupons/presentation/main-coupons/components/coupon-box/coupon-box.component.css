@@ -1,0 +1,29 @@
+.couponsBox {
+  padding: 5px;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.coupons-total p {
+  text-align: center;
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+.coupons-total p:first-child {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.coupons-total p:last-child {
+  font-size: .85rem;
+}
+
+.error-text {
+  color: red;
+}

@@ -21,6 +21,7 @@ export class TableCouponsViewModel {
     this.getMostUsedCouponsUseCase = new GetMostUsedCouponsUseCase(this.couponsDataRepository)
   }
 
+
   private uiState = signal<CouponsUIState>({
     coupons: [],
     isLoading: false,
