@@ -30,14 +30,6 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
     this.isBrowser = isPlatformBrowser(platformId);
 
     effect(() => {
-      const year = this.monthlySalesViewModel.selectedYear$();
-      this.selectedYear = year;
-      if (this.currentData.length > 0) {
-        this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
-      }
-    });
-
-    effect(() => {
       const data = this.monthlySalesViewModel.allMonthlySales$();
       if (data && data.length > 0) {
         this.currentData = data;
@@ -124,15 +116,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
               display: false
             },
             legend: {
-              display: true,
-              position: 'top',
-              labels: {
-                font: {
-                  weight: 'bold',
-                  size: 12
-                },
-                padding: 15
-              }
+              display: false
             },
             tooltip: {
               enabled: true,

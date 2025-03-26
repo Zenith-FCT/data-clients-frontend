@@ -94,6 +94,12 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: {
+            top: 20,
+            bottom: 20
+          }
+        },
         interaction: {
           intersect: false,
           mode: 'nearest',
@@ -195,6 +201,12 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 20,
+              bottom: 20
+            }
+          },
           interaction: {
             intersect: false,
             mode: 'nearest',
