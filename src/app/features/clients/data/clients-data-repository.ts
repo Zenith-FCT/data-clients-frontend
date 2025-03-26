@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@angular/core";
 import { Observable, catchError, tap, map } from "rxjs";
 import { ClientsList } from "../domain/clients-list.model";
 import { IClientsRepository } from "../domain/iclients-repository.interface";
+import { ProductClientDistribution } from "../domain/product-distribution.model";
 import { ClientsApiMapper } from "./remote/api-json/clients-api.mapper";
 import { ClientsApiService } from "./remote/api-json/clients-api.service";
 
@@ -55,7 +56,7 @@ export class ClientsDataRepository implements IClientsRepository {
         );
     }
 
-    getClientsPerProduct(): Observable<{ name: string; value: number; }[]> {
+    getClientsPerProduct(): Observable<ProductClientDistribution[]> {
         return this.apiClients.getClientsPerProduct().pipe(
             tap(distribution => console.log('ClientsDataRepository: Clients per product distribution:', distribution)),
             catchError(error => {
