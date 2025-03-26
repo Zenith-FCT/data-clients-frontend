@@ -20,7 +20,6 @@ export interface MonthlySalesUIState {
   totalOrdersAmount: number;
   totalOrders: number;
   monthlyOrders: number;
-  // Nueva propiedad para la lista de TM
   monthlyTmList: TmModel[];
 }
 
@@ -40,7 +39,6 @@ export class MonthlySalesViewModelService implements OnDestroy {
     totalOrdersAmount: 0,
     totalOrders: 0,
     monthlyOrders: 0,
-    // Inicializar la lista de TM
     monthlyTmList: []
   });
 
@@ -55,7 +53,6 @@ export class MonthlySalesViewModelService implements OnDestroy {
   public readonly totalOrdersAmount$ = computed(() => this.uiState().totalOrdersAmount);
   public readonly totalOrders$ = computed(() => this.uiState().totalOrders);
   public readonly monthlyOrders$ = computed(() => this.uiState().monthlyOrders);
-  // Nuevo signal para acceder a la lista de TM
   public readonly monthlyTmList$ = computed(() => this.uiState().monthlyTmList);
 
   private getMonthlySalesUseCase: GetMonthlySalesUseCase;
@@ -63,7 +60,6 @@ export class MonthlySalesViewModelService implements OnDestroy {
   private getTotalAmountOrdersUseCase: GetTotalAmountOrdersUseCase;
   private getTotalOrdersUseCase: GetTotalOrdersUseCase;
   private getTotalMonthOrdersUseCase: GetTotalMonthOrdersUseCase;
-  // Nuevo caso de uso para TM
   private getMonthlyTMUseCase: GetMonthlyTMUseCase;
 
   constructor(private monthlySalesRepository: MonthlySalesDataRepository) {
@@ -72,7 +68,6 @@ export class MonthlySalesViewModelService implements OnDestroy {
     this.getTotalAmountOrdersUseCase = new GetTotalAmountOrdersUseCase(this.monthlySalesRepository);
     this.getTotalOrdersUseCase = new GetTotalOrdersUseCase(this.monthlySalesRepository);
     this.getTotalMonthOrdersUseCase = new GetTotalMonthOrdersUseCase(this.monthlySalesRepository);
-    // Inicializar el caso de uso para TM
     this.getMonthlyTMUseCase = new GetMonthlyTMUseCase(this.monthlySalesRepository);
   }
 
@@ -121,7 +116,6 @@ export class MonthlySalesViewModelService implements OnDestroy {
     }
   }
 
-  // Nuevo método para cargar la lista de TM
   public async loadMonthlyTmList(): Promise<void> {
     try {
       this.updateState({ 
@@ -216,7 +210,6 @@ export class MonthlySalesViewModelService implements OnDestroy {
     await Promise.all([
       this.loadMonthlySales(this.selectedYear$(), currentMonth),
       this.loadMonthlyOrders(this.selectedOrderYear$(), currentMonth),
-      // Añadir la carga de la lista de TM al refrescar los datos
       this.loadMonthlyTmList()
     ]);
   }

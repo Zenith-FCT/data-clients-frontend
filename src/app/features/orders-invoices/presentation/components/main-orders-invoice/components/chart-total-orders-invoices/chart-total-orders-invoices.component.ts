@@ -109,19 +109,19 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 30,
+              bottom: 20
+            }
+          },
           interaction: {
             intersect: false,
             mode: 'index'
           },
           plugins: {
             title: {
-              display: true,
-              text: 'Análisis de Ventas y Facturas',
-              font: {
-                size: 16,
-                weight: 'bold'
-              },
-              padding: 20
+              display: false
             },
             legend: {
               display: true,
@@ -179,6 +179,10 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
                 font: {
                   weight: '600'
                 }
+              },
+              suggestedMax: function(context: any) {
+                const maxValue = Math.max(...context.chart.data.datasets[0].data);
+                return maxValue + 50;
               }
             },
             y1: {
@@ -204,6 +208,10 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
                 font: {
                   weight: '600'
                 }
+              },
+              suggestedMax: function(context: any) {
+                const maxValue = Math.max(...context.chart.data.datasets[1].data);
+                return maxValue + 1;
               }
             },
             x: {

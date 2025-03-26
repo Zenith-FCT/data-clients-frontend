@@ -1,7 +1,7 @@
 <div class="chart-header">
   <h3>Análisis de Ticket Medio Historico</h3>
   <mat-form-field appearance="outline" class="year-selector">
-    <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
+    <mat-select [(ngModel)]="chartTmSelectedYear" (selectionChange)="onYearChange()">
       <mat-option *ngFor="let year of years" [value]="year">
         {{year}}
       </mat-option>

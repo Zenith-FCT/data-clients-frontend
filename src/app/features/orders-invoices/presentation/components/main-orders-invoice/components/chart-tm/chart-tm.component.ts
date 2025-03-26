@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MonthlySalesViewModelService } from '../../../../view-model/monthly-orders-viewmodel.service';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { TmModel } from '../../../../../domain/use-cases/get-monthly-tm.use-case';
@@ -18,12 +18,41 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   private chart: any;
   private destroy$ = new Subject<void>();
-  selectedYear: number = new Date().getFullYear();
-  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
+  chartTmSelectedYear: number = new Date().getFullYear();
+  years: number[] = [];
   private currentData: TmModel[] = [];
   private isBrowser: boolean;
   
-  // Variables para depuración
+  private chartColors = [
+    'rgba(255, 99, 132, 0.2)',   
+    'rgba(54, 162, 235, 0.2)', 
+    'rgba(255, 206, 86, 0.2)',  
+    'rgba(75, 192, 192, 0.2)',  
+    'rgba(153, 102, 255, 0.2)', 
+    'rgba(255, 159, 64, 0.2)',  
+    'rgba(76, 175, 80, 0.2)',  
+    'rgba(121, 85, 72, 0.2)',  
+    'rgba(233, 30, 99, 0.2)',  
+    'rgba(156, 39, 176, 0.2)',  
+    'rgba(3, 169, 244, 0.2)', 
+    'rgba(255, 87, 34, 0.2)' 
+  ];
+
+  private chartBorderColors = [
+    'rgba(255, 99, 132, 1)',
+    'rgba(54, 162, 235, 1)',
+    'rgba(255, 206, 86, 1)',
+    'rgba(75, 192, 192, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 159, 64, 1)',
+    'rgba(76, 175, 80, 1)',
+    'rgba(121, 85, 72, 1)',
+    'rgba(233, 30, 99, 1)',
+    'rgba(156, 39, 176, 1)',
+    'rgba(3, 169, 244, 1)',
+    'rgba(255, 87, 34, 1)'
+  ];
+  
   dataLoaded = false;
   chartInitialized = false;
 
@@ -34,67 +63,48 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isBrowser = isPlatformBrowser(platformId);
 
     effect(() => {
-      const year = this.monthlySalesViewModel.selectedYear$();
-      this.selectedYear = year;
-      if (this.currentData.length > 0) {
-        this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
-      }
-    });
-
-    effect(() => {
       const tmList = this.monthlySalesViewModel.monthlyTmList$();
       if (tmList && tmList.length > 0) {
-        console.log('Datos TM recibidos:', tmList);
         this.currentData = tmList;
         this.dataLoaded = true;
         
-        // Verificar si hay datos para el año seleccionado
-        const filteredData = this.filterDataByYear(tmList);
-        console.log('Datos filtrados por año:', filteredData);
+        this.years = Array.from(new Set(tmList.map(item => item.year))).sort((a, b) => b - a);
+        if (this.years.length > 0 && !this.years.includes(this.chartTmSelectedYear)) {
+          this.chartTmSelectedYear = this.years[0];
+        }
         
+        const filteredData = this.filterDataByYear(tmList);
         this.destroyAndRecreateChart(filteredData);
-      } else {
-        console.log('No se recibieron datos de TM o la lista está vacía');
       }
     });
   }
 
   ngOnInit(): void {
-    console.log('ChartTmComponent inicializado');
-    // Cargar los datos de TM explícitamente
     this.monthlySalesViewModel.loadMonthlyTmList();
   }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
-      console.log('Inicializando gráfico TM');
       setTimeout(() => {
         this.initChart();
         this.chartInitialized = true;
         
-        // Si ya tenemos datos cuando se inicializa el gráfico, actualizarlo
         if (this.currentData.length > 0) {
-          console.log('Actualizando gráfico con datos existentes después de inicialización');
           this.updateChart(this.filterDataByYear(this.currentData));
         }
-      }, 500); // Pequeño retraso para asegurar que el canvas esté listo
+      }, 500); 
     }
   }
 
   onYearChange(): void {
-    if (this.selectedYear) {
-      console.log('Año seleccionado cambiado a:', this.selectedYear);
-      this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
-      if (this.currentData.length > 0) {
-        const filteredData = this.filterDataByYear(this.currentData);
-        console.log('Datos filtrados después de cambio de año:', filteredData);
-        this.destroyAndRecreateChart(filteredData);
-      }
+    if (this.chartTmSelectedYear && this.currentData.length > 0) {
+      const filteredData = this.filterDataByYear(this.currentData);
+      this.destroyAndRecreateChart(filteredData);
     }
   }
 
   private filterDataByYear(data: TmModel[]): TmModel[] {
-    return data.filter(item => item.year === this.selectedYear);
+    return data.filter(item => item.year === this.chartTmSelectedYear);
   }
 
   private initChart(): void {
@@ -110,8 +120,8 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         datasets: [{
           label: 'Ticket Medio',
           data: [],
-          backgroundColor: 'rgba(140, 74, 96, 0.7)',
-          borderColor: 'rgba(140, 74, 96, 1)',
+          backgroundColor: this.chartColors,
+          borderColor: this.chartBorderColors,
           borderWidth: 1
         }]
       },
@@ -181,8 +191,8 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
           datasets: [{
             label: 'Ticket Medio Mensual',
             data: [],
-            backgroundColor: 'rgba(140, 74, 96, 0.7)',
-            borderColor: 'rgba(140, 74, 96, 1)',
+            backgroundColor: this.chartColors,
+            borderColor: this.chartBorderColors,
             borderWidth: 1
           }]
         },
@@ -191,14 +201,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              display: true,
-              position: 'top',
-              labels: {
-                font: {
-                  weight: 'bold',
-                  size: 12
-                }
-              }
+              display: false
             },
             tooltip: {
               enabled: true,
@@ -263,23 +266,18 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private updateChart(data: TmModel[]): void {
     if (!this.isBrowser || !this.chart) {
-      console.log('No se puede actualizar el gráfico: isBrowser=', this.isBrowser, 'chart=', !!this.chart);
       return;
     }
 
     const values = Array(12).fill(0);
-    console.log('Actualizando gráfico con datos:', data);
     
-    // Ordenar los datos por mes
     data.forEach(item => {
-      // El mes en el modelo TmModel está basado en 1 (1-12), pero el array es basado en 0 (0-11)
       const monthIndex = item.month - 1;
       if (monthIndex >= 0 && monthIndex < 12) {
         values[monthIndex] = parseFloat(item.tm);
       }
     });
 
-    console.log('Valores finales para el gráfico:', values);
     this.chart.data.datasets[0].data = values;
     this.chart.update();
   }
