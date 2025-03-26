@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, ChangeDetectionStrategy, effect, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -38,13 +38,18 @@ export class ClientsComponent implements OnInit {
   dataSource = new MatTableDataSource<ClientsList>([]);
   displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];
   chartOption: any;
+  isBrowser: boolean;
 
   public viewModel = inject(ClientsViewModel);
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+
     effect(() => {
       this.dataSource.data = this.viewModel.clients();
-      this.updateChartOption();
+      if (this.isBrowser) {
+        this.updateChartOption();
+      }
     });
   }
 
@@ -53,6 +58,8 @@ export class ClientsComponent implements OnInit {
   }
 
   private updateChartOption(): void {
+    if (!this.isBrowser) return; // No ejecutar esto en el servidor
+    
     const distribution = this.viewModel.clientsPerProduct();
     
     if (!distribution || distribution.length === 0) {

@@ -74,9 +74,11 @@
 </div>
 
 <!-- Clients per Product Chart -->
-<div class="chart-wrapper">
-  <div class="chart-container" *ngIf="!viewModel.loading() && !viewModel.error()">
-    <h2 class="chart-title">Distribución de Clientes por Producto</h2>
-    <div class="echarts-container" echarts [options]="chartOption"></div>
+@if (isBrowser) {
+  <div class="chart-wrapper">
+    <div class="chart-container" *ngIf="!viewModel.loading() && !viewModel.error()">
+      <h2 class="chart-title">Distribución de Clientes por Producto</h2>
+      <div class="echarts-container" echarts [options]="chartOption"></div>
+    </div>
   </div>
-</div>
+}
