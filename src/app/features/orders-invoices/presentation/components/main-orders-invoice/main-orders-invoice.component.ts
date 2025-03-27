@@ -4,11 +4,18 @@ import { RouterModule } from '@angular/router';
 import { InformationBoxComponent } from './components/information-box/information-box.component';
 import { MonthlySalesViewModelService } from '../../view-model/monthly-orders-viewmodel.service';
 import { ChartTotalInvoiceComponent } from './components/chart-total-invoice/chart-total-invoice.component';
+import { ChartTotalOrdersInvoicesComponent } from './components/chart-total-orders-invoices/chart-total-orders-invoices.component';
 
 @Component({
   selector: 'app-main-orders-invoice',
   standalone: true,
-  imports: [CommonModule, RouterModule, InformationBoxComponent, ChartTotalInvoiceComponent],
+  imports: [
+    CommonModule, 
+    RouterModule, 
+    InformationBoxComponent, 
+    ChartTotalInvoiceComponent,
+    ChartTotalOrdersInvoicesComponent
+  ],
   providers: [MonthlySalesViewModelService],
   templateUrl: './main-orders-invoice.component.html',
   styleUrl: './main-orders-invoice.component.css'

@@ -1,7 +1,7 @@
 <div class="information-box">
   <div class="box-header">
-    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos' : 'Ventas Mensuales' }}</h3>
-    <div class="selectors-container" *ngIf="type === 'monthly'">
+    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos totales' : type === 'monthly' ? 'Ventas Mensuales' : 'Pedidos Mensuales' }}</h3>
+    <div class="selectors-container" *ngIf="type === 'monthly' || type === 'monthly-order'">
       <mat-form-field appearance="outline" class="month-selector">
         <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onMonthChange()">
           <mat-option *ngFor="let month of months" [value]="month.value">
@@ -61,7 +61,26 @@
           <span class="value">{{ monthlySalesViewModel.monthlySales$() | number:'1.2-2' }}</span>
           <span class="currency">€</span>
         </div>
-        <p class="description">Ventas de mes {{selectedMonth + 1}} {{ selectedYear }}</p>
+        <p class="description">Ventas del mes {{selectedMonth + 1}} de {{ selectedYear }}</p>
+      </div>
+    </ng-container>
+    
+    <ng-container *ngIf="type === 'monthly-order'">
+      <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
+        <div class="spinner"></div>
+        <span>Calculando...</span>
+      </div>
+
+      <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
+        <span>⚠</span>
+        <p>{{ monthlySalesViewModel.error$() }}</p>
+      </div>
+
+      <div *ngIf="!monthlySalesViewModel.isLoading$() && !monthlySalesViewModel.error$()" class="data-state">
+        <div class="amount">
+          <span class="value">{{ monthlySalesViewModel.monthlyOrders$() | number:'1.0-0' }}</span>
+        </div>
+        <p class="description">Órdenes del mes {{selectedMonth + 1}} de {{ selectedYear }}</p>
       </div>
     </ng-container>
   </div>

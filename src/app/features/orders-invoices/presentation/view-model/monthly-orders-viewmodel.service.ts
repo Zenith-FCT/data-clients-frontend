@@ -6,6 +6,7 @@ import { MonthlySalesModel } from '../../domain/models/monthly-sales.model';
 import { MonthlySalesDataRepository } from '../../data/data-repositories/monthly-sales-repository.service';
 import { GetTotalAmountOrdersUseCase } from '../../domain/use-cases/get-total-amount-orders.use-case';
 import { GetTotalOrdersUseCase } from '../../domain/use-cases/get-total-orders.use-case';
+import { GetTotalMonthOrdersUseCase } from '../../domain/use-cases/get-total-month-orders.use-case';
 
 export interface MonthlySalesUIState {
   isLoading: boolean;
@@ -13,8 +14,10 @@ export interface MonthlySalesUIState {
   monthlySales: number;
   allMonthlySales: MonthlySalesModel[];
   selectedYear: number;
+  selectedOrderYear: number;
   totalOrdersAmount: number;
   totalOrders: number;
+  monthlyOrders: number;
 }
 
 @Injectable({
@@ -23,15 +26,16 @@ export interface MonthlySalesUIState {
 export class MonthlySalesViewModelService implements OnDestroy {
   private destroy$ = new Subject<void>();
 
-  // Initialize UIState with default values
   private readonly uiState = signal<MonthlySalesUIState>({
     isLoading: false,
     error: null,
     monthlySales: 0,
     allMonthlySales: [],
     selectedYear: new Date().getFullYear(),
+    selectedOrderYear: new Date().getFullYear(),
     totalOrdersAmount: 0,
-    totalOrders: 0
+    totalOrders: 0,
+    monthlyOrders: 0
   });
 
   public readonly uiState$ = this.uiState.asReadonly();
@@ -41,31 +45,38 @@ export class MonthlySalesViewModelService implements OnDestroy {
   public readonly monthlySales$ = computed(() => this.uiState().monthlySales);
   public readonly allMonthlySales$ = computed(() => this.uiState().allMonthlySales);
   public readonly selectedYear$ = computed(() => this.uiState().selectedYear);
+  public readonly selectedOrderYear$ = computed(() => this.uiState().selectedOrderYear);
   public readonly totalOrdersAmount$ = computed(() => this.uiState().totalOrdersAmount);
   public readonly totalOrders$ = computed(() => this.uiState().totalOrders);
+  public readonly monthlyOrders$ = computed(() => this.uiState().monthlyOrders);
 
   private getMonthlySalesUseCase: GetMonthlySalesUseCase;
   private getAllMonthWithTotalsUseCase: GetAllMonthWithTotalsUseCase;
   private getTotalAmountOrdersUseCase: GetTotalAmountOrdersUseCase;
   private getTotalOrdersUseCase: GetTotalOrdersUseCase;
+  private getTotalMonthOrdersUseCase: GetTotalMonthOrdersUseCase;
 
   constructor(private monthlySalesRepository: MonthlySalesDataRepository) {
     this.getMonthlySalesUseCase = new GetMonthlySalesUseCase(this.monthlySalesRepository);
     this.getAllMonthWithTotalsUseCase = new GetAllMonthWithTotalsUseCase(this.monthlySalesRepository);
     this.getTotalAmountOrdersUseCase = new GetTotalAmountOrdersUseCase(this.monthlySalesRepository);
     this.getTotalOrdersUseCase = new GetTotalOrdersUseCase(this.monthlySalesRepository);
+    this.getTotalMonthOrdersUseCase = new GetTotalMonthOrdersUseCase(this.monthlySalesRepository);
   }
 
   public setSelectedYear(year: number): void {
     this.updateState({ selectedYear: year });
   }
 
+  public setSelectedOrderYear(year: number): void {
+    this.updateState({ selectedOrderYear: year });
+  }
+
   public async loadMonthlySales(year: number, month: number): Promise<void> {
     try {
       this.updateState({ 
         isLoading: true, 
-        error: null,
-        selectedYear: year 
+        error: null
       });
 
       const total = await firstValueFrom(this.getMonthlySalesUseCase.execute(year, month));
@@ -74,6 +85,24 @@ export class MonthlySalesViewModelService implements OnDestroy {
       this.updateState({ 
         error: 'Error al cargar las ventas mensuales. Intente nuevamente.',
         monthlySales: 0 
+      });
+    } finally {
+      this.updateState({ isLoading: false });
+    }
+  }
+
+  public async loadMonthlyOrders(year: number, month: number): Promise<void> {
+    try {
+      this.updateState({ 
+        isLoading: true, 
+        error: null
+      });
+      const total = await firstValueFrom(this.getTotalMonthOrdersUseCase.execute(year, month));
+      this.updateState({ monthlyOrders: total });
+    } catch (error) {
+      this.updateState({
+        error: 'Error al cargar las órdenes mensuales. Intente nuevamente.',
+        monthlyOrders: 0
       });
     } finally {
       this.updateState({ isLoading: false });
@@ -93,7 +122,10 @@ export class MonthlySalesViewModelService implements OnDestroy {
       if (monthlyTotals.length > 0) {
         const years = monthlyTotals.map(sale => parseInt(sale.date.split('-')[0]));
         const mostRecentYear = Math.max(...years);
-        this.updateState({ selectedYear: mostRecentYear });
+        this.updateState({ 
+          selectedYear: mostRecentYear,
+          selectedOrderYear: mostRecentYear
+        });
       }
     } catch (error) {
       this.updateState({ 
@@ -145,9 +177,13 @@ export class MonthlySalesViewModelService implements OnDestroy {
 
   public async refreshData(forceRefresh: boolean = false): Promise<void> {
     const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    
+    await this.loadAllMonthWithTotals();
+    
     await Promise.all([
-      this.loadMonthlySales(this.selectedYear$(), currentDate.getMonth()),
-      this.loadAllMonthWithTotals()
+      this.loadMonthlySales(this.selectedYear$(), currentMonth),
+      this.loadMonthlyOrders(this.selectedOrderYear$(), currentMonth)
     ]);
   }
 
