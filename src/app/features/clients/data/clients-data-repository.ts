@@ -34,4 +34,14 @@ export class ClientsDataRepository implements IClientsRepository {
             })
         );
     }
+
+    getTotalAverageOrders(): Observable<number> {
+        return this.apiClients.getTotalAverageOrders().pipe(
+            tap(total => console.log('ClientsDataRepository: Total average orders:', total)),
+            catchError(error => {
+                console.error('ClientsDataRepository: Error getting total average orders:', error);
+                throw error;
+            })
+        );
+    }
 }

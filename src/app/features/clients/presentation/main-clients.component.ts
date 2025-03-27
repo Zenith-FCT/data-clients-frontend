@@ -1,12 +1,13 @@
 import { Component, inject, OnInit, OnDestroy, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon'; // Importar el módulo de iconos
+import { MatIconModule } from '@angular/material/icon'; 
 import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { clientsProviders } from '../clients.providers';
 import { ClientsViewModel } from './clients.view-model';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
+import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders-use-case';
 
 @Component({
   selector: 'app-clients',
@@ -14,11 +15,12 @@ import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
   imports: [
     CommonModule, 
     MatTableModule,
-    MatIconModule // Añadir MatIconModule a los imports
+    MatIconModule
   ],
   providers: [
     GetClientsListUseCase,
     GetTotalClientsUseCase,
+    GetTotalAverageOrdersUseCase,
     ...clientsProviders,
     ClientsViewModel
   ],

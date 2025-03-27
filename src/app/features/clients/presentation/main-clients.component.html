@@ -50,10 +50,17 @@
         <div class="info-box-icon">
           <mat-icon>people</mat-icon>
         </div>
-        <div class="info-box-title">Total Clientes</div>
+        <div class="info-box-title">Clientes totales:</div>
         <div class="info-box-value">{{ viewModel.totalClients() }}</div>
       </div>
-      <!-- Add more info boxes here later -->
+      
+      <div class="info-box">
+        <div class="info-box-icon">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+        <div class="info-box-title">Promedio de pedidos por cliente:</div>
+        <div class="info-box-value">{{ viewModel.totalAverageOrders() | number:'1.0-0' }}</div>
+      </div>
     </div>
   }
 </div>

@@ -37,6 +37,18 @@ export class ClientsApiService {
     );
   }
 
+  getTotalAverageOrders(): Observable<number> {
+    return this.getAllClientsList().pipe(
+      map(clients => {
+        const sum = clients.reduce<number>((acc, client) => acc + Number(client.nº_pedidos), 0);
+        const count = clients.length;
+        return count > 0 ? sum / count : 0;
+      }),
+      tap(averageOrders => console.log('ClientsApiService: Average orders per client:', averageOrders)),
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
     console.error('ClientsApiService Error:', error);
