@@ -24,11 +24,13 @@ import { ChartTmComponent } from './components/chart-tm/chart-tm.component';
 })
 export class MainOrdersInvoiceComponent implements OnInit {
   constructor(public monthlySalesViewModel: MonthlySalesViewModelService) {}
-
+  
   ngOnInit(): void {
+    const currentYear = new Date().getFullYear();
+    
     this.monthlySalesViewModel.loadAllMonthWithTotals();
-    this.monthlySalesViewModel.loadTotalOrdersAmount();
-    this.monthlySalesViewModel.loadTotalOrders();
+    this.monthlySalesViewModel.loadTotalOrdersAmount(currentYear);
+    this.monthlySalesViewModel.loadTotalOrders(currentYear);
     this.monthlySalesViewModel.loadMonthlyTmList();
   }
 }

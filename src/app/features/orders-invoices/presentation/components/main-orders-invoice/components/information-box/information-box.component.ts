@@ -64,10 +64,10 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
         this.monthlySalesViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
         break;
       case 'amount':
-        this.monthlySalesViewModel.loadTotalOrdersAmount();
+        this.monthlySalesViewModel.loadTotalOrdersAmount(this.selectedYear);
         break;
       case 'count':
-        this.monthlySalesViewModel.loadTotalOrders();
+        this.monthlySalesViewModel.loadTotalOrders(this.selectedYear);
         break;
       case 'monthly-order':
         this.monthlySalesViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);

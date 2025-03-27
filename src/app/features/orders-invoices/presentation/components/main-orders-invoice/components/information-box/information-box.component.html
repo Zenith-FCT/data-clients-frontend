@@ -1,14 +1,16 @@
 <div class="information-box">
   <div class="box-header">
     <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos totales' : type === 'monthly' ? 'Ventas Mensuales' : 'Pedidos Mensuales' }}</h3>
-    <div class="selectors-container" *ngIf="type === 'monthly' || type === 'monthly-order'">
-      <mat-form-field appearance="outline" class="month-selector">
-        <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onMonthChange()">
-          <mat-option *ngFor="let month of months" [value]="month.value">
-            {{month.value + 1}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+    <div class="selectors-container" *ngIf="type === 'monthly' || type === 'monthly-order' || type === 'amount' || type === 'count'">
+      <ng-container *ngIf="type === 'monthly' || type === 'monthly-order'">
+        <mat-form-field appearance="outline" class="month-selector">
+          <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onMonthChange()">
+            <mat-option *ngFor="let month of months" [value]="month.value">
+              {{month.value + 1}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
       <mat-form-field appearance="outline" class="year-selector">
         <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
           <mat-option *ngFor="let year of years" [value]="year">

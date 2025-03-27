@@ -163,14 +163,14 @@ export class MonthlySalesViewModelService implements OnDestroy {
     }
   }
 
-  public async loadTotalOrdersAmount(): Promise<void> {
+  public async loadTotalOrdersAmount(year: number): Promise<void> {
     try {
       this.updateState({ 
         isLoading: true, 
         error: null 
       });
       
-      const amount = await firstValueFrom(this.getTotalAmountOrdersUseCase.execute());
+      const amount = await firstValueFrom(this.getTotalAmountOrdersUseCase.execute(year));
       this.updateState({ totalOrdersAmount: amount });
     } catch (error) {
       this.updateState({ 
@@ -181,15 +181,14 @@ export class MonthlySalesViewModelService implements OnDestroy {
       this.updateState({ isLoading: false });
     }
   }
-
-  public async loadTotalOrders(): Promise<void> {
+  
+  public async loadTotalOrders(year: number): Promise<void> {
     try {
       this.updateState({ 
         isLoading: true, 
         error: null 
       });
-
-      const total = await firstValueFrom(this.getTotalOrdersUseCase.execute());
+      const total = await firstValueFrom(this.getTotalOrdersUseCase.execute(year));
       this.updateState({ totalOrders: total });
     } catch (error) {
       this.updateState({ 
@@ -210,6 +209,8 @@ export class MonthlySalesViewModelService implements OnDestroy {
     await Promise.all([
       this.loadMonthlySales(this.selectedYear$(), currentMonth),
       this.loadMonthlyOrders(this.selectedOrderYear$(), currentMonth),
+      this.loadTotalOrdersAmount(this.selectedYear$()),
+      this.loadTotalOrders(this.selectedYear$()),
       this.loadMonthlyTmList()
     ]);
   }
