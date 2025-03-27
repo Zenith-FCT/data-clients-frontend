@@ -106,6 +106,11 @@ export class ClientsApiService {
     );
   }
 
+  getTopLocationsByClients(): Observable<TopLocationsByClients[]> {
+    
+  }
+
+
   // Nuevos métodos para filtrado por año y mes
 
   getFullClientData(): Observable<any[]> {
