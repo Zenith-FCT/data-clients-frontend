@@ -7,6 +7,8 @@ import { ClientsListApi } from './clients-list-api.model';
 import { ProductClientDistribution } from '../../../domain/product-distribution.model';
 import { ClientsApiMapper } from './clients-api.mapper';
 import { ProductClientDistributionApi } from './product-client-distribution-api.model';
+import { TopLocationsByClientsApi } from './top-locations-by-clients-api.model';
+import { TopLocationsByClients } from '../../../domain/top-locations-by-clients.model';
 
 @Injectable({
   providedIn: 'root'
