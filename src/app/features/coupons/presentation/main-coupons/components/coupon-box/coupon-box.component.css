@@ -1,12 +1,28 @@
-.couponsBox {
-  padding: 5px;
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #666;
+  font-size: 14px;
 }
 
-h2 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.1rem;
-  font-weight: 600;
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
 }
 
 .coupons-total p {
@@ -16,24 +32,42 @@ h2 {
 }
 
 .coupons-total p:first-child {
-  font-size: 1.4rem;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.currency {
+  font-size: 20px;
+  vertical-align: top;
+  margin-left: 2px;
+  color: #666;
 }
 
 .coupons-total p:last-child {
-  font-size: .85rem;
+  color: #777;
+  font-size: 12px;
+  margin: 0;
 }
 
 .error-text {
   color: red;
 }
 
-.couponsBox div:first-child {
+.coupons-box div:first-child {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
 
-.couponsBox div:first-child input {
+.coupons-box div:first-child input {
   width: 120px;
+}
+
+select {
+  padding-left: 4px;
+  padding-right: 4px;
+  height: 32px;
+  margin-left: 5px;
 }
