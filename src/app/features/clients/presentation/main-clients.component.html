@@ -184,7 +184,7 @@
               </mat-form-field>
             </div>
           </div>
-          <div class="info-box-title">Tickets medios anuales:</div>
+          <div class="info-box-title">Valor medio tickets:</div>
           <div class="info-box-value">{{ viewModel.getAverageTicket() | number:'1.2-2' }} €</div>
         </div>
         
@@ -234,6 +234,22 @@
       <div class="chart-container" *ngIf="!viewModel.loading() && !viewModel.error()">
         <h2 class="chart-title">Distribución de Clientes por Producto</h2>
         <div class="echarts-container" echarts [options]="chartOption"></div>
+      </div>
+    </div>
+  
+    <!-- Top Locations by Clients Chart -->
+    <div class="chart-wrapper">
+      <div class="chart-container" *ngIf="!viewModel.loading() && !viewModel.error()">
+        <div class="chart-header-with-controls">
+          <h2 class="chart-title">Top 10 {{ viewModel.currentLocationType() === 'country' ? 'Países' : 'Ciudades' }} por Clientes</h2>
+          <div class="chart-controls">
+            <mat-button-toggle-group [value]="viewModel.currentLocationType()" (change)="onLocationTypeChange($event)">
+              <mat-button-toggle value="country">Países</mat-button-toggle>
+              <mat-button-toggle value="city">Ciudades</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+        <div class="echarts-container" echarts [options]="locationsChartOption"></div>
       </div>
     </div>
   }

@@ -13,6 +13,8 @@ import { GetAverageOrdersByYearUseCase } from '../domain/get-average-orders-by-y
 import { GetTotalOrdersByYearMonthUseCase } from '../domain/get-total-orders-by-year-month-use-case';
 import { GetAverageTicketByYearUseCase } from '../domain/get-average-ticket-by-year-use-case';
 import { GetLTVByYearMonthUseCase } from '../domain/get-ltv-by-year-month-use-case';
+import { GetTopLocationsByClientsUseCase } from '../domain/get-top-locations-by-clients-use-case';
+import { TopLocationsByClients } from '../domain/top-locations-by-clients.model';
 
 interface ClientsState {
   clients: ClientsList[];
@@ -25,6 +27,8 @@ interface ClientsState {
   newClients: number;
   totalOrders: number;
   ltv: number;
+  topLocationsByClients: TopLocationsByClients[];
+  currentLocationType: 'country' | 'city';
 }
 
 @Injectable()
@@ -39,7 +43,9 @@ export class ClientsViewModel {
     error: null,
     newClients: 0,
     totalOrders: 0,
-    ltv: 0
+    ltv: 0,
+    topLocationsByClients: [],
+    currentLocationType: 'country'
   });
 
   private _clientsCache: ClientsList[] = [];
@@ -54,6 +60,8 @@ export class ClientsViewModel {
   readonly newClients = computed(() => this._state().newClients);
   readonly totalOrders = computed(() => this._state().totalOrders);
   readonly ltv = computed(() => this._state().ltv);
+  readonly topLocationsByClients = computed(() => this._state().topLocationsByClients);
+  readonly currentLocationType = computed(() => this._state().currentLocationType);
 
   private getClientsListUseCase = inject(GetClientsListUseCase);
   private getTotalClientsUseCase = inject(GetTotalClientsUseCase);
@@ -66,6 +74,7 @@ export class ClientsViewModel {
   private getTotalOrdersByYearMonthUseCase = inject(GetTotalOrdersByYearMonthUseCase);
   private getAverageTicketByYearUseCase = inject(GetAverageTicketByYearUseCase);
   private getLTVByYearMonthUseCase = inject(GetLTVByYearMonthUseCase);
+  private getTopLocationsByClientsUseCase = inject(GetTopLocationsByClientsUseCase);
 
   getAverageTicket(): number {
     return this.averageTicket();
@@ -89,6 +98,7 @@ export class ClientsViewModel {
     this.loadTotalAverageOrders();
     this.loadAverageTicket();
     this.loadClientsPerProduct();
+    this.loadTopLocationsByClients();
     this.loadInitialDerivedMetrics();
   }
 
@@ -506,6 +516,44 @@ export class ClientsViewModel {
           ...state,
           loading: false,
           error: `Error loading LTV for ${year}/${month}`
+        }));
+      }
+    });
+  }
+
+  changeLocationType(locationType: 'country' | 'city'): void {
+    if (this._state().currentLocationType !== locationType) {
+      this._state.update(state => ({
+        ...state,
+        currentLocationType: locationType
+      }));
+      this.loadTopLocationsByClients();
+    }
+  }
+
+  private loadTopLocationsByClients(): void {
+    this._state.update(state => ({
+      ...state,
+      loading: true,
+      error: null
+    }));
+
+    const locationType = this._state().currentLocationType;
+    
+    this.getTopLocationsByClientsUseCase.execute(locationType).subscribe({
+      next: (locations) => {
+        this._state.update(state => ({
+          ...state,
+          topLocationsByClients: locations,
+          loading: false
+        }));
+      },
+      error: (err) => {
+        console.error(`Error loading top ${locationType} locations:`, err);
+        this._state.update(state => ({
+          ...state,
+          loading: false,
+          error: `Error loading top ${locationType} locations`
         }));
       }
     });

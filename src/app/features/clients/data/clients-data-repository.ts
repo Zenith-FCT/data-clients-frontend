@@ -3,6 +3,7 @@ import { Observable, catchError, tap, map } from "rxjs";
 import { ClientsList } from "../domain/clients-list.model";
 import { IClientsRepository } from "../domain/iclients-repository.interface";
 import { ProductClientDistribution } from "../domain/product-distribution.model";
+import { TopLocationsByClients } from "../domain/top-locations-by-clients.model";
 import { ClientsApiMapper } from "./remote/api-json/clients-api.mapper";
 import { ClientsApiService } from "./remote/api-json/clients-api.service";
 
@@ -134,6 +135,16 @@ export class ClientsDataRepository implements IClientsRepository {
             tap(ltv => console.log(`ClientsDataRepository: LTV for ${year}/${month}:`, ltv)),
             catchError(error => {
                 console.error('ClientsDataRepository: Error getting LTV by year/month:', error);
+                throw error;
+            })
+        );
+    }
+
+    getTopLocationsByClients(locationType: 'country' | 'city'): Observable<TopLocationsByClients[]> {
+        return this.apiClients.getTopLocationsByClients(locationType).pipe(
+            tap(locations => console.log(`ClientsDataRepository: Top ${locationType} locations:`, locations)),
+            catchError(error => {
+                console.error(`ClientsDataRepository: Error getting top ${locationType} locations:`, error);
                 throw error;
             })
         );

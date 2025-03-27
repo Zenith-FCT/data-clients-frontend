@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
@@ -21,6 +22,7 @@ import { GetAverageOrdersByYearUseCase } from '../domain/get-average-orders-by-y
 import { GetTotalOrdersByYearMonthUseCase } from '../domain/get-total-orders-by-year-month-use-case';
 import { GetAverageTicketByYearUseCase } from '../domain/get-average-ticket-by-year-use-case';
 import { GetLTVByYearMonthUseCase } from '../domain/get-ltv-by-year-month-use-case';
+import { GetTopLocationsByClientsUseCase } from '../domain/get-top-locations-by-clients-use-case';
 
 type FilterType = 'clients' | 'newClients' | 'orders' | 'totalOrders' | 'ticket' | 'ltv';
 
@@ -40,6 +42,7 @@ interface FilterConfig {
     MatFormFieldModule,
     MatSelectModule,
     MatOptionModule,
+    MatButtonToggleModule,
     NgxEchartsModule
   ],
   providers: [
@@ -55,6 +58,7 @@ interface FilterConfig {
     GetTotalOrdersByYearMonthUseCase,
     GetAverageTicketByYearUseCase,
     GetLTVByYearMonthUseCase,
+    GetTopLocationsByClientsUseCase,
     ...clientsProviders,
     ClientsViewModel
   ],
@@ -66,6 +70,7 @@ export class ClientsComponent implements OnInit {
   dataSource = new MatTableDataSource<ClientsList>([]);
   displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];
   chartOption: any;
+  locationsChartOption: any;
   isBrowser: boolean;
   
   // Filtros actuales con tipos correctos
@@ -87,6 +92,7 @@ export class ClientsComponent implements OnInit {
       this.dataSource.data = this.viewModel.clients();
       if (this.isBrowser) {
         this.updateChartOption();
+        this.updateLocationsChartOption();
       }
     });
   }
@@ -128,6 +134,13 @@ export class ClientsComponent implements OnInit {
     
     console.log(`Filtro de ${type} por ${filterType} cambiado a:`, this.filters[type][filterType]);
     this.applyFilter(type);
+  }
+
+  // Método para cambiar entre países y ciudades
+  onLocationTypeChange(event: any): void {
+    const newLocationType = event.value as 'country' | 'city';
+    console.log('Cambiando tipo de ubicación a:', newLocationType);
+    this.viewModel.changeLocationType(newLocationType);
   }
 
   // Aplicar un filtro específico
@@ -284,6 +297,104 @@ export class ClientsComponent implements OnInit {
             }
           },
           data: topCategories
+        }
+      ]
+    };
+  }
+
+  private updateLocationsChartOption(): void {
+    if (!this.isBrowser) return; // No ejecutar esto en el servidor
+    
+    const locations = this.viewModel.topLocationsByClients();
+    const locationType = this.viewModel.currentLocationType();
+    
+    if (!locations || locations.length === 0) {
+      this.locationsChartOption = {
+        title: {
+          text: 'No hay datos disponibles',
+          left: 'center',
+          textStyle: {
+            color: '#333'
+          }
+        }
+      };
+      return;
+    }
+
+    // Ordenar los datos por valor descendente 
+    const sortedLocations = [...locations].sort((a, b) => b.clientCount - a.clientCount);
+    
+    // Preparar datos para el gráfico de barras
+    const locationLabels = sortedLocations.map(item => 
+      locationType === 'country' ? item.country : item.city
+    );
+    
+    const locationValues = sortedLocations.map(item => item.clientCount);
+    
+    // Configuración para gráfico de barras vertical
+    this.locationsChartOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        },
+        formatter: '{b}: {c} clientes',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        borderColor: '#e0e0e0',
+        textStyle: {
+          color: '#333'
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '10%', // Ajustado para dar más espacio a las etiquetas del eje X
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: locationLabels,
+        axisLabel: {
+          color: '#333',
+          rotate: 45, // Rotar etiquetas para mejor visibilidad
+          interval: 0 // Mostrar todas las etiquetas
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#ccc'
+          }
+        }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Nº Clientes',
+        nameLocation: 'middle',
+        nameGap: 40,
+        axisLabel: {
+          color: '#333'
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#ccc'
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Clientes',
+          type: 'bar',
+          data: locationValues,
+          itemStyle: {
+            color: '#5c6bc0',
+            borderRadius: [4, 4, 0, 0] // Redondear las esquinas superiores de las barras
+          },
+          label: {
+            show: true,
+            position: 'top',
+            valueAnimation: true,
+            color: '#333',
+            formatter: '{c}'
+          }
         }
       ]
     };
