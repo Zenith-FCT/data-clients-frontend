@@ -7,6 +7,8 @@ import { ClientsListApi } from './clients-list-api.model';
 import { ProductClientDistribution } from '../../../domain/product-distribution.model';
 import { ClientsApiMapper } from './clients-api.mapper';
 import { ProductClientDistributionApi } from './product-client-distribution-api.model';
+import { TopLocationsByClientsApi } from './top-locations-by-clients-api.model';
+import { TopLocationsByClients } from '../../../domain/top-locations-by-clients.model';
 
 @Injectable({
   providedIn: 'root'
@@ -103,6 +105,55 @@ export class ClientsApiService {
       catchError(this.handleError)
     );
   }
+
+  getTopLocationsByClients(locationType: 'country' | 'city'): Observable<TopLocationsByClients[]> {
+    // En un entorno real, esta sería una llamada API específica
+    // Para el json-server, procesamos los datos del cliente para extraer esta información
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      map(clients => {
+        // Mapa para contar clientes por ubicación
+        const locationCountMap = new Map<string, number>();
+        
+        clients.forEach(client => {
+          // Dependiendo del tipo de ubicación solicitado (país o ciudad/localidad)
+          const location = locationType === 'country' ? 
+            (client.pais || 'Desconocido') : 
+            (client.localidad || 'Desconocida'); // Cambiado de ciudad a localidad
+          
+          // Normalizar el valor de la ubicación
+          const normalizedLocation = location.trim();
+          
+          // Incrementar el contador para esta ubicación
+          locationCountMap.set(
+            normalizedLocation, 
+            (locationCountMap.get(normalizedLocation) || 0) + 1
+          );
+        });
+        
+        // Convertir el mapa a un array de objetos TopLocationsByClientsApi
+        const locationStats = Array.from(locationCountMap.entries())
+          .map(([location, count]) => {
+            return new TopLocationsByClientsApi(
+              locationType === 'country' ? location : 'N/A', // Si es ciudad, el país es N/A 
+              locationType === 'city' ? location : 'N/A',    // Si es país, la ciudad es N/A
+              count
+            );
+          })
+          .sort((a, b) => b.clientCount - a.clientCount) // Ordenar de mayor a menor
+          .slice(0, 10); // Tomar solo los primeros 10
+        
+        // Convertir a modelo de dominio
+        return locationStats.map(stat => new TopLocationsByClients(
+          stat.country,
+          stat.city,
+          stat.clientCount
+        ));
+      }),
+      tap(locations => console.log(`ClientsApiService: Top ${locationType} locations:`, locations)),
+      catchError(this.handleError)
+    );
+  }
+
 
   // Nuevos métodos para filtrado por año y mes
 
