@@ -19,7 +19,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
   private chart: any;
   private destroy$ = new Subject<void>();
   selectedYear: number = new Date().getFullYear();
-  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
+  years: number[] = [];
   private currentData: MonthlySalesModel[] = [];
   private isBrowser: boolean;
 
@@ -29,16 +29,15 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
-    // Escuchar cambios en los datos de ventas mensuales
-    effect(() => {
+   effect(() => {
       const data = this.monthlySalesViewModel.allMonthlySales$();
       if (data && data.length > 0) {
         this.currentData = data;
+        this.extractAvailableYears(data);
         this.destroyAndRecreateChart(this.filterDataByYear(data));
       }
     });
 
-    // Escuchar cambios en el año seleccionado para pedidos
     effect(() => {
       const year = this.monthlySalesViewModel.selectedOrderYear$();
       if (year !== this.selectedYear) {
@@ -56,6 +55,22 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
 
   ngAfterViewInit(): void {
     this.monthlySalesViewModel.loadAllMonthWithTotals();
+  }
+
+  private extractAvailableYears(data: MonthlySalesModel[]): void {
+    const uniqueYears = new Set<number>();
+    
+    data.forEach(item => {
+      const year = parseInt(item.date.split('-')[0]);
+      uniqueYears.add(year);
+    });
+    
+    this.years = Array.from(uniqueYears).sort((a, b) => b - a);
+
+    if (this.years.length > 0 && !this.years.includes(this.selectedYear)) {
+      this.selectedYear = this.years[0];
+      this.monthlySalesViewModel.setSelectedOrderYear(this.selectedYear);
+    }
   }
 
   onYearChange(): void {

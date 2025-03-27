@@ -19,7 +19,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
   private chart: any;
   private destroy$ = new Subject<void>();
   selectedYear: number = new Date().getFullYear();
-  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
+  years: number[] = [];
   private currentData: MonthlySalesModel[] = [];
   private isBrowser: boolean;
 
@@ -41,6 +41,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
       const data = this.monthlySalesViewModel.allMonthlySales$();
       if (data && data.length > 0) {
         this.currentData = data;
+        this.extractYearsFromData(data);
         this.destroyAndRecreateChart(this.filterDataByYear(data));
       }
     });
@@ -63,6 +64,24 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
       if (this.currentData.length > 0) {
         this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
       }
+    }
+  }
+
+  private extractYearsFromData(data: MonthlySalesModel[]): void {
+    const uniqueYears = new Set<number>();
+    
+    data.forEach(item => {
+      const year = parseInt(item.date.split('-')[0]);
+      if (!isNaN(year)) {
+        uniqueYears.add(year);
+      }
+    });
+    
+    this.years = Array.from(uniqueYears).sort((a, b) => b - a); // Sort in descending order (newest first)
+    
+    if (this.years.length > 0 && !this.years.includes(this.selectedYear)) {
+      this.selectedYear = this.years[0];
+      this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
     }
   }
 

@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.model';
 
 @Component({
   selector: 'app-information-box',
@@ -27,13 +28,13 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   loading = false;
   selectedYear: number = new Date().getFullYear();
   selectedMonth: number = new Date().getMonth();
-  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
+  years: number[] = [];
   months = Array.from({length: 12}, (_, i) => ({ value: i }));
-
+  
   constructor(public monthlySalesViewModel: MonthlySalesViewModelService) {
-    // Escuchar cambios de año dependiendo del tipo de caja
+    // Listen for year changes based on box type
     effect(() => {
-      // Para los tipos amount y monthly, usar selectedYear$
+      // For types amount and monthly, use selectedYear$
       if (this.type === 'amount' || this.type === 'monthly') {
         const year = this.monthlySalesViewModel.selectedYear$();
         if (year !== this.selectedYear) {
@@ -53,13 +54,21 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     effect(() => {
       this.loading = this.monthlySalesViewModel.isLoading$();
     });
+    
+    // Listen for data changes to extract available years
+    effect(() => {
+      const data = this.monthlySalesViewModel.allMonthlySales$();
+      if (data && data.length > 0) {
+        this.extractYearsFromData(data);
+      }
+    });
   }
-
+  
   ngOnInit(): void {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     
-    // Inicializar con los valores del servicio según el tipo
+    // Initialize with values from service based on type
     if (this.type === 'monthly-order' || this.type === 'count') {
       this.selectedYear = this.monthlySalesViewModel.selectedOrderYear$();
     } else {
@@ -67,9 +76,40 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     }
     this.selectedMonth = currentMonth;
     
+    // Load initial data
+    const data = this.monthlySalesViewModel.allMonthlySales$();
+    if (data && data.length > 0) {
+      this.extractYearsFromData(data);
+    } else {
+      // Fallback to last 5 years if no data is available yet
+      this.years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
+    }
+    
     this.updateData();
   }
-
+  
+  private extractYearsFromData(data: MonthlySalesModel[]): void {
+    const uniqueYears = new Set<number>();
+    
+    data.forEach(item => {
+      const year = parseInt(item.date.split('-')[0]);
+      if (!isNaN(year)) {
+        uniqueYears.add(year);
+      }
+    });
+    
+    this.years = Array.from(uniqueYears).sort((a, b) => b - a); // Sort in descending order (newest first)
+    
+    // If no years found or the currently selected year is not in the list, add current year
+    if (this.years.length === 0) {
+      this.years = [new Date().getFullYear()];
+    } else if (!this.years.includes(this.selectedYear)) {
+      // Select the most recent year if current selection isn't available
+      this.selectedYear = this.years[0];
+      this.onYearChange();
+    }
+  }
+  
   private updateData(): void {
     switch (this.type) {
       case 'monthly':
@@ -86,7 +126,7 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
         break;
     }
   }
-
+  
   onYearChange(): void {
     if (this.selectedYear) {
       if (this.type === 'monthly-order' || this.type === 'count') {
@@ -97,13 +137,13 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
       this.updateData();
     }
   }
-
+  
   onMonthChange(): void {
     if (this.selectedYear && this.selectedMonth !== undefined) {
       this.updateData();
     }
   }
-
+  
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
