@@ -31,14 +31,22 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   months = Array.from({length: 12}, (_, i) => ({ value: i }));
 
   constructor(public monthlySalesViewModel: MonthlySalesViewModelService) {
+    // Escuchar cambios de año dependiendo del tipo de caja
     effect(() => {
-      const year = this.type === 'monthly-order' ? 
-        this.monthlySalesViewModel.selectedOrderYear$() : 
-        this.monthlySalesViewModel.selectedYear$();
-        
-      if (year !== this.selectedYear) {
-        this.selectedYear = year;
-        this.updateData();
+      // Para los tipos amount y monthly, usar selectedYear$
+      if (this.type === 'amount' || this.type === 'monthly') {
+        const year = this.monthlySalesViewModel.selectedYear$();
+        if (year !== this.selectedYear) {
+          this.selectedYear = year;
+          this.updateData();
+        }
+      }
+      else if (this.type === 'monthly-order' || this.type === 'count') {
+        const year = this.monthlySalesViewModel.selectedOrderYear$();
+        if (year !== this.selectedYear) {
+          this.selectedYear = year;
+          this.updateData();
+        }
       }
     });
     
@@ -49,10 +57,14 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
     
-    this.selectedYear = currentYear;
+    // Inicializar con los valores del servicio según el tipo
+    if (this.type === 'monthly-order' || this.type === 'count') {
+      this.selectedYear = this.monthlySalesViewModel.selectedOrderYear$();
+    } else {
+      this.selectedYear = this.monthlySalesViewModel.selectedYear$();
+    }
     this.selectedMonth = currentMonth;
     
     this.updateData();
@@ -77,7 +89,7 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
 
   onYearChange(): void {
     if (this.selectedYear) {
-      if (this.type === 'monthly-order') {
+      if (this.type === 'monthly-order' || this.type === 'count') {
         this.monthlySalesViewModel.setSelectedOrderYear(this.selectedYear);
       } else {
         this.monthlySalesViewModel.setSelectedYear(this.selectedYear);

@@ -29,11 +29,23 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
+    // Escuchar cambios en los datos de ventas mensuales
     effect(() => {
       const data = this.monthlySalesViewModel.allMonthlySales$();
       if (data && data.length > 0) {
         this.currentData = data;
         this.destroyAndRecreateChart(this.filterDataByYear(data));
+      }
+    });
+
+    // Escuchar cambios en el año seleccionado para pedidos
+    effect(() => {
+      const year = this.monthlySalesViewModel.selectedOrderYear$();
+      if (year !== this.selectedYear) {
+        this.selectedYear = year;
+        if (this.currentData.length > 0) {
+          this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
+        }
       }
     });
   }
