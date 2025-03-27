@@ -1,114 +1,159 @@
 :host ::ng-deep .mat-mdc-table {
-  background-color: #212121 !important;
+  background-color: white !important;
 }
 
 :host ::ng-deep .mdc-data-table__row {
-  background-color: #212121 !important;
+  background-color: white !important;
 }
 
 :host ::ng-deep .mdc-data-table__content {
-  color: white !important;
+  color: #333 !important;
 }
 
 :host ::ng-deep .mat-mdc-table .mdc-data-table__row {
-  color: white !important;
+  color: #333 !important;
 }
 
 :host ::ng-deep .mat-mdc-table .mdc-data-table__cell {
-  color: white !important;
+  color: #333 !important;
 }
 
 :host ::ng-deep .mat-mdc-cell {
-  color: white !important;
+  color: #333 !important;
 }
 
 :host ::ng-deep .mat-mdc-header-cell {
-  color: white !important;
+  color: #333 !important;
 }
 
 :host ::ng-deep .mat-mdc-table .mat-mdc-cell {
-  color: white !important;
+  color: #333 !important;
 }
 
 :host ::ng-deep tbody, :host ::ng-deep td, :host ::ng-deep tfoot, :host ::ng-deep th, :host ::ng-deep thead, :host ::ng-deep tr {
-  border-color: #333 !important;
+  border-color: #e0e0e0 !important;
+}
+
+:host {
+  display: block;
+  height: 100%;
+  padding: 10px; /* Reducido de 20px a 10px */
+  box-sizing: border-box;
 }
 
 .main-container {
   display: flex;
-  gap: 20px;
-  padding: 20px;
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan cuando no caben en una línea */
+  gap: 15px; /* Reducido de 20px a 15px */
+  padding: 10px; /* Reducido de 20px a 10px */
   background-color: transparent;
-  align-items: flex-start;
+  height: 100%;
+}
+
+.top-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
 }
 
 .clients-container {
-  flex: 0 0 50%;
-  background-color: #212121;
+  width: calc(50% - 7.5px); /* 50% menos la mitad del gap */
+  background-color: white;
   border-radius: 8px;
-  color: white;
+  color: #333;
   display: flex;
   flex-direction: column;
-  height: 504px; /* (112px + 40px padding) * 3 recuadros + (24px * 2) gaps = 504px */
+  max-height: 504px; /* Altura máxima para asegurar scroll vertical */
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
 }
 
 .loading-text, .error-text {
-  color: white;
+  color: #333;
   padding: 20px;
-  background-color: #212121;
+  background-color: white;
   border-radius: 8px;
 }
 
 h2 {
-  color: white;
+  color: #333;
   margin-bottom: 10px; /* Reducido de 20px a 10px */
 }
 
 .clients-title {
-  color: white;
+  color: #333;
   margin: 0;
   padding: 10px 20px;  /* Reducido de 15px a 10px */
   text-align: center;
-  background-color: #212121;
+  background-color: white;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .table-container {
-  overflow-x: auto;
-  background-color: #212121;
+  overflow-x: auto; /* Permite scroll horizontal */
+  background-color: white;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  padding: 10px 20px;
-  overflow-y: auto;
+  padding: 10px;
+  overflow-y: auto; /* Permite scroll vertical */
   height: calc(100% - 41px); /* Resta la altura del título */
   min-height: 0; /* Esto asegura que el scroll funcione correctamente */
+  width: 100%; /* Ancho completo del contenedor */
+  margin: 0;
+  box-sizing: border-box;
 }
 
 table {
   width: 100%;
-  border: 1px solid #333;
-  color: white;
+  border: 1px solid #e0e0e0;
+  color: #333;
   margin: 0;
+  border-collapse: collapse;
+  table-layout: fixed; /* Asegura que la tabla respete el ancho del contenedor */
+  min-width: 600px; /* Asegura un mínimo ancho de tabla para evitar que las columnas se compriman demasiado */
+}
+
+th.mat-header-cell, td.mat-cell {
+  white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Muestra "..." cuando el texto es demasiado largo */
+  max-width: 200px; /* Limita el ancho máximo de las celdas */
 }
 
 th.mat-header-cell {
-  background-color: #1a1a1a;
-  color: white !important;
+  background-color: #f5f5f5;
+  color: #333 !important;
   font-weight: bold;
   padding: 12px 8px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 td.mat-cell {
   padding: 8px;
-  color: white !important;
-  border-bottom: 1px solid #333;
+  color: #333 !important;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 tr.mat-row:hover {
-  background-color: #383838;
+  background-color: #f9f9f9;
+}
+
+th {
+  background-color: #f5f5f5;
+  color: #333;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 15px;
+}
+
+td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
 }
 
 .info-section {
@@ -117,77 +162,184 @@ tr.mat-row:hover {
 }
 
 .info-panel {
-  flex: 1;
+  width: calc(50% - 7.5px); /* 50% menos la mitad del gap */
   display: flex;
   flex-direction: column;
-  gap: 24px; /* Aumentado de 16px a 24px */
-  max-width: 40%;
-  align-items: center;
-  margin: 0 auto;
+  gap: 10px; /* Reducido de 12px a 10px para dar más espacio a los elementos */
+  height: 504px; /* Misma altura que el contenedor de clientes */
+  justify-content: space-between; /* Distribución equitativa del espacio vertical */
+}
+
+.info-row {
+  display: flex;
+  gap: 10px; /* Reducido de 12px a 10px */
+  width: 100%;
+  flex-wrap: nowrap;
+  height: calc(33.33% - 6.67px); /* Ajustado para compensar el nuevo gap de 10px */
 }
 
 .info-box {
-  background-color: #212121;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 0; /* Quitamos el margin-bottom que teníamos antes */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  width: 80%;
-  text-align: center;
+  background-color: white;
+  border-radius: 6px;
+  padding: 10px; /* Reducido de 12px a 10px */
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 112px; /* Altura fija para cada recuadro */
+  min-width: 0; /* Evitar que crezca más allá del contenedor */
+  height: 100%;
+  box-sizing: border-box; /* Asegura que padding esté incluido en el cálculo de altura */
+  transition: transform 0.2s;
+  justify-content: space-between; /* Distribuir contenido verticalmente */
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .info-box-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 2px; /* Reducido de 4px a 2px */
+    align-items: center;
+  }
+
+  .info-box-selector {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+  }
 
   .info-box-icon {
-    margin-bottom: 10px;
+    margin-bottom: 2px; /* Reducido de 4px a 2px */
+    width: 32px; /* Restaurado a 32px */
+    height: 32px; /* Restaurado a 32px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border-radius: 50%;
     
     mat-icon {
-      font-size: 32px;
-      height: 32px;
-      width: 32px;
-      color: #64B5F6;
+      font-size: 20px; /* Restaurado a 20px */
+      height: 20px; /* Restaurado a 20px */
+      width: 20px; /* Restaurado a 20px */
+      color: #5c6bc0;
     }
   }
 
   .info-box-title {
-    color: #888;
-    font-size: 0.9rem;
-    margin-bottom: 8px;
+    color: #666;
+    font-size: 0.85rem; /* Restaurado a 0.85rem */
+    margin: 8px 0 4px; /* Restaurado a 8px 0 4px */
+    white-space: nowrap;
+    width: 100%;
+    text-align: center;
   }
 
   .info-box-value {
-    color: white;
-    font-size: 2rem;
-    font-weight: 500;
+    color: #333;
+    font-size: 1.5rem; /* Restaurado a 1.5rem */
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 2px; /* Añadido margen inferior */
+  }
+}
+
+// Estilos para selectores de Material (ajustados para ser más compactos)
+.selectors-container {
+  display: flex;
+  gap: 5px;
+}
+
+// Material select styles
+.year-selector, .month-selector {
+  width: 90px; /* Restaurado a 90px */
+  height: 32px; /* Altura fija para los selectores */
+  margin-bottom: 0;
+
+  ::ng-deep {
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+    
+    .mat-mdc-text-field-wrapper {
+      background-color: transparent;
+      padding: 0;
+      height: 32px;
+    }
+    
+    .mat-mdc-form-field-infix {
+      padding: 0;
+      min-height: 28px;
+    }
+    
+    .mat-mdc-form-field-flex {
+      margin-top: 0;
+      height: 32px;
+    }
+
+    .mdc-notched-outline__leading, 
+    .mdc-notched-outline__notch, 
+    .mdc-notched-outline__trailing {
+      border-width: 1px;
+    }
+
+    .mat-mdc-form-field-outline {
+      color: #e0e0e0;
+    }
+    
+    .mat-select-value {
+      color: #5c6bc0;
+      font-size: 14px; /* Restaurado a 14px */
+    }
+    
+    .mat-select-arrow {
+      color: #5c6bc0;
+    }
+
+    .mat-mdc-form-field-icon-suffix {
+      padding: 0;
+      align-self: center;
+    }
+
+    .mat-mdc-select {
+      padding: 6px 0; /* Reducir padding vertical */
+    }
+
+    .mat-mdc-form-field-icon-prefix > .mat-icon,
+    .mat-mdc-form-field-icon-suffix > .mat-icon {
+      padding: 0;
+    }
   }
 }
 
 .chart-wrapper {
-  display: flex;
-  justify-content: flex-start;
-  padding: 0 20px;
-  margin-top: 30px; /* Aumentado de -10px a 30px para mayor separación */
+  width: calc(50% - 7.5px); /* Mismo ancho que la lista de clientes */
+  margin-top: 15px; /* Reducido de 20px a 15px */
 }
 
 .chart-container {
-  background-color: #212121;
+  background-color: white;
   border-radius: 8px;
-  padding: 10px;
-  width: 50%;
-  color: white;
+  padding: 15px;
+  width: 100%;
+  color: #333;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 }
 
 .chart-title {
-  color: white;
-  margin: 0;
-  padding: 10px 20px;
+  color: #333;
+  margin: 0 0 15px 0;
   text-align: center;
-  background-color: #212121;
+  background-color: white;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .echarts-container {
@@ -209,18 +361,22 @@ tr.mat-row:hover {
   }
   
   .info-panel {
-    flex-direction: row;
-    flex-wrap: wrap;
+    margin-top: 15px; /* Reducido de 16px a 15px */
+    height: auto;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    gap: 10px; /* Reducido de 16px a 10px */
+    height: auto;
   }
   
   .info-box {
-    flex: 1;
-    min-width: 250px;
-    width: auto;
+    height: 150px;
   }
   
-  .chart-container {
-    width: calc(100% - 40px);
-    margin: 20px auto;
+  .chart-wrapper {
+    width: 100%;
+    margin: 15px 0; /* Ajustado para mantener coherencia */
   }
 }
