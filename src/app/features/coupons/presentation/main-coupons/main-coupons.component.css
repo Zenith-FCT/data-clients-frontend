@@ -1,8 +1,9 @@
 .coupon-element {
-  border: 1px solid black;
-  border-radius: 5px;
-  padding: 10px;
-  background-color: #faf9fd;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
 .coupon-container {
@@ -18,9 +19,11 @@
 .coupon-box-container {
   width: 50%;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .coupon-box {
-  width: 50%;
+  width: 46%;
   margin: 2%;
+  height: 125px;
 }
