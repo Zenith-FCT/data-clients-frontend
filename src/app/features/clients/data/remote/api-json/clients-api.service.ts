@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { ClientsListApi } from './clients-list-api.model';
 import { ProductClientDistribution } from '../../../domain/product-distribution.model';
@@ -33,7 +33,7 @@ export class ClientsApiService {
   getTotalClients(): Observable<number> {
     return this.getAllClientsList().pipe(
       map(clients => clients.length),
-      tap(total => console.log('ClientsApiService: Total clients:', total)),
+      tap((total: number) => console.log('ClientsApiService: Total clients:', total)),
       catchError(this.handleError)
     );
   }
@@ -45,7 +45,7 @@ export class ClientsApiService {
         const count = clients.length;
         return count > 0 ? sum / count : 0;
       }),
-      tap(averageOrders => console.log('ClientsApiService: Average orders per client:', averageOrders)),
+      tap((averageOrders: number) => console.log('ClientsApiService: Average orders per client:', averageOrders)),
       catchError(this.handleError)
     );
   }
@@ -57,7 +57,7 @@ export class ClientsApiService {
         const count = clients.length;
         return count > 0 ? sum / count : 0;
       }),
-      tap(averageTicket => console.log('ClientsApiService: Average ticket per client:', averageTicket)),
+      tap((averageTicket: number) => console.log('ClientsApiService: Average ticket per client:', averageTicket)),
       catchError(this.handleError)
     );
   }
@@ -96,7 +96,7 @@ export class ClientsApiService {
         // Mapear objetos de API a objetos de dominio
         return ClientsApiMapper.productDistributionListToDomain(apiDistributions);
       }),
-      tap(distribution => console.log('ClientsApiService: Clients per category distribution:', distribution)),
+      tap((distribution: ProductClientDistribution[]) => console.log('ClientsApiService: Clients per category distribution:', distribution)),
       catchError(this.handleError)
     );
   }
