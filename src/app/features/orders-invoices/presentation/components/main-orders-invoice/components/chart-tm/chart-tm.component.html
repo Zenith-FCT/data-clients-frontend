@@ -1,23 +1,25 @@
-<div class="chart-header">
-  <h3>Análisis de Ticket Medio Historico</h3>
-  <mat-form-field appearance="outline" class="year-selector">
-    <mat-select [(ngModel)]="chartTmSelectedYear" (selectionChange)="onYearChange()">
-      <mat-option *ngFor="let year of years" [value]="year">
-        {{year}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-
-<div class="chart-content">
-  <div *ngIf="ordersInvoiceViewModel.isLoading$()" class="loading-state">
-    <div class="spinner"></div>
-    <span>Generando gráfica...</span>
+<div class="chart-container">
+  <div class="chart-header">
+    <h3>Evolución del Ticket Medio</h3>
+    <mat-form-field appearance="outline" class="year-selector">
+      <mat-select [ngModel]="ordersInvoiceViewModel.selectedTmYear$()" (selectionChange)="onYearChange($event)">
+        <mat-option *ngFor="let year of years" [value]="year">
+          {{year}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-  <div *ngIf="ordersInvoiceViewModel.error$()" class="error-state">
-    <span>⚠</span>
-    <p>{{ ordersInvoiceViewModel.error$() }}</p>
+  
+  <div class="chart-content">
+    <div *ngIf="ordersInvoiceViewModel.isLoading$()" class="loading-state">
+      <div class="spinner"></div>
+      <span>Generando gráfica...</span>
+    </div>
+    <div *ngIf="ordersInvoiceViewModel.error$()" class="error-state">
+      <span>⚠</span>
+      <p>{{ ordersInvoiceViewModel.error$() }}</p>
+    </div>
+   
+    <canvas #chartCanvas></canvas>
   </div>
- 
-  <canvas #chartCanvas></canvas>
 </div>

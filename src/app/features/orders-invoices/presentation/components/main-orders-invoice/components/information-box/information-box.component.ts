@@ -22,18 +22,18 @@ import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.mo
   styleUrl: './information-box.component.css'
 })
 export class InformationBoxComponent implements OnInit, OnDestroy {
-  @Input() type: 'amount' |'tm-year'| 'count' | 'monthly' | 'monthly-order'  = 'amount';
+  @Input() type: 'amount' |'tm-year'| 'count' |'monthly-tm'| 'monthly' | 'monthly-order'  = 'amount';
   
   private destroy$ = new Subject<void>();
   loading = false;
   selectedYear: number = new Date().getFullYear();
-  selectedMonth: number = new Date().getMonth();
+  selectedMonth: number = new Date().getMonth() + 1; // Inicializar con el mes actual (1-12)
   years: number[] = [];
   months = Array.from({length: 12}, (_, i) => ({ value: i }));
   
   constructor(public ordersInvoiceViewModel: OrdersInvoiceViewModelService) {
     effect(() => {
-      if (this.type === 'amount' || this.type === 'monthly' || this.type === 'tm-year') {
+      if (this.type === 'amount' || this.type === 'monthly' ) {
         const year = this.ordersInvoiceViewModel.selectedYear$();
         if (year !== this.selectedYear) {
           this.selectedYear = year;
@@ -42,6 +42,13 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
       }
       else if (this.type === 'monthly-order' || this.type === 'count') {
         const year = this.ordersInvoiceViewModel.selectedOrderYear$();
+        if (year !== this.selectedYear) {
+          this.selectedYear = year;
+          this.updateData();
+        }
+      }
+      else if (this.type === 'monthly-tm'|| this.type === 'tm-year') {
+        const year = this.ordersInvoiceViewModel.selectedTmYear$();
         if (year !== this.selectedYear) {
           this.selectedYear = year;
           this.updateData();
@@ -62,15 +69,12 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   }
   
   ngOnInit(): void {
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    
+    // No necesitamos reinicializar selectedMonth aquí ya que ya está inicializado con el mes actual
     if (this.type === 'monthly-order' || this.type === 'count') {
       this.selectedYear = this.ordersInvoiceViewModel.selectedOrderYear$();
     } else {
       this.selectedYear = this.ordersInvoiceViewModel.selectedYear$();
     }
-    this.selectedMonth = currentMonth;
     
     const data = this.ordersInvoiceViewModel.allMonthlySales$();
     if (data && data.length > 0) {
@@ -118,6 +122,9 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
         break;
       case 'tm-year':
         this.ordersInvoiceViewModel.loadYearTmList(this.selectedYear);
+        break;
+      case 'monthly-tm':
+        this.ordersInvoiceViewModel.loadMonthlyTm(this.selectedYear, this.selectedMonth);
         break;
     }
   }

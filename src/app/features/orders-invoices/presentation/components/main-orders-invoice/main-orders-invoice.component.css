@@ -115,7 +115,7 @@
   flex: 1;
   min-height: 0;
   position: relative;
-  height: 630px; /* Aumentada de 560px a 630px */
+  height: 630px;
 }
 
 .chart-section-tm canvas {

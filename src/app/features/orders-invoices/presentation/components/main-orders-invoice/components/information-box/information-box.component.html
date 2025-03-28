@@ -1,12 +1,12 @@
 <div class="information-box">
   <div class="box-header">
-    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos totales' : type === 'monthly' ? 'Ventas Mensuales' : type === 'tm-year' ? 'Total TM Anual' : 'Pedidos Mensuales' }}</h3>
-    <div class="selectors-container" *ngIf="type === 'monthly' || type === 'monthly-order' || type === 'amount' || type === 'count' || type === 'tm-year'">
-      <ng-container *ngIf="type === 'monthly' || type === 'monthly-order'">
+    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos totales' : type === 'monthly' ? 'Ventas Mensuales' : type === 'tm-year' ? 'Total TM Anual' : type === 'monthly-tm' ? 'Ticket medio mensual' : 'Pedidos Mensuales' }}</h3>
+    <div class="selectors-container" *ngIf="type === 'monthly' || type === 'monthly-order' || type === 'amount' || type === 'count' || type === 'tm-year' || type === 'monthly-tm'">
+      <ng-container *ngIf="type === 'monthly' || type === 'monthly-order' || type === 'monthly-tm'">
         <mat-form-field appearance="outline" class="month-selector">
           <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onMonthChange()">
-            <mat-option *ngFor="let month of months" [value]="month.value">
-              {{month.value + 1}}
+            <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
+              {{i + 1}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -18,7 +18,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="year-selector hidden-selector" *ngIf="type === 'monthly' || type === 'monthly-order'">
+      <mat-form-field appearance="outline" class="year-selector hidden-selector" *ngIf="type === 'monthly' || type === 'monthly-order' || type === 'monthly-tm'">
         <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
           <mat-option *ngFor="let year of years" [value]="year">
             {{year}}
@@ -74,7 +74,7 @@
           <span class="value">{{ ordersInvoiceViewModel.monthlySales$() | number:'1.2-2' }}</span>
           <span class="currency">€</span>
         </div>
-        <p class="description">Ventas del mes {{selectedMonth + 1}} de {{ selectedYear }}</p>
+        <p class="description">Ventas del mes {{selectedMonth}} de {{ selectedYear }}</p>
       </div>
     </ng-container>
     
@@ -93,7 +93,27 @@
         <div class="amount">
           <span class="value">{{ ordersInvoiceViewModel.monthlyOrders$() | number:'1.0-0' }}</span>
         </div>
-        <p class="description">Órdenes del mes {{selectedMonth + 1}} de {{ selectedYear }}</p>
+        <p class="description">Órdenes del mes {{selectedMonth}} de {{ selectedYear }}</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="type === 'monthly-tm'">
+      <div *ngIf="ordersInvoiceViewModel.isLoading$()" class="loading-state">
+        <div class="spinner"></div>
+        <span>Calculando...</span>
+      </div>
+
+      <div *ngIf="ordersInvoiceViewModel.error$()" class="error-state">
+        <span>⚠</span>
+        <p>{{ ordersInvoiceViewModel.error$() }}</p>
+      </div>
+
+      <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
+        <div class="amount">
+          <span class="value">{{ ordersInvoiceViewModel.monthlyTm$() | number:'1.2-2' }}</span>
+          <span class="currency">€</span>
+        </div>
+        <p class="description">Ticket Medio del mes {{selectedMonth}} de {{ selectedYear }}</p>
       </div>
     </ng-container>
 

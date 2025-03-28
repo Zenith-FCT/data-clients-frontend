@@ -4,7 +4,7 @@ import { OrdersInvoiceViewModelService } from '../../../../view-model/orders-inv
 import { Subject } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
-import { TmModel } from '../../../../../domain/use-cases/get-monthly-tm.use-case';
+import { TmModel } from '../../../../../domain/use-cases/get-all-monthly-tm.use-case';
 
 interface ChartConfiguration {
   type: string;
@@ -27,10 +27,9 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   private chart: any;
   private destroy$ = new Subject<void>();
-  chartTmSelectedYear: number = new Date().getFullYear();
-  years: number[] = [];
   private currentData: TmModel[] = [];
   private isBrowser: boolean;
+  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
   
   private readonly chartColors = [
     'rgba(255, 99, 132, 0.2)',   
@@ -77,12 +76,8 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentData = tmList;
         this.dataLoaded = true;
         
-        this.years = Array.from(new Set(tmList.map(item => item.year))).sort((a, b) => b - a);
-        if (this.years.length > 0 && !this.years.includes(this.chartTmSelectedYear)) {
-          this.chartTmSelectedYear = this.years[0];
-        }
-        
-        const filteredData = this.filterDataByYear(tmList);
+        const selectedYear = this.ordersInvoiceViewModel.selectedTmYear$();
+        const filteredData = this.filterDataByYear(tmList, selectedYear);
         if (this.chartInitialized) {
           this.updateChart(filteredData);
         }
@@ -101,21 +96,24 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         this.chartInitialized = true;
         
         if (this.currentData.length > 0) {
-          this.updateChart(this.filterDataByYear(this.currentData));
+          const selectedYear = this.ordersInvoiceViewModel.selectedTmYear$();
+          this.updateChart(this.filterDataByYear(this.currentData, selectedYear));
         }
       }, 500); 
     }
   }
 
-  onYearChange(): void {
-    if (this.chartTmSelectedYear && this.currentData.length > 0) {
-      const filteredData = this.filterDataByYear(this.currentData);
-      this.updateChart(filteredData);
+  onYearChange(event: any): void {
+    if (event.value) {
+      this.ordersInvoiceViewModel.setSelectedTmYear(event.value);
+      if (this.currentData.length > 0) {
+        this.updateChart(this.filterDataByYear(this.currentData, event.value));
+      }
     }
   }
 
-  private filterDataByYear(data: TmModel[]): TmModel[] {
-    return data.filter(item => item.year === this.chartTmSelectedYear);
+  private filterDataByYear(data: TmModel[], year: number): TmModel[] {
+    return data.filter(item => item.year === year);
   }
 
   private initChart(): void {

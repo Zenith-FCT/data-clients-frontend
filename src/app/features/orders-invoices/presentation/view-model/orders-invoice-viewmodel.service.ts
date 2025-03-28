@@ -7,9 +7,10 @@ import { MonthlySalesDataRepository } from '../../data/data-repositories/monthly
 import { GetTotalAmountOrdersUseCase } from '../../domain/use-cases/get-total-amount-orders.use-case';
 import { GetTotalOrdersUseCase } from '../../domain/use-cases/get-total-orders.use-case';
 import { GetTotalMonthOrdersUseCase } from '../../domain/use-cases/get-total-month-orders.use-case';
-import { GetMonthlyTMUseCase } from '../../domain/use-cases/get-monthly-tm.use-case';
-import { TmModel } from '../../domain/use-cases/get-monthly-tm.use-case';
+import { GetAllMonthlyTMUseCase } from '../../domain/use-cases/get-all-monthly-tm.use-case';
+import { TmModel } from '../../domain/use-cases/get-all-monthly-tm.use-case';
 import { GetTmYearUseCase } from '../../domain/use-cases/get-tm-year.use-case';
+import { GetMonthlyTmUseCase } from '../../domain/use-cases/get-monthly-tm.use-case';
 
 export interface OrdersInvoicesUIState {
   isLoading: boolean;
@@ -24,6 +25,7 @@ export interface OrdersInvoicesUIState {
   monthlyTmList: TmModel[];
   totalTm: number;
   selectedTmYear: number;
+  monthlyTm: number;
 }
 
 @Injectable({
@@ -44,7 +46,8 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     monthlyOrders: 0,
     monthlyTmList: [],
     totalTm: 0,
-    selectedTmYear: new Date().getFullYear()
+    selectedTmYear: new Date().getFullYear(),
+    monthlyTm: 0
   });
 
   public readonly uiState$ = this.uiState.asReadonly();
@@ -61,14 +64,17 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   public readonly monthlyTmList$ = computed(() => this.uiState().monthlyTmList);
   public readonly totalTm$ = computed(() => this.uiState().totalTm);
   public readonly selectedTmYear$ = computed(() => this.uiState().selectedTmYear);
+  public readonly monthlyTm$ = computed(() => this.uiState().monthlyTm);
+
 
   private getMonthlySalesUseCase: GetMonthlySalesUseCase;
   private getAllMonthWithTotalsUseCase: GetAllMonthWithTotalsUseCase;
   private getTotalAmountOrdersUseCase: GetTotalAmountOrdersUseCase;
   private getTotalOrdersUseCase: GetTotalOrdersUseCase;
   private getTotalMonthOrdersUseCase: GetTotalMonthOrdersUseCase;
-  private getMonthlyTMUseCase: GetMonthlyTMUseCase;
+  private getAllMonthlyTMUseCase: GetAllMonthlyTMUseCase;
   private getTmYearUseCase: GetTmYearUseCase;
+  private getMonthlyTMUseCase: GetMonthlyTmUseCase;
 
   constructor(private monthlySalesRepository: MonthlySalesDataRepository) {
     this.getMonthlySalesUseCase = new GetMonthlySalesUseCase(this.monthlySalesRepository);
@@ -76,8 +82,9 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     this.getTotalAmountOrdersUseCase = new GetTotalAmountOrdersUseCase(this.monthlySalesRepository);
     this.getTotalOrdersUseCase = new GetTotalOrdersUseCase(this.monthlySalesRepository);
     this.getTotalMonthOrdersUseCase = new GetTotalMonthOrdersUseCase(this.monthlySalesRepository);
-    this.getMonthlyTMUseCase = new GetMonthlyTMUseCase(this.monthlySalesRepository);
+    this.getAllMonthlyTMUseCase = new GetAllMonthlyTMUseCase(this.monthlySalesRepository);
     this.getTmYearUseCase = new GetTmYearUseCase(this.monthlySalesRepository);
+    this.getMonthlyTMUseCase = new GetMonthlyTmUseCase(this.monthlySalesRepository);
   }
 
   public setSelectedYear(year: number): void {
@@ -128,6 +135,38 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       this.updateState({ isLoading: false });
     }
   }
+  
+  public async loadMonthlyTm(year: number, month: number): Promise<void> {
+    if (!year || !month) {
+      this.updateState({
+        error: 'Año y mes son requeridos para cargar el ticket medio',
+        monthlyTm: 0
+      });
+      return;
+    }
+
+    try {
+      this.updateState({ 
+        isLoading: true, 
+        error: null
+      });
+
+      const tm = await firstValueFrom(this.getMonthlyTMUseCase.execute(year, month));
+      
+      this.updateState({ 
+        monthlyTm: tm,
+        error: null
+      });
+    } catch (error) {
+      console.error('Error loading monthly TM:', error);
+      this.updateState({
+        error: 'Error al cargar el ticket medio mensual. Intente nuevamente.',
+        monthlyTm: 0
+      });
+    } finally {
+      this.updateState({ isLoading: false });
+    }
+  }
 
   public async loadMonthlyTmList(): Promise<void> {
     try {
@@ -136,7 +175,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
         error: null
       });
       
-      const tmList = await firstValueFrom(this.getMonthlyTMUseCase.execute());
+      const tmList = await firstValueFrom(this.getAllMonthlyTMUseCase.execute());
       this.updateState({ monthlyTmList: tmList });
     } catch (error) {
       this.updateState({
@@ -233,7 +272,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
 
   public async refreshData(forceRefresh: boolean = false): Promise<void> {
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
+    const currentMonth = currentDate.getMonth() + 1; // Ajustamos para usar formato 1-12
     
     await this.loadAllMonthWithTotals();
     
