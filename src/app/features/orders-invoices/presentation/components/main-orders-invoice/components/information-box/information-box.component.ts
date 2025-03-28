@@ -27,7 +27,7 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   loading = false;
   selectedYear: number = new Date().getFullYear();
-  selectedMonth: number = new Date().getMonth() + 1; // Inicializar con el mes actual (1-12)
+  selectedMonth: number = new Date().getMonth() + 1; 
   years: number[] = [];
   months = Array.from({length: 12}, (_, i) => ({ value: i }));
   
@@ -69,7 +69,7 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   }
   
   ngOnInit(): void {
-    // No necesitamos reinicializar selectedMonth aquí ya que ya está inicializado con el mes actual
+   
     if (this.type === 'monthly-order' || this.type === 'count') {
       this.selectedYear = this.ordersInvoiceViewModel.selectedOrderYear$();
     } else {
