@@ -53,7 +53,7 @@
 .chart-content {
   position: relative;
   width: 100%;
-  height: calc(630px - 72px); /* 700px menos el header y padding */
+  height: calc(600px - 72px);
   overflow: hidden;
   display: flex;
   align-items: stretch;

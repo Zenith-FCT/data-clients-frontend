@@ -88,7 +88,7 @@
   border-radius: 8px;
   padding: 0;
   height: calc(100vh - 380px);
-  min-height: 650px;
+  min-height: 600px;
   width: 100%;
   box-shadow: none;
   position: relative;
@@ -166,53 +166,34 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  height: fit-content;
-  padding: 10px 0;
+  height: 100%;
+  position: relative;
+  padding: 0;
+  align-self: stretch !important;
+  margin-top: 0 !important;
 }
 
-.dashboard-container {
-  padding: 1rem;
-}
-
-.information-boxes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.charts-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-.chart-wrapper {
+.info-container > div {
+  flex: 1;
   background: white;
   border-radius: 8px;
-  height: 400px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  box-sizing: border-box;
+  height: calc(50% - 8px);
+  display: flex;
 }
 
-@media (max-width: 1200px) {
-  .summary-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .charts-section {
-    flex-direction: column;
-    height: auto;
-    gap: 2rem;
-  }
-
-  .chart-item {
-    width: 100%;
-    margin-bottom: 0;
-  }
+.info-container > div:first-child {
+  margin-bottom: 16px;
 }
 
-@media (min-width: 1201px) and (max-width: 1500px) {
-  body.sidenav-expanded .summary-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.info-container > div:last-child {
+  margin-bottom: 0;
+}
+
+.info-container > div > app-information-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
