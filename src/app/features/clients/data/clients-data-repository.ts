@@ -11,16 +11,12 @@ import { ClientsApiService } from "./remote/api-json/clients-api.service";
 })
 export class ClientsDataRepository implements IClientsRepository {
     constructor(private apiClients: ClientsApiService) {
-        console.log('ClientsDataRepository initialized');
     }
 
     getAllClientsList(): Observable<ClientsList[]> {
-        console.log('ClientsDataRepository: Getting all clients');
         return this.apiClients.getAllClientsList().pipe(
-            tap(apiClients => console.log('ClientsDataRepository: Mapping clients:', apiClients)),
             map((apiClients: any[]) => apiClients.map(client => ClientsApiMapper.toDomain(client))),
             catchError(error => {
-                console.error('ClientsDataRepository: Error getting clients:', error);
                 throw error;
             })
         );

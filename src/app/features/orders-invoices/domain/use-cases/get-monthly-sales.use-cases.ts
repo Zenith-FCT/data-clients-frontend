@@ -6,11 +6,12 @@ export class GetMonthlySalesUseCase {
     constructor(private monthlySalesRepository: MonthlySalesRepository) {}
     
     execute(year: number, month: number): Observable<number> {
-        let monthlySales= this.monthlySalesRepository.getMonthlySales();
+        let monthlySales = this.monthlySalesRepository.getMonthlySales();
         return monthlySales.pipe(
             map((monthlySales: MonthlySalesModel[]) => {
-                const monthNumber = month + 1;
-                const formattedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
+                // El mes ya viene en el formato correcto (1-12)
+                const actualMonth = month;
+                const formattedMonth = actualMonth < 10 ? `0${actualMonth}` : `${actualMonth}`;
                 const searchFormat = `${year}-${formattedMonth}`;
                 const monthlySale = monthlySales.find(sale => sale.date === searchFormat);
                 

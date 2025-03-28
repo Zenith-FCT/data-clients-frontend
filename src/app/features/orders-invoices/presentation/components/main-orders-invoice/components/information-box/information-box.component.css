@@ -5,8 +5,50 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
-  height: 140px;
+  height: 100%; 
   box-sizing: border-box;
+  width: 100%;
+}
+
+:host([type="monthly-tm"]) .information-box,
+:host([type="tm-year"]) .information-box {
+  height: 100%;
+  width: 100%;
+}
+
+:host([type="monthly-tm"]),
+:host([type="tm-year"]) {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.info-container .information-box {
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-container .box-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-container .amount {
+  font-size: 38px;
+  line-height: 1.2;
+}
+
+.info-container .currency {
+  font-size: 32px;
+}
+
+.info-container .description {
+  font-size: 16px;
+  margin-top: 12px;
 }
 
 .box-header {
@@ -39,6 +81,13 @@
   min-height: 0;
 }
 
+:host([type="monthly-tm"]) .box-content,
+:host([type="tm-year"]) .box-content {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
 .selectors-container {
   display: flex;
   gap: 4px;
@@ -47,12 +96,12 @@
 }
 
 .month-selector {
-  width: 45px !important;
+  width: 100% !important;
   min-width: 45px !important;
 }
 
 .year-selector {
-  width: 62px !important;
+  width: 100% !important;
   min-width: 62px !important;
 }
 
@@ -212,7 +261,7 @@
 }
 
 .amount {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
   color: #333;
   margin-bottom: 4px;
@@ -220,10 +269,30 @@
 }
 
 .currency {
-  font-size: 20px;
+  font-size: 24px;
   vertical-align: top;
   margin-left: 2px;
   color: #666;
+}
+
+:host([type="monthly-tm"]) .amount,
+:host([type="tm-year"]) .amount {
+  font-size: 42px;
+}
+
+:host([type="monthly-tm"]) .currency,
+:host([type="tm-year"]) .currency,
+:host([type="tm-year"]) .unit {
+  font-size: 36px;
+}
+
+:host([type="monthly-tm"]) .data-state,
+:host([type="tm-year"]) .data-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 }
 
 .description {
@@ -247,4 +316,10 @@
 
 ::ng-deep .mat-mdc-option .mdc-list-item--selected {
   padding-left: 8px !important;
+}
+.hidden-selector {
+  visibility: hidden;
+  position: absolute;
+  height: 0;
+  overflow: hidden;
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { MonthlySalesViewModelService } from '../../../../view-model/monthly-orders-viewmodel.service';
+import { OrdersInvoiceViewModelService } from '../../../../view-model/orders-invoice-viewmodel.service';
 import { Subject } from 'rxjs';
 import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.model';
 import { MatSelectModule } from '@angular/material/select';
@@ -19,29 +19,32 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
   private chart: any;
   private destroy$ = new Subject<void>();
   selectedYear: number = new Date().getFullYear();
-  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
+  years: number[] = [];
   private currentData: MonthlySalesModel[] = [];
   private isBrowser: boolean;
 
   constructor(
-    public monthlySalesViewModel: MonthlySalesViewModelService,
+    public monthlySalesViewModel: OrdersInvoiceViewModelService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
-    effect(() => {
-      const year = this.monthlySalesViewModel.selectedYear$();
-      this.selectedYear = year;
-      if (this.currentData.length > 0) {
-        this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
+   effect(() => {
+      const data = this.monthlySalesViewModel.allMonthlySales$();
+      if (data && data.length > 0) {
+        this.currentData = data;
+        this.extractAvailableYears(data);
+        this.destroyAndRecreateChart(this.filterDataByYear(data));
       }
     });
 
     effect(() => {
-      const data = this.monthlySalesViewModel.allMonthlySales$();
-      if (data && data.length > 0) {
-        this.currentData = data;
-        this.destroyAndRecreateChart(this.filterDataByYear(data));
+      const year = this.monthlySalesViewModel.selectedOrderYear$();
+      if (year !== this.selectedYear) {
+        this.selectedYear = year;
+        if (this.currentData.length > 0) {
+          this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
+        }
       }
     });
   }
@@ -52,6 +55,22 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
 
   ngAfterViewInit(): void {
     this.monthlySalesViewModel.loadAllMonthWithTotals();
+  }
+
+  private extractAvailableYears(data: MonthlySalesModel[]): void {
+    const uniqueYears = new Set<number>();
+    
+    data.forEach(item => {
+      const year = parseInt(item.date.split('-')[0]);
+      uniqueYears.add(year);
+    });
+    
+    this.years = Array.from(uniqueYears).sort((a, b) => b - a);
+
+    if (this.years.length > 0 && !this.years.includes(this.selectedYear)) {
+      this.selectedYear = this.years[0];
+      this.monthlySalesViewModel.setSelectedOrderYear(this.selectedYear);
+    }
   }
 
   onYearChange(): void {
@@ -109,30 +128,22 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 30,
+              bottom: 20
+            }
+          },
           interaction: {
             intersect: false,
             mode: 'index'
           },
           plugins: {
             title: {
-              display: true,
-              text: 'Análisis de Ventas y Facturas',
-              font: {
-                size: 16,
-                weight: 'bold'
-              },
-              padding: 20
+              display: false
             },
             legend: {
-              display: true,
-              position: 'top',
-              labels: {
-                font: {
-                  weight: 'bold',
-                  size: 12
-                },
-                padding: 15
-              }
+              display: false
             },
             tooltip: {
               enabled: true,
@@ -179,6 +190,10 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
                 font: {
                   weight: '600'
                 }
+              },
+              suggestedMax: function(context: any) {
+                const maxValue = Math.max(...context.chart.data.datasets[0].data);
+                return maxValue + 50;
               }
             },
             y1: {
@@ -204,6 +219,10 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
                 font: {
                   weight: '600'
                 }
+              },
+              suggestedMax: function(context: any) {
+                const maxValue = Math.max(...context.chart.data.datasets[1].data);
+                return maxValue + 1;
               }
             },
             x: {
