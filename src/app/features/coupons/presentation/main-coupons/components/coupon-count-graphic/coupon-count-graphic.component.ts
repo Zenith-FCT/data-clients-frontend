@@ -1,0 +1,85 @@
+import {CommonModule,isPlatformBrowser} from '@angular/common';
+import {AfterViewInit,Component,ElementRef,Inject,PLATFORM_ID,ViewChild,effect,inject} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import Chart from 'chart.js/auto';
+import {CouponCountGraphicViewModel} from './coupon-count-graphic.view-model';
+
+@Component({
+    selector: 'app-coupon-count-graphic',
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule
+    ],
+    templateUrl: './coupon-count-graphic.component.html',
+    styleUrl: './coupon-count-graphic.component.css',
+})
+export class CouponCountGraphicComponent implements AfterViewInit {
+  viewModel = inject(CouponCountGraphicViewModel)
+  @ViewChild('chartCanvas') chartCanvas!: ElementRef;
+  selectedYear: string = new Date().getFullYear() + "";
+  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
+  private isPlatformBrowser: boolean;
+  private chart: any;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isPlatformBrowser = isPlatformBrowser(platformId)
+
+    effect(() => {
+      const data = this.viewModel.count();
+      if (data && data.length > 0) {
+        this.chart.data.datasets[0].data = this.viewModel.count();
+        this.chart.update();
+      }
+    });
+  }
+
+  ngAfterViewInit() {
+    if (this.isPlatformBrowser) {
+      this.createChart();
+    }
+
+
+
+  }
+
+  createChart() {
+    const ctx = this.chartCanvas.nativeElement.getContext('2d');
+
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        datasets: [
+          {
+            label: 'Cupones usados',
+            data: this.viewModel.count(),
+            borderColor: 'blue',
+            backgroundColor: 'rgba(0, 0, 255, 1)',
+            pointRadius: 5,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { title: { display: true, text: 'Cupones usados'}, min: 0, ticks: {precision: 0} },
+        },
+
+        plugins: {
+          legend: {
+            display: false
+          },
+
+        }
+      }
+    });
+    this.yearChange()
+  }
+
+  yearChange() {
+    console.log(this.selectedYear);
+
+    this.viewModel.getTotalCoupons(this.selectedYear)
+  }
+}

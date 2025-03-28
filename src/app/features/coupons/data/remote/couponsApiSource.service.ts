@@ -75,4 +75,15 @@ export class CouponsApiSourceService{
       }
     }
 
+    async getMonthlyCouponsByYear(year: string): Promise<number[]> {
+      try {
+        const response = await fetch(`${this.url}cuponesByYear${year}`);
+        const data = await response.json();
+        return data;
+      }
+      catch (error) {
+        throw new Error("Error al recoger los datos");
+      }
+    }
+
 }
