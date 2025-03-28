@@ -124,7 +124,8 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
         this.ordersInvoiceViewModel.loadYearTmList(this.selectedYear);
         break;
       case 'monthly-tm':
-        this.ordersInvoiceViewModel.loadMonthlyTm(this.selectedYear, this.selectedMonth);
+        const tmYear = this.ordersInvoiceViewModel.selectedTmYear$();
+        this.ordersInvoiceViewModel.loadMonthlyTm(tmYear, this.selectedMonth);
         break;
     }
   }
@@ -133,6 +134,8 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     if (this.selectedYear) {
       if (this.type === 'monthly-order' || this.type === 'count') {
         this.ordersInvoiceViewModel.setSelectedOrderYear(this.selectedYear);
+      } else if (this.type === 'tm-year' || this.type === 'monthly-tm') {
+        this.ordersInvoiceViewModel.setSelectedTmYear(this.selectedYear);
       } else {
         this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
       }

@@ -29,7 +29,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private currentData: TmModel[] = [];
   private isBrowser: boolean;
-  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
+  years: number[] = [];
   
   private readonly chartColors = [
     'rgba(255, 99, 132, 0.2)',   
@@ -76,7 +76,15 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentData = tmList;
         this.dataLoaded = true;
         
+        // Extract available years from data
+        this.updateAvailableYears(tmList);
+        
         const selectedYear = this.ordersInvoiceViewModel.selectedTmYear$();
+        // If the selected year is not in the available years, select the most recent year
+        if (this.years.length > 0 && !this.years.includes(selectedYear)) {
+          this.ordersInvoiceViewModel.setSelectedTmYear(this.years[0]);
+        }
+        
         const filteredData = this.filterDataByYear(tmList, selectedYear);
         if (this.chartInitialized) {
           this.updateChart(filteredData);
@@ -110,6 +118,11 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         this.updateChart(this.filterDataByYear(this.currentData, event.value));
       }
     }
+  }
+
+  private updateAvailableYears(data: TmModel[]): void {
+    const uniqueYears = [...new Set(data.map(item => item.year))];
+    this.years = uniqueYears.sort((a, b) => b - a);
   }
 
   private filterDataByYear(data: TmModel[], year: number): TmModel[] {
