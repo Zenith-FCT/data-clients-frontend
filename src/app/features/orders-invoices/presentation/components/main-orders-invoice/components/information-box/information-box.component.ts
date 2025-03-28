@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MonthlySalesViewModelService } from '../../../../view-model/monthly-orders-viewmodel.service';
+import { OrdersInvoiceViewModelService } from '../../../../view-model/orders-invoice-viewmodel.service';
 import { Subject } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,7 +22,7 @@ import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.mo
   styleUrl: './information-box.component.css'
 })
 export class InformationBoxComponent implements OnInit, OnDestroy {
-  @Input() type: 'amount' | 'count' | 'monthly' | 'monthly-order' = 'amount';
+  @Input() type: 'amount' |'tm-year'| 'count' | 'monthly' | 'monthly-order'  = 'amount';
   
   private destroy$ = new Subject<void>();
   loading = false;
@@ -31,19 +31,17 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   years: number[] = [];
   months = Array.from({length: 12}, (_, i) => ({ value: i }));
   
-  constructor(public monthlySalesViewModel: MonthlySalesViewModelService) {
-    // Listen for year changes based on box type
+  constructor(public ordersInvoiceViewModel: OrdersInvoiceViewModelService) {
     effect(() => {
-      // For types amount and monthly, use selectedYear$
-      if (this.type === 'amount' || this.type === 'monthly') {
-        const year = this.monthlySalesViewModel.selectedYear$();
+      if (this.type === 'amount' || this.type === 'monthly' || this.type === 'tm-year') {
+        const year = this.ordersInvoiceViewModel.selectedYear$();
         if (year !== this.selectedYear) {
           this.selectedYear = year;
           this.updateData();
         }
       }
       else if (this.type === 'monthly-order' || this.type === 'count') {
-        const year = this.monthlySalesViewModel.selectedOrderYear$();
+        const year = this.ordersInvoiceViewModel.selectedOrderYear$();
         if (year !== this.selectedYear) {
           this.selectedYear = year;
           this.updateData();
@@ -52,12 +50,11 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     });
     
     effect(() => {
-      this.loading = this.monthlySalesViewModel.isLoading$();
+      this.loading = this.ordersInvoiceViewModel.isLoading$();
     });
     
-    // Listen for data changes to extract available years
     effect(() => {
-      const data = this.monthlySalesViewModel.allMonthlySales$();
+      const data = this.ordersInvoiceViewModel.allMonthlySales$();
       if (data && data.length > 0) {
         this.extractYearsFromData(data);
       }
@@ -68,20 +65,17 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     
-    // Initialize with values from service based on type
     if (this.type === 'monthly-order' || this.type === 'count') {
-      this.selectedYear = this.monthlySalesViewModel.selectedOrderYear$();
+      this.selectedYear = this.ordersInvoiceViewModel.selectedOrderYear$();
     } else {
-      this.selectedYear = this.monthlySalesViewModel.selectedYear$();
+      this.selectedYear = this.ordersInvoiceViewModel.selectedYear$();
     }
     this.selectedMonth = currentMonth;
     
-    // Load initial data
-    const data = this.monthlySalesViewModel.allMonthlySales$();
+    const data = this.ordersInvoiceViewModel.allMonthlySales$();
     if (data && data.length > 0) {
       this.extractYearsFromData(data);
     } else {
-      // Fallback to last 5 years if no data is available yet
       this.years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
     }
     
@@ -98,13 +92,11 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
       }
     });
     
-    this.years = Array.from(uniqueYears).sort((a, b) => b - a); // Sort in descending order (newest first)
+    this.years = Array.from(uniqueYears).sort((a, b) => b - a);
     
-    // If no years found or the currently selected year is not in the list, add current year
     if (this.years.length === 0) {
       this.years = [new Date().getFullYear()];
     } else if (!this.years.includes(this.selectedYear)) {
-      // Select the most recent year if current selection isn't available
       this.selectedYear = this.years[0];
       this.onYearChange();
     }
@@ -113,16 +105,19 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   private updateData(): void {
     switch (this.type) {
       case 'monthly':
-        this.monthlySalesViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
+        this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
         break;
       case 'amount':
-        this.monthlySalesViewModel.loadTotalOrdersAmount(this.selectedYear);
+        this.ordersInvoiceViewModel.loadTotalOrdersAmount(this.selectedYear);
         break;
       case 'count':
-        this.monthlySalesViewModel.loadTotalOrders(this.selectedYear);
+        this.ordersInvoiceViewModel.loadTotalOrders(this.selectedYear);
         break;
       case 'monthly-order':
-        this.monthlySalesViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
+        this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
+        break;
+      case 'tm-year':
+        this.ordersInvoiceViewModel.loadYearTmList(this.selectedYear);
         break;
     }
   }
@@ -130,9 +125,9 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   onYearChange(): void {
     if (this.selectedYear) {
       if (this.type === 'monthly-order' || this.type === 'count') {
-        this.monthlySalesViewModel.setSelectedOrderYear(this.selectedYear);
+        this.ordersInvoiceViewModel.setSelectedOrderYear(this.selectedYear);
       } else {
-        this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
+        this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
       }
       this.updateData();
     }

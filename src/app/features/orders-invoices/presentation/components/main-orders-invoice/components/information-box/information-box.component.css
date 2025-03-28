@@ -248,3 +248,9 @@
 ::ng-deep .mat-mdc-option .mdc-list-item--selected {
   padding-left: 8px !important;
 }
+.hidden-selector {
+  visibility: hidden;
+  position: absolute;
+  height: 0;
+  overflow: hidden;
+}

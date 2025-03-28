@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { MonthlySalesViewModelService } from '../../../../view-model/monthly-orders-viewmodel.service';
+import { OrdersInvoiceViewModelService } from '../../../../view-model/orders-invoice-viewmodel.service';
 import { Subject } from 'rxjs';
 import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.model';
 import { MatSelectModule } from '@angular/material/select';
@@ -24,7 +24,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
   private isBrowser: boolean;
 
   constructor(
-    public monthlySalesViewModel: MonthlySalesViewModelService,
+    public monthlySalesViewModel: OrdersInvoiceViewModelService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);

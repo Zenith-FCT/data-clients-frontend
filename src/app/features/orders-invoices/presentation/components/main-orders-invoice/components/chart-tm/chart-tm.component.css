@@ -3,6 +3,11 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
 }
 
 .chart-header {
@@ -51,12 +56,14 @@
   width: 100%;
   min-height: 0;
   overflow: hidden;
+  display: flex;
+  align-items: stretch;
 }
 
 canvas {
+  width: 100% !important;
+  height: 100% !important;
   display: block !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
 }
 
 .loading-state, .error-state {

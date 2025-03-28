@@ -1,11 +1,20 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { MonthlySalesViewModelService } from '../../../../view-model/monthly-orders-viewmodel.service';
-import { Subject, takeUntil } from 'rxjs';
+import { OrdersInvoiceViewModelService } from '../../../../view-model/orders-invoice-viewmodel.service';
+import { Subject } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { TmModel } from '../../../../../domain/use-cases/get-monthly-tm.use-case';
-declare const Chart: any;
+
+interface ChartConfiguration {
+  type: string;
+  data: any;
+  options: any;
+}
+
+declare const Chart: {
+  new (ctx: CanvasRenderingContext2D, config: ChartConfiguration): any;
+};
 
 @Component({
   selector: 'app-chart-tm',
@@ -23,7 +32,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   private currentData: TmModel[] = [];
   private isBrowser: boolean;
   
-  private chartColors = [
+  private readonly chartColors = [
     'rgba(255, 99, 132, 0.2)',   
     'rgba(54, 162, 235, 0.2)', 
     'rgba(255, 206, 86, 0.2)',  
@@ -38,7 +47,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
     'rgba(255, 87, 34, 0.2)' 
   ];
 
-  private chartBorderColors = [
+  private readonly chartBorderColors = [
     'rgba(255, 99, 132, 1)',
     'rgba(54, 162, 235, 1)',
     'rgba(255, 206, 86, 1)',
@@ -57,13 +66,13 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   chartInitialized = false;
 
   constructor(
-    public monthlySalesViewModel: MonthlySalesViewModelService,
+    public readonly ordersInvoiceViewModel: OrdersInvoiceViewModelService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     effect(() => {
-      const tmList = this.monthlySalesViewModel.monthlyTmList$();
+      const tmList = this.ordersInvoiceViewModel.monthlyTmList$();
       if (tmList && tmList.length > 0) {
         this.currentData = tmList;
         this.dataLoaded = true;
@@ -74,13 +83,15 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         
         const filteredData = this.filterDataByYear(tmList);
-        this.destroyAndRecreateChart(filteredData);
+        if (this.chartInitialized) {
+          this.updateChart(filteredData);
+        }
       }
     });
   }
 
   ngOnInit(): void {
-    this.monthlySalesViewModel.loadMonthlyTmList();
+    this.ordersInvoiceViewModel.loadMonthlyTmList();
   }
 
   ngAfterViewInit(): void {
@@ -99,7 +110,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   onYearChange(): void {
     if (this.chartTmSelectedYear && this.currentData.length > 0) {
       const filteredData = this.filterDataByYear(this.currentData);
-      this.destroyAndRecreateChart(filteredData);
+      this.updateChart(filteredData);
     }
   }
 
@@ -113,12 +124,12 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
-    this.chart = new Chart(ctx, {
+    const config: ChartConfiguration = {
       type: 'bar',
       data: {
         labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         datasets: [{
-          label: 'Ticket Medio',
+          label: 'Ticket Medio Mensual',
           data: [],
           backgroundColor: this.chartColors,
           borderColor: this.chartBorderColors,
@@ -130,8 +141,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true,
-            position: 'top'
+            display: false
           },
           tooltip: {
             enabled: true,
@@ -142,8 +152,9 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
             bodyFont: {
               size: 12
             },
+            padding: 10,
             callbacks: {
-              label: function(context: any) {
+              label: (context: any) => {
                 return `Ticket Medio: ${context.parsed.y.toLocaleString('es-ES')} €`;
               }
             }
@@ -157,111 +168,37 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
               color: 'rgba(0, 0, 0, 0.1)'
             },
             ticks: {
-              callback: function(value: number): string {
+              callback: (value: number) => {
                 return value.toLocaleString('es-ES') + ' €';
+              },
+              font: {
+                size: 11
+              }
+            },
+            title: {
+              display: true,
+              text: 'Valor Medio (€)',
+              font: {
+                weight: 'bold',
+                size: 14
               }
             }
           },
           x: {
             grid: {
               display: false
+            },
+            ticks: {
+              font: {
+                size: 11
+              }
             }
           }
         }
       }
-    });
-  }
+    };
 
-  private destroyAndRecreateChart(data: TmModel[]): void {
-    if (!this.isBrowser) return;
-    
-    if (this.chart) {
-      this.chart.destroy();
-      this.chart = null;
-    }
-    
-    if (this.chartCanvas && this.chartCanvas.nativeElement) {
-      const ctx = this.chartCanvas.nativeElement.getContext('2d');
-      if (!ctx) return;
-      
-      this.chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          datasets: [{
-            label: 'Ticket Medio Mensual',
-            data: [],
-            backgroundColor: this.chartColors,
-            borderColor: this.chartBorderColors,
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              enabled: true,
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              titleFont: {
-                size: 12
-              },
-              bodyFont: {
-                size: 12
-              },
-              padding: 10,
-              callbacks: {
-                label: function(context: any) {
-                  return `Ticket Medio: ${context.parsed.y.toLocaleString('es-ES')} €`;
-                }
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              grid: {
-                display: true,
-                color: 'rgba(0, 0, 0, 0.1)'
-              },
-              ticks: {
-                callback: function(value: number): string {
-                  return value.toLocaleString('es-ES') + ' €';
-                },
-                font: {
-                  size: 11
-                }
-              },
-              title: {
-                display: true,
-                text: 'Valor Medio (€)',
-                font: {
-                  weight: 'bold',
-                  size: 14
-                }
-              }
-            },
-            x: {
-              grid: {
-                display: false
-              },
-              ticks: {
-                font: {
-                  size: 11
-                }
-              }
-            }
-          }
-        }
-      });
-      
-      if (this.chart) {
-        this.updateChart(data);
-      }
-    }
+    this.chart = new Chart(ctx, config);
   }
 
   private updateChart(data: TmModel[]): void {

@@ -57,7 +57,7 @@
   flex: 1;
   width: 100%;
   height: calc(100% - 60px);
-  min-height: 400px; 
+  min-height: 650px; /* Aumentado de 400px a 650px para permitir que el gráfico crezca */
   padding-top: 8px; 
   overflow: hidden;
 }
@@ -66,7 +66,7 @@ canvas {
   display: block !important;
   width: 100% !important;
   height: 100% !important;
-  max-height: 420px !important; 
+  max-height: 490px !important;  /* Aumentado a 700px para que el gráfico sea más alto */
 }
 
 .loading-state, .error-state {

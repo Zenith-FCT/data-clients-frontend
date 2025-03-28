@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { ClientsListApi } from './clients-list-api.model';
 
@@ -14,8 +14,6 @@ export class ClientsApiService {
   constructor(private http: HttpClient) {}
 
   getAllClientsList(): Observable<ClientsListApi[]> {
-    console.log('ClientsApiService: Fetching clients from:', this.apiUrl);
-    
     return this.http.get<ClientsListApi[]>(this.apiUrl).pipe(
       map(response => response.map(item => ({
         id: item.id,
@@ -24,14 +22,12 @@ export class ClientsApiService {
         ltv: item.ltv,
         tm: item.tm
       }))),
-      tap(clients => console.log('ClientsApiService: Received response:', clients)),
       catchError(this.handleError)
     );
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
-    console.error('ClientsApiService Error:', error);
     return throwError(() => new Error(errorMessage));
   }
 
