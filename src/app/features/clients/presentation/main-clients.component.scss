@@ -34,41 +34,63 @@
   border-color: #333 !important;
 }
 
-.clients-container {
+.main-container {
+  display: flex;
+  gap: 20px;
   padding: 20px;
+  background-color: transparent;
+  align-items: flex-start;
+}
+
+.clients-container {
+  flex: 0 0 50%;
   background-color: #212121;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  width: 50%;
-  margin: 0;
   color: white;
+  display: flex;
+  flex-direction: column;
+  height: 504px; /* (112px + 40px padding) * 3 recuadros + (24px * 2) gaps = 504px */
 }
 
 .loading-text, .error-text {
   color: white;
   padding: 20px;
+  background-color: #212121;
+  border-radius: 8px;
 }
 
 h2 {
   color: white;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reducido de 20px a 10px */
 }
 
 .clients-title {
   color: white;
-  margin-bottom: 20px;
+  margin: 0;
+  padding: 10px 20px;  /* Reducido de 15px a 10px */
   text-align: center;
+  background-color: #212121;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom: 1px solid #333;
 }
 
 .table-container {
   overflow-x: auto;
+  background-color: #212121;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 10px 20px;
+  overflow-y: auto;
+  height: calc(100% - 41px); /* Resta la altura del título */
+  min-height: 0; /* Esto asegura que el scroll funcione correctamente */
 }
 
 table {
   width: 100%;
-  margin-top: 20px;
   border: 1px solid #333;
   color: white;
+  margin: 0;
 }
 
 th.mat-header-cell {
@@ -87,4 +109,118 @@ td.mat-cell {
 
 tr.mat-row:hover {
   background-color: #383838;
+}
+
+.info-section {
+  flex: 1;
+  padding: 20px;
+}
+
+.info-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* Aumentado de 16px a 24px */
+  max-width: 40%;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.info-box {
+  background-color: #212121;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 0; /* Quitamos el margin-bottom que teníamos antes */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 112px; /* Altura fija para cada recuadro */
+
+  .info-box-icon {
+    margin-bottom: 10px;
+    
+    mat-icon {
+      font-size: 32px;
+      height: 32px;
+      width: 32px;
+      color: #64B5F6;
+    }
+  }
+
+  .info-box-title {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  .info-box-value {
+    color: white;
+    font-size: 2rem;
+    font-weight: 500;
+  }
+}
+
+.chart-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 20px;
+  margin-top: 30px; /* Aumentado de -10px a 30px para mayor separación */
+}
+
+.chart-container {
+  background-color: #212121;
+  border-radius: 8px;
+  padding: 10px;
+  width: 50%;
+  color: white;
+  box-sizing: border-box;
+}
+
+.chart-title {
+  color: white;
+  margin: 0;
+  padding: 10px 20px;
+  text-align: center;
+  background-color: #212121;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom: 1px solid #333;
+}
+
+.echarts-container {
+  height: 350px;
+  width: 100%;
+  border-radius: 8px;
+  padding: 10px 0;
+}
+
+@media (max-width: 1200px) {
+  .main-container {
+    flex-direction: column;
+  }
+  
+  .clients-container, .info-panel {
+    width: 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .info-panel {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .info-box {
+    flex: 1;
+    min-width: 250px;
+    width: auto;
+  }
+  
+  .chart-container {
+    width: calc(100% - 40px);
+    margin: 20px auto;
+  }
 }

@@ -36,7 +36,7 @@ export const routes: Routes = [
             },
             {
                 path: 'coupons',
-                loadComponent: () => import('./features/coupons/components/main-coupons/main-coupons.component').then(m => m.MainCouponsComponent)
+                loadComponent: () => import('./features/coupons/presentation/main-coupons/main-coupons.component').then(m => m.MainCouponsComponent)
             }
         ]
     },
