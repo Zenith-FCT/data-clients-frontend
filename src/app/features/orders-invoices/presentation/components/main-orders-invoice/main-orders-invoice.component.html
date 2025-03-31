@@ -4,10 +4,25 @@
       <app-information-box type="amount"></app-information-box>
       <app-information-box type="monthly"></app-information-box>
       <app-information-box type="count"></app-information-box>
-      <app-information-box type="count"></app-information-box>
+      <app-information-box type="monthly-order"></app-information-box>
     </div>
-    <div class="chart-section">
-      <app-chart-total-invoice></app-chart-total-invoice>
+    
+    <div class="all-charts-wrapper">
+      <div class="charts-section">
+        <app-chart-total-invoice class="chart-item"></app-chart-total-invoice>
+        <app-chart-total-orders-invoices class="chart-item"></app-chart-total-orders-invoices>
+      </div>
+      <div class="chart-section-tm">
+        <div class="info-container" style="align-self: flex-start; margin-top: -10px;">
+          <div>
+            <app-information-box type="tm-year"></app-information-box>
+          </div>
+          <div>
+            <app-information-box type="monthly-tm"></app-information-box>
+          </div>
+        </div>
+        <app-chart-tm></app-chart-tm>
+      </div>
     </div>
   </div>
 </div>

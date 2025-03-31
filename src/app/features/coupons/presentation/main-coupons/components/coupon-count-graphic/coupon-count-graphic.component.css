@@ -1,0 +1,19 @@
+h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+select {
+  padding: 8px;
+  width: 90px;
+  height: 32px;
+  margin-left: 5px;
+}

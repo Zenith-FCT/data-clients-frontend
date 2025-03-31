@@ -46,124 +46,20 @@
 
   @if (!viewModel.loading() && !viewModel.error()) {
     <div class="info-panel">
-      <!-- Fila 1: Clientes totales y Clientes nuevos mensuales -->
-      <div class="info-row">
-        <div class="info-box">
-          <div class="info-box-header">
-            <div class="info-box-icon">
-              <mat-icon>people</mat-icon>
-            </div>
-            <div class="info-box-selector">
-              <mat-form-field appearance="outline" class="year-selector">
-                <mat-select [value]="filters.clients.year" (selectionChange)="onYearFilterChange($event, 'clients')">
-                  <mat-option value="all">Todos</mat-option>
-                  <mat-option value="2025">2025</mat-option>
-                  <mat-option value="2024">2024</mat-option>
-                  <mat-option value="2023">2023</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </div>
-          <div class="info-box-title">Clientes totales:</div>
-          <div class="info-box-value">{{ viewModel.totalClients() }}</div>
+      <div class="info-box">
+        <div class="info-box-icon">
+          <mat-icon>people</mat-icon>
         </div>
-        
-        <div class="info-box">
-          <div class="info-box-header">
-            <div class="info-box-icon">
-              <mat-icon>person_add</mat-icon>
-            </div>
-            <div class="info-box-selector">
-              <div class="selectors-container">
-                <mat-form-field appearance="outline" class="month-selector">
-                  <mat-select [value]="filters.newClients.month" (selectionChange)="onYearMonthFilterChange($event, 'newClients', 'month')">
-                    <mat-option value="1">Enero</mat-option>
-                    <mat-option value="2">Febrero</mat-option>
-                    <mat-option value="3">Marzo</mat-option>
-                    <mat-option value="4">Abril</mat-option>
-                    <mat-option value="5">Mayo</mat-option>
-                    <mat-option value="6">Junio</mat-option>
-                    <mat-option value="7">Julio</mat-option>
-                    <mat-option value="8">Agosto</mat-option>
-                    <mat-option value="9">Septiembre</mat-option>
-                    <mat-option value="10">Octubre</mat-option>
-                    <mat-option value="11">Noviembre</mat-option>
-                    <mat-option value="12">Diciembre</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="year-selector">
-                  <mat-select [value]="filters.newClients.year" (selectionChange)="onYearMonthFilterChange($event, 'newClients', 'year')">
-                    <mat-option value="2025">2025</mat-option>
-                    <mat-option value="2024">2024</mat-option>
-                    <mat-option value="2023">2023</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-          <div class="info-box-title">Clientes nuevos:</div>
-          <div class="info-box-value">{{ viewModel.getNewClients() | number:'1.0-0' }}</div>
-        </div>
+        <div class="info-box-title">Clientes totales:</div>
+        <div class="info-box-value">{{ viewModel.totalClients() }}</div>
       </div>
       
-      <!-- Fila 2: Promedio pedidos por cliente y Pedidos totales -->
-      <div class="info-row">
-        <div class="info-box">
-          <div class="info-box-header">
-            <div class="info-box-icon">
-              <mat-icon>shopping_cart</mat-icon>
-            </div>
-            <div class="info-box-selector">
-              <mat-form-field appearance="outline" class="year-selector">
-                <mat-select [value]="filters.orders.year" (selectionChange)="onYearFilterChange($event, 'orders')">
-                  <mat-option value="all">Todos</mat-option>
-                  <mat-option value="2025">2025</mat-option>
-                  <mat-option value="2024">2024</mat-option>
-                  <mat-option value="2023">2023</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </div>
-          <div class="info-box-title">Promedio de pedidos anuales:</div>
-          <div class="info-box-value">{{ viewModel.totalAverageOrders() | number:'1.0-0' }}</div>
+      <div class="info-box">
+        <div class="info-box-icon">
+          <mat-icon>shopping_cart</mat-icon>
         </div>
-        
-        <div class="info-box">
-          <div class="info-box-header">
-            <div class="info-box-icon">
-              <mat-icon>receipt</mat-icon>
-            </div>
-            <div class="info-box-selector">
-              <div class="selectors-container">
-                <mat-form-field appearance="outline" class="month-selector">
-                  <mat-select [value]="filters.totalOrders.month" (selectionChange)="onYearMonthFilterChange($event, 'totalOrders', 'month')">
-                    <mat-option value="1">Enero</mat-option>
-                    <mat-option value="2">Febrero</mat-option>
-                    <mat-option value="3">Marzo</mat-option>
-                    <mat-option value="4">Abril</mat-option>
-                    <mat-option value="5">Mayo</mat-option>
-                    <mat-option value="6">Junio</mat-option>
-                    <mat-option value="7">Julio</mat-option>
-                    <mat-option value="8">Agosto</mat-option>
-                    <mat-option value="9">Septiembre</mat-option>
-                    <mat-option value="10">Octubre</mat-option>
-                    <mat-option value="11">Noviembre</mat-option>
-                    <mat-option value="12">Diciembre</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="year-selector">
-                  <mat-select [value]="filters.totalOrders.year" (selectionChange)="onYearMonthFilterChange($event, 'totalOrders', 'year')">
-                    <mat-option value="2025">2025</mat-option>
-                    <mat-option value="2024">2024</mat-option>
-                    <mat-option value="2023">2023</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-          <div class="info-box-title">Pedidos totales:</div>
-          <div class="info-box-value">{{ viewModel.getTotalOrders() | number:'1.0-0' }}</div>
-        </div>
+        <div class="info-box-title">Promedio de pedidos por cliente:</div>
+        <div class="info-box-value">{{ viewModel.totalAverageOrders() | number:'1.0-0' }}</div>
       </div>
       
       <!-- Fila 3: Ticket medio y LTV medio -->
@@ -223,20 +119,23 @@
           </div>
           <div class="info-box-title">LTV medio:</div>
           <div class="info-box-value">{{ viewModel.getLTV() | number:'1.2-2' }} €</div>
+
         </div>
+        <div class="info-box-title">Ticket medio por cliente:</div>
+        <div class="info-box-value">{{ viewModel.getAverageTicket() | number:'1.2-2' }} €</div>
       </div>
     </div>
   }
-  
-  <!-- Clients per Product Chart -->
-  @if (isBrowser) {
-    <div class="chart-wrapper">
-      <div class="chart-container" *ngIf="!viewModel.loading() && !viewModel.error()">
-        <h2 class="chart-title">Distribución de Clientes por Producto</h2>
-        <div class="echarts-container" echarts [options]="chartOption"></div>
-      </div>
+</div>
+
+<!-- Clients per Product Chart -->
+@if (isBrowser) {
+  <div class="chart-wrapper">
+    <div class="chart-container" *ngIf="!viewModel.loading() && !viewModel.error()">
+      <h2 class="chart-title">Distribución de Clientes por Producto</h2>
+      <div class="echarts-container" echarts [options]="chartOption"></div>
     </div>
-  
+ 
     <!-- Top Locations by Clients Chart -->
     <div class="chart-wrapper">
       <div class="chart-container" *ngIf="!viewModel.loading() && !viewModel.error()">
@@ -254,3 +153,4 @@
     </div>
   }
 </div>
+

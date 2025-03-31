@@ -1,14 +1,54 @@
 .information-box {
   background: #fff;
   border-radius: 8px;
-  padding: 12px;
+  padding: 16px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 120px;
-  max-height: 140px;
+  height: 100%; 
   box-sizing: border-box;
+  width: 100%;
+}
+
+:host([type="monthly-tm"]) .information-box,
+:host([type="tm-year"]) .information-box {
+  height: 100%;
+  width: 100%;
+}
+
+:host([type="monthly-tm"]),
+:host([type="tm-year"]) {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.info-container .information-box {
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-container .box-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-container .amount {
+  font-size: 38px;
+  line-height: 1.2;
+}
+
+.info-container .currency {
+  font-size: 32px;
+}
+
+.info-container .description {
+  font-size: 16px;
+  margin-top: 12px;
 }
 
 .box-header {
@@ -19,6 +59,7 @@
   min-height: 32px;
   flex-wrap: nowrap;
   gap: 12px;
+  flex: 0 0 auto;
 }
 
 .box-header h3 {
@@ -27,13 +68,24 @@
   font-weight: 500;
   color: #333;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
 
 .box-content {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-height: 0;
+}
+
+:host([type="monthly-tm"]) .box-content,
+:host([type="tm-year"]) .box-content {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .selectors-container {
@@ -44,12 +96,12 @@
 }
 
 .month-selector {
-  width: 45px !important;
+  width: 100% !important;
   min-width: 45px !important;
 }
 
 .year-selector {
-  width: 62px !important;
+  width: 100% !important;
   min-width: 62px !important;
 }
 
@@ -199,31 +251,58 @@
 
 .data-state {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+  min-height: 0;
+  flex: 1;
+}
+
+.amount {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.currency {
+  font-size: 24px;
+  vertical-align: top;
+  margin-left: 2px;
+  color: #666;
+}
+
+:host([type="monthly-tm"]) .amount,
+:host([type="tm-year"]) .amount {
+  font-size: 42px;
+}
+
+:host([type="monthly-tm"]) .currency,
+:host([type="tm-year"]) .currency,
+:host([type="tm-year"]) .unit {
+  font-size: 36px;
+}
+
+:host([type="monthly-tm"]) .data-state,
+:host([type="tm-year"]) .data-state {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 8px 0;
-}
-
-.amount {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #333;
-}
-
-.currency {
-  font-size: 20px;
-  vertical-align: top;
-  margin-left: 2px;
-  color: #666;
+  width: 100%;
 }
 
 .description {
   color: #777;
   font-size: 12px;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 ::ng-deep .mat-mdc-option .mdc-list-item__start {
@@ -237,4 +316,10 @@
 
 ::ng-deep .mat-mdc-option .mdc-list-item--selected {
   padding-left: 8px !important;
+}
+.hidden-selector {
+  visibility: hidden;
+  position: absolute;
+  height: 0;
+  overflow: hidden;
 }

@@ -8,13 +8,13 @@ import {
   Inject,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+
 import { NgxEchartsModule } from 'ngx-echarts';
 import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
@@ -58,6 +58,7 @@ interface FilterConfig {
     MatOptionModule,
     MatButtonToggleModule,
     NgxEchartsModule,
+
   ],
   providers: [
     GetClientsListUseCase,
@@ -73,6 +74,7 @@ interface FilterConfig {
     GetAverageTicketByYearUseCase,
     GetLTVByYearMonthUseCase,
     GetTopLocationsByClientsUseCase,
+
     ...clientsProviders,
     ClientsViewModel,
   ],
@@ -91,7 +93,6 @@ export class ClientsComponent implements OnInit {
   chartOption: any;
   locationsChartOption: any;
   isBrowser: boolean;
-
   // Filtros actuales con tipos correctos
   filters: Record<FilterType, FilterConfig> = {
     clients: { year: 'all' },
@@ -118,7 +119,6 @@ export class ClientsComponent implements OnInit {
 
   ngOnInit(): void {
     this.viewModel.loadData();
-
     // Inicializar los valores predeterminados con la fecha actual
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear().toString();
@@ -256,6 +256,7 @@ export class ClientsComponent implements OnInit {
             color: '#333',
           },
         },
+
       };
       return;
     }
@@ -286,8 +287,8 @@ export class ClientsComponent implements OnInit {
       tooltip: {
         trigger: 'item',
         formatter: '{b}: {c} clientes ({d}%)',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        borderColor: '#e0e0e0',
+        backgroundColor: 'rgba(33, 33, 33, 0.9)',
+        borderColor: '#444',
         textStyle: {
           color: '#333',
         },
@@ -298,7 +299,7 @@ export class ClientsComponent implements OnInit {
         bottom: 10,
         data: topCategories.map((item) => item.name),
         textStyle: {
-          color: '#333',
+         color: '#333',
         },
       },
       series: [
@@ -311,6 +312,7 @@ export class ClientsComponent implements OnInit {
             borderRadius: 8,
             borderColor: '#fff',
             borderWidth: 2,
+
           },
           emphasis: {
             label: {
@@ -318,6 +320,7 @@ export class ClientsComponent implements OnInit {
               fontSize: '16',
               fontWeight: 'bold',
               color: '#333',
+
             },
             itemStyle: {
               shadowBlur: 10,
@@ -336,6 +339,7 @@ export class ClientsComponent implements OnInit {
             lineStyle: {
               color: '#666',
             },
+
           },
           data: topCategories,
         },

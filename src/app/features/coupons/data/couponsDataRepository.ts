@@ -24,8 +24,8 @@ export class CouponsDataRepository implements CouponsRepository {
 
     getTotalCoupons(): Observable<number> {
       return new Observable(obs => {
-        this.dataSource.getTotalCoupons().then(totalDiscount => {
-          obs.next(totalDiscount);
+        this.dataSource.getTotalCoupons().then(total => {
+          obs.next(total);
           obs.complete();
         }).catch((error) =>
           obs.error(error)
@@ -37,6 +37,39 @@ export class CouponsDataRepository implements CouponsRepository {
       return new Observable(obs => {
         this.dataSource.getTotalDiscount().then(totalDiscount => {
           obs.next(totalDiscount);
+          obs.complete();
+        }).catch((error) =>
+          obs.error(error)
+        )
+      })
+    }
+
+    getTotalCouponsByMonth(month: string, year: string): Observable<number> {
+      return new Observable(obs => {
+        this.dataSource.getTotalCouponsByMonth(month, year).then(total => {
+          obs.next(total);
+          obs.complete();
+        }).catch((error) =>
+          obs.error(error)
+        )
+      })
+    }
+
+    getTotalDiscountByMonth(month: string, year: string): Observable<number> {
+      return new Observable(obs => {
+        this.dataSource.getTotalDiscountByMonth(month, year).then(total => {
+          obs.next(total);
+          obs.complete();
+        }).catch((error) =>
+          obs.error(error)
+        )
+      })
+    }
+
+    getMonthlyCouponsByYear(year: string): Observable<number[]> {
+      return new Observable(obs => {
+        this.dataSource.getMonthlyCouponsByYear(year).then(total => {
+          obs.next(total);
           obs.complete();
         }).catch((error) =>
           obs.error(error)

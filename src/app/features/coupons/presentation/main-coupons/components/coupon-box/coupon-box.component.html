@@ -1,9 +1,10 @@
-<div [ngSwitch]="boxType()" class="couponsBox">
+<div [ngSwitch]="boxType()" class="coupons-box">
   <ng-container *ngSwitchCase="'coupons'">
-    <h2 class="coupons-box-title">Numero cupones</h2>
+    <h3 class="coupons-box-title">Numero cupones</h3>
 
-    <div *ngIf="viewModel.isLoadingCoupons()">
-      Cargando...
+    <div *ngIf="viewModel.isLoadingCoupons()" class="loading-state">
+      <div class="spinner"></div>
+      <span>Calculando...</span>
     </div>
 
     <div *ngIf="viewModel.errorCoupons()" class="error-text">
@@ -21,10 +22,11 @@
     </div>
   </ng-container>
   <ng-container *ngSwitchCase="'discount'">
-    <h2 class="coupons-box-title">Total descuento</h2>
+    <h3 class="coupons-box-title">Total descuento</h3>
 
-    <div *ngIf="viewModel.isLoadingDiscount()">
-      Cargando...
+    <div *ngIf="viewModel.isLoadingDiscount()" class="loading-state">
+      <div class="spinner"></div>
+      <span>Calculando...</span>
     </div>
 
     <div *ngIf="viewModel.errorDiscount()" class="error-text">
@@ -33,11 +35,85 @@
 
     <div *ngIf="!viewModel.isLoadingDiscount() && !viewModel.errorDiscount()" class="coupons-total">
       <p class="coupons-info">
-        {{ viewModel.totalDiscount() }}€
+        {{ viewModel.totalDiscount() }}<span class="currency">€</span>
       </p>
       <p>
         Total descuento realizado
       </p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'couponsMonth'">
+    <div>
+      <h3 class="coupons-box-title">Nº cupones mensuales</h3>
+      <div>
+        <select [value]="selectedMonth" [(ngModel)]="selectedMonth" (change)="changeDate()">
+          <option *ngFor="let month of months" [value]="month">
+            {{ month }}
+          </option>
+        </select>
+        <select [value]="selectedYear" [(ngModel)]="selectedYear" (change)="changeDate()">
+          <option *ngFor="let year of years" [value]="year">
+            {{ year }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="viewModel.isLoadingCouponsMonth()" class="loading-state">
+      <div class="spinner"></div>
+      <span>Calculando...</span>
+    </div>
+
+    <div *ngIf="viewModel.errorCouponsMonth()" class="error-text">
+      {{ viewModel.errorCouponsMonth() }}
+    </div>
+
+    <div *ngIf="!viewModel.isLoadingCouponsMonth() && !viewModel.errorCouponsMonth()" class="coupons-total">
+      <p class="coupons-info">
+        {{ viewModel.totalCouponsMonth() }}
+      </p>
+      <p>
+        Cantidad total de cupones utilizados por mes
+      </p>
+
+    </div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'discountMonth'">
+    <div>
+      <h3 class="coupons-box-title">Descuento mensual</h3>
+      <div>
+        <select [value]="selectedMonth" [(ngModel)]="selectedMonth" (change)="changeDate()">
+          <option *ngFor="let month of months" [value]="month">
+            {{ month }}
+          </option>
+        </select>
+        <select [value]="selectedYear" [(ngModel)]="selectedYear" (change)="changeDate()">
+          <option *ngFor="let year of years" [value]="year">
+            {{ year }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="viewModel.isLoadingDiscountMonth()" class="loading-state">
+      <div class="spinner"></div>
+      <span>Calculando...</span>
+    </div>
+
+    <div *ngIf="viewModel.errorDiscountMonth()" class="error-text">
+      {{ viewModel.errorDiscountMonth() }}
+    </div>
+
+    <div *ngIf="!viewModel.isLoadingDiscountMonth() && !viewModel.errorDiscountMonth()" class="coupons-total">
+      <p class="coupons-info">
+        {{ viewModel.totalDiscountMonth() }}<span class="currency">€</span>
+      </p>
+      <p>
+        Total descuento por mes
+      </p>
+
     </div>
   </ng-container>
 </div>
