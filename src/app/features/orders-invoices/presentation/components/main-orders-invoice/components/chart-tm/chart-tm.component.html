@@ -1,8 +1,8 @@
 <div class="chart-container">
   <div class="chart-header">
-    <h3>Análisis de Ventas y Facturación</h3>
+    <h3>Evolución del Ticket Medio</h3>
     <mat-form-field appearance="outline" class="year-selector">
-      <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
+      <mat-select [ngModel]="ordersInvoiceViewModel.selectedTmYear$()" (selectionChange)="onYearChange($event)">
         <mat-option *ngFor="let year of years" [value]="year">
           {{year}}
         </mat-option>
@@ -11,14 +11,15 @@
   </div>
   
   <div class="chart-content">
-    <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
+    <div *ngIf="ordersInvoiceViewModel.isLoading$()" class="loading-state">
       <div class="spinner"></div>
       <span>Generando gráfica...</span>
     </div>
-    <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
+    <div *ngIf="ordersInvoiceViewModel.error$()" class="error-state">
       <span>⚠</span>
-      <p>{{ monthlySalesViewModel.error$() }}</p>
+      <p>{{ ordersInvoiceViewModel.error$() }}</p>
     </div>
+   
     <canvas #chartCanvas></canvas>
   </div>
 </div>

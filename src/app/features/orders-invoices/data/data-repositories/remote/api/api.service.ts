@@ -23,7 +23,6 @@ export class ApiService {
             throw new Error('Datos inválidos recibidos del servidor');
         }
         catch (error) {
-            console.error("Error obteniendo ventas mensuales:", error);
             throw error;
         }
     }
