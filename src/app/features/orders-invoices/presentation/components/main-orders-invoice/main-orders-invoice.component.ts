@@ -6,6 +6,8 @@ import { OrdersInvoiceViewModelService } from '../../view-model/orders-invoice-v
 import { ChartTotalInvoiceComponent } from './components/chart-total-invoice/chart-total-invoice.component';
 import { ChartTotalOrdersInvoicesComponent } from './components/chart-total-orders-invoices/chart-total-orders-invoices.component';
 import { ChartTmComponent } from './components/chart-tm/chart-tm.component';
+import { InvoiceClientTypeComponent } from './components/invoice-client-type/invoice-client-type.component';
+import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients-viewmodel.service';
 
 @Component({
   selector: 'app-main-orders-invoice',
@@ -16,14 +18,18 @@ import { ChartTmComponent } from './components/chart-tm/chart-tm.component';
     InformationBoxComponent, 
     ChartTotalInvoiceComponent,
     ChartTotalOrdersInvoicesComponent,
-    ChartTmComponent
+    ChartTmComponent,
+    InvoiceClientTypeComponent
   ],
-  providers: [OrdersInvoiceViewModelService],
+  providers: [OrdersInvoiceViewModelService, InvoiceClientsViewModelService],
   templateUrl: './main-orders-invoice.component.html',
   styleUrl: './main-orders-invoice.component.css'
 })
 export class MainOrdersInvoiceComponent implements OnInit {
-  constructor(public ordersInvoiceViewModel: OrdersInvoiceViewModelService) {}
+  constructor(
+    public ordersInvoiceViewModel: OrdersInvoiceViewModelService,
+    public invoiceClientsViewModel: InvoiceClientsViewModelService
+  ) {}
   
   ngOnInit(): void {
     const currentYear = new Date().getFullYear();
@@ -32,6 +38,6 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.ordersInvoiceViewModel.loadTotalOrdersAmount(currentYear);
     this.ordersInvoiceViewModel.loadTotalOrders(currentYear);
     this.ordersInvoiceViewModel.loadMonthlyTmList();
-
+    this.invoiceClientsViewModel.loadInvoiceClientsType();
   }
 }

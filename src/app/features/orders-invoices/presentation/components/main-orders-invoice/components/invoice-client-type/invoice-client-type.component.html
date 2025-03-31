@@ -1,0 +1,28 @@
+<div class="chart-container">
+  <div class="chart-header">
+    <h3>Facturacion de Clientes por Tipo</h3>
+    <mat-form-field appearance="outline" class="year-selector">
+      <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
+        <mat-option *ngFor="let year of years" [value]="year">
+          {{year}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  
+  <div class="chart-content">
+    <div *ngIf="invoiceClientsViewModel.loading$()" class="loading-state">
+      <div class="spinner"></div>
+      <span>Cargando datos...</span>
+    </div>
+    <div *ngIf="invoiceClientsViewModel.error$()" class="error-state">
+      <span>⚠</span>
+      <p>{{ invoiceClientsViewModel.error$() }}</p>
+    </div>
+    <div *ngIf="years.length === 0 && !invoiceClientsViewModel.loading$()" class="no-data-state">
+      <span>📊</span>
+      <p>No hay datos disponibles para mostrar</p>
+    </div>
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>
