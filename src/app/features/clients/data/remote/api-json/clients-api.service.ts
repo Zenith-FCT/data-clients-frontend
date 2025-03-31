@@ -101,6 +101,69 @@ export class ClientsApiService {
     );
   }
 
+  getTotalAverageOrders(): Observable<number> {
+    return this.getAllClientsList().pipe(
+      map(clients => {
+        const sum = clients.reduce<number>((acc, client) => acc + Number(client.nº_pedidos), 0);
+        const count = clients.length;
+        return count > 0 ? sum / count : 0;
+      }),
+      tap(averageOrders => console.log('ClientsApiService: Average orders per client:', averageOrders)),
+      catchError(this.handleError)
+    );
+  }
+
+  getAverageTicket(): Observable<number> {
+    return this.getAllClientsList().pipe(
+      map(clients => {
+        const sum = clients.reduce<number>((acc, client) => acc + Number(client.tm), 0);
+        const count = clients.length;
+        return count > 0 ? sum / count : 0;
+      }),
+      tap(averageTicket => console.log('ClientsApiService: Average ticket per client:', averageTicket)),
+      catchError(this.handleError)
+    );
+  }
+
+  getClientsPerProduct(): Observable<ProductClientDistribution[]> {
+    // Para el json-server actual, hacemos el procesamiento aquí
+    // Cuando se conecte a la API real, esta línea simplemente devolverá los datos directamente
+    return this.http.get<any[]>(this.pedidosUrl).pipe(
+      map(orders => {
+        // Este procesamiento solo es necesario con el json-server
+        // y se eliminará cuando consigas la API real
+        const categoryClientsMap = new Map<string, Set<string>>();
+        
+        orders.forEach(order => {
+          if (order.productos && Array.isArray(order.productos) && order.email) {
+            order.productos.forEach((product: any) => {
+              if (product && product.categoria) {
+                const categoria = product.categoria.trim();
+                
+                if (!categoryClientsMap.has(categoria)) {
+                  categoryClientsMap.set(categoria, new Set());
+                }
+                categoryClientsMap.get(categoria)?.add(order.email.toLowerCase().trim());
+              }
+            });
+          }
+        });
+
+        // Crear objetos ProductClientDistributionApi a partir del mapa
+        const apiDistributions: ProductClientDistributionApi[] = Array.from(categoryClientsMap.entries())
+          .map(([name, clients]) => new ProductClientDistributionApi(
+            name,
+            clients.size
+          ));
+
+        // Mapear objetos de API a objetos de dominio
+        return ClientsApiMapper.productDistributionListToDomain(apiDistributions);
+      }),
+      tap(distribution => console.log('ClientsApiService: Clients per category distribution:', distribution)),
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
     return throwError(() => new Error(errorMessage));
