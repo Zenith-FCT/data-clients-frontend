@@ -1,8 +1,9 @@
 <div>
-  <h2 class="coupons-title">Cupones mas usados</h2>
+  <h3 class="coupons-table-title">Cupones mas usados</h3>
 
   <div *ngIf="viewModel.isLoading()">
-    Cargando...
+    <div class="spinner"></div>
+    <span>Calculando...</span>
   </div>
 
   <div *ngIf="viewModel.error()" class="error-text">

@@ -2,7 +2,7 @@ import { Observable, map } from 'rxjs';
 import { MonthlySalesRepository } from '../repositories/monthly-sales-repository';
 import { MonthlySalesModel } from '../models/monthly-sales.model';
 
-export class GetMonthlySalesUseCase {
+export class GetTotalMonthOrdersUseCase {
     constructor(private monthlySalesRepository: MonthlySalesRepository) {}
     
     execute(year: number, month: number): Observable<number> {
@@ -15,7 +15,7 @@ export class GetMonthlySalesUseCase {
                 const searchFormat = `${year}-${formattedMonth}`;
                 const monthlySale = monthlySales.find(sale => sale.date === searchFormat);
                 
-                return monthlySale ? parseFloat(monthlySale.totalSales) : 0;
+                return monthlySale ? parseFloat(monthlySale.totalSalesNumber) : 0;
             })
         );
     }

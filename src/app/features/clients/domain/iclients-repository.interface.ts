@@ -9,7 +9,6 @@ export interface IClientsRepository {
     getTotalAverageOrders(): Observable<number>;
     getAverageTicket(): Observable<number>;
     getClientsPerProduct(): Observable<ProductClientDistribution[]>;
-    getTopLocationsByClients(locationType: 'country' | 'city'): Observable<TopLocationsByClients[]>;
 
     // Nuevos métodos para filtrado
     getClientsByYear(year: string): Observable<ClientsList[]>;
@@ -19,4 +18,5 @@ export interface IClientsRepository {
     getTotalOrdersByYearMonth(year: string, month: string): Observable<number>;
     getAverageTicketByYear(year: string): Observable<number>;
     getLTVByYearMonth(year: string, month: string): Observable<number>;
+
 }

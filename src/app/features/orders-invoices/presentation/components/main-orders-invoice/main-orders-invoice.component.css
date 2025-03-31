@@ -1,28 +1,27 @@
 .orders-container {
-  padding: 8px;
-  min-height: calc(100vh - 32px); 
-  flex-direction: column;
-  justify-content: space-between;
+  padding: 1rem;
+  min-height: calc(100vh - 32px);
+  transition: width 0.3s ease, margin 0.3s ease;
 }
 
 .orders-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   width: 100%;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 16px;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  gap: 2%;
   padding: 8px 0;
-}
-
-.summary-cards > * {
-  flex: 0 0 23.5%;
-  max-width: 23.5%;
+  transition: all 0.3s ease; 
 }
 
 .orders-details {
@@ -40,6 +39,161 @@
 }
 
 .chart-section {
-  margin-top: 24px;
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  height: 400px;
+  margin-top: 1rem;
+  margin-bottom: 4rem;
   width: 100%;
+  box-sizing: border-box;
+}
+
+.all-charts-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 2rem;
+}
+
+.charts-section {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 580px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  gap: 1.5%;
+}
+
+.chart-item {
+  height: 580px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 49.25%;
+}
+
+.chart-item canvas {
+  max-height: 100%;
+  max-width: 100%;
+  height: 570px;
+}
+
+.chart-section-tm {
+  background: transparent;
+  border-radius: 8px;
+  padding: 0;
+  height: calc(100vh - 380px);
+  min-height: 600px;
+  width: 100%;
+  box-shadow: none;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+  margin-top: 4rem;
+  gap: 1rem;
+}
+
+.chart-section-tm app-chart-tm {
+  width: 75%;
+  height: 100%;
+}
+
+.chart-section-tm .chart-header {
+  flex-shrink: 0;
+}
+
+.chart-section-tm .chart-content {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  height: 630px;
+}
+
+.chart-section-tm canvas {
+  max-height: 100%;
+  max-width: 100%;
+  height: 630px;
+}
+
+.chart-tm-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.chart-tm {
+  flex: 0 0 75%;
+}
+
+.tm-info-container {
+  flex: 0 0 25%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 25%;
+  height: 100%;
+}
+
+.chart-container {
+  width: 75%;
+  box-sizing: border-box;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 650px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.chart-section-tm .chart-container {
+  width: 75%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.info-container {
+  width: 25%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  padding: 0;
+  align-self: stretch !important;
+  margin-top: 0 !important;
+}
+
+.info-container > div {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  box-sizing: border-box;
+  height: calc(50% - 8px);
+  display: flex;
+}
+
+.info-container > div:first-child {
+  margin-bottom: 16px;
+}
+
+.info-container > div:last-child {
+  margin-bottom: 0;
+}
+
+.info-container > div > app-information-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
 }

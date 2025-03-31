@@ -20,8 +20,6 @@ export class ClientsApiService {
   constructor(private http: HttpClient) {}
 
   getAllClientsList(): Observable<ClientsListApi[]> {
-    console.log('ClientsApiService: Fetching clients from:', this.apiUrl);
-    
     return this.http.get<ClientsListApi[]>(this.apiUrl).pipe(
       map(response => response.map(item => ({
         id: item.id,
@@ -30,7 +28,6 @@ export class ClientsApiService {
         ltv: item.ltv,
         tm: item.tm
       }))),
-      tap(clients => console.log('ClientsApiService: Received response:', clients)),
       catchError(this.handleError)
     );
   }
@@ -38,7 +35,7 @@ export class ClientsApiService {
   getTotalClients(): Observable<number> {
     return this.getAllClientsList().pipe(
       map(clients => clients.length),
-      tap(total => console.log('ClientsApiService: Total clients:', total)),
+      tap((total: number) => console.log('ClientsApiService: Total clients:', total)),
       catchError(this.handleError)
     );
   }
@@ -50,7 +47,7 @@ export class ClientsApiService {
         const count = clients.length;
         return count > 0 ? sum / count : 0;
       }),
-      tap(averageOrders => console.log('ClientsApiService: Average orders per client:', averageOrders)),
+      tap((averageOrders: number) => console.log('ClientsApiService: Average orders per client:', averageOrders)),
       catchError(this.handleError)
     );
   }
@@ -62,7 +59,7 @@ export class ClientsApiService {
         const count = clients.length;
         return count > 0 ? sum / count : 0;
       }),
-      tap(averageTicket => console.log('ClientsApiService: Average ticket per client:', averageTicket)),
+      tap((averageTicket: number) => console.log('ClientsApiService: Average ticket per client:', averageTicket)),
       catchError(this.handleError)
     );
   }
@@ -289,7 +286,6 @@ export class ClientsApiService {
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     const errorMessage = this.getErrorMessage(error);
-    console.error('ClientsApiService Error:', error);
     return throwError(() => new Error(errorMessage));
   }
 

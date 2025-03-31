@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, tap } from 'rxjs';
 import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
@@ -7,6 +7,7 @@ import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders
 import { GetAverageTicketUseCase } from '../domain/get-average-ticket-use-case';
 import { GetClientsPerProductUseCase } from '../domain/get-clients-per-product-use-case';
 import { ProductClientDistribution } from '../domain/product-distribution.model';
+
 import { GetTotalClientsByYearUseCase } from '../domain/get-total-clients-by-year-use-case';
 import { GetNewClientsByYearMonthUseCase } from '../domain/get-new-clients-by-year-month-use-case';
 import { GetAverageOrdersByYearUseCase } from '../domain/get-average-orders-by-year-use-case';
@@ -15,6 +16,7 @@ import { GetAverageTicketByYearUseCase } from '../domain/get-average-ticket-by-y
 import { GetLTVByYearMonthUseCase } from '../domain/get-ltv-by-year-month-use-case';
 import { GetTopLocationsByClientsUseCase } from '../domain/get-top-locations-by-clients-use-case';
 import { TopLocationsByClients } from '../domain/top-locations-by-clients.model';
+
 
 interface ClientsState {
   clients: ClientsList[];
@@ -29,6 +31,7 @@ interface ClientsState {
   ltv: number;
   topLocationsByClients: TopLocationsByClients[];
   currentLocationType: 'country' | 'city';
+
 }
 
 @Injectable()
@@ -46,10 +49,9 @@ export class ClientsViewModel {
     ltv: 0,
     topLocationsByClients: [],
     currentLocationType: 'country'
+
   });
 
-  private _clientsCache: ClientsList[] = [];
-  
   readonly clients = computed(() => this._state().clients);
   readonly totalClients = computed(() => this._state().totalClients);
   readonly totalAverageOrders = computed(() => this._state().totalAverageOrders);
@@ -62,6 +64,7 @@ export class ClientsViewModel {
   readonly ltv = computed(() => this._state().ltv);
   readonly topLocationsByClients = computed(() => this._state().topLocationsByClients);
   readonly currentLocationType = computed(() => this._state().currentLocationType);
+
 
   private getClientsListUseCase = inject(GetClientsListUseCase);
   private getTotalClientsUseCase = inject(GetTotalClientsUseCase);
@@ -76,20 +79,9 @@ export class ClientsViewModel {
   private getLTVByYearMonthUseCase = inject(GetLTVByYearMonthUseCase);
   private getTopLocationsByClientsUseCase = inject(GetTopLocationsByClientsUseCase);
 
+
   getAverageTicket(): number {
     return this.averageTicket();
-  }
-
-  getNewClients(): number {
-    return this.newClients();
-  }
-
-  getTotalOrders(): number {
-    return this.totalOrders();
-  }
-
-  getLTV(): number {
-    return this.ltv();
   }
 
   loadData(): void {
@@ -233,6 +225,7 @@ export class ClientsViewModel {
     ];
     
     return seasonalFactors[month - 1];
+
   }
 
   loadClients(): void {

@@ -12,16 +12,12 @@ import { ClientsApiService } from "./remote/api-json/clients-api.service";
 })
 export class ClientsDataRepository implements IClientsRepository {
     constructor(private apiClients: ClientsApiService) {
-        console.log('ClientsDataRepository initialized');
     }
 
     getAllClientsList(): Observable<ClientsList[]> {
-        console.log('ClientsDataRepository: Getting all clients');
         return this.apiClients.getAllClientsList().pipe(
-            tap(apiClients => console.log('ClientsDataRepository: Mapping clients:', apiClients)),
             map((apiClients: any[]) => apiClients.map(client => ClientsApiMapper.toDomain(client))),
             catchError(error => {
-                console.error('ClientsDataRepository: Error getting clients:', error);
                 throw error;
             })
         );
@@ -65,10 +61,7 @@ export class ClientsDataRepository implements IClientsRepository {
                 throw error;
             })
         );
-    }
-
-    // Implementación de los nuevos métodos para filtrado
-    
+    } 
     getClientsByYear(year: string): Observable<ClientsList[]> {
         return this.apiClients.getClientsByYear(year).pipe(
             map((apiClients: any[]) => apiClients.map(client => ClientsApiMapper.toDomain(client))),
