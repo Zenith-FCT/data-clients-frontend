@@ -1,7 +1,7 @@
 .coupon-element {
   background: #fff;
   border-radius: 8px;
-  padding: 12px;
+  padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 }
@@ -9,11 +9,12 @@
 .coupon-container {
   display: flex;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .coupons-table {
-  width: 50%;
-  margin: 1%;
+  width: 49%;
+  margin: 0.5%;
 }
 
 .coupon-box-container {
@@ -23,7 +24,12 @@
 }
 
 .coupon-box {
-  width: 46%;
-  margin: 2%;
-  height: 125px;
+  width: 48%;
+  margin: 1%;
+  min-height: 125px;
+}
+
+.coupon-graphic {
+  width: 98%;
+  margin: 1%;
 }
