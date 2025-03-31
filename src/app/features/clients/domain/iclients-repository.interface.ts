@@ -18,5 +18,5 @@ export interface IClientsRepository {
     getTotalOrdersByYearMonth(year: string, month: string): Observable<number>;
     getAverageTicketByYear(year: string): Observable<number>;
     getLTVByYearMonth(year: string, month: string): Observable<number>;
-
+    getTopLocationsByClients(locationType: 'country' | 'city'): Observable<TopLocationsByClients[]>;
 }
