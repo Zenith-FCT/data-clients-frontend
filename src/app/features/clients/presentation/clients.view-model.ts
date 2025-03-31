@@ -52,6 +52,8 @@ export class ClientsViewModel {
 
   });
 
+  private _clientsCache: ClientsList[] = [];
+  
   readonly clients = computed(() => this._state().clients);
   readonly totalClients = computed(() => this._state().totalClients);
   readonly totalAverageOrders = computed(() => this._state().totalAverageOrders);
