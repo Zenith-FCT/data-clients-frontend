@@ -373,14 +373,14 @@ export class ClientsViewModel {
     }));
 
     this.getTotalClientsByYearUseCase.execute(year).subscribe({
-      next: (total) => {
+      next: (total: number) => {
         this._state.update(state => ({
           ...state,
           totalClients: total,
           loading: false
         }));
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(`Error loading total clients for year ${year}:`, err);
         this._state.update(state => ({
           ...state,
@@ -399,14 +399,14 @@ export class ClientsViewModel {
     }));
 
     this.getNewClientsByYearMonthUseCase.execute(year, month).subscribe({
-      next: (total) => {
+      next: (total: number) => {
         this._state.update(state => ({
           ...state,
           newClients: total,
           loading: false
         }));
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(`Error loading new clients for ${year}/${month}:`, err);
         this._state.update(state => ({
           ...state,
@@ -425,14 +425,14 @@ export class ClientsViewModel {
     }));
 
     this.getAverageOrdersByYearUseCase.execute(year).subscribe({
-      next: (average) => {
+      next: (average: number) => {
         this._state.update(state => ({
           ...state,
           totalAverageOrders: average,
           loading: false
         }));
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(`Error loading average orders for year ${year}:`, err);
         this._state.update(state => ({
           ...state,
@@ -451,14 +451,14 @@ export class ClientsViewModel {
     }));
 
     this.getTotalOrdersByYearMonthUseCase.execute(year, month).subscribe({
-      next: (total) => {
+      next: (total: number) => {
         this._state.update(state => ({
           ...state,
           totalOrders: total,
           loading: false
         }));
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(`Error loading total orders for ${year}/${month}:`, err);
         this._state.update(state => ({
           ...state,
@@ -477,14 +477,14 @@ export class ClientsViewModel {
     }));
 
     this.getAverageTicketByYearUseCase.execute(year).subscribe({
-      next: (average) => {
+      next: (average: number) => {
         this._state.update(state => ({
           ...state,
           averageTicket: average,
           loading: false
         }));
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(`Error loading average ticket for year ${year}:`, err);
         this._state.update(state => ({
           ...state,
@@ -503,14 +503,14 @@ export class ClientsViewModel {
     }));
 
     this.getLTVByYearMonthUseCase.execute(year, month).subscribe({
-      next: (ltv) => {
+      next: (ltv: number) => {
         this._state.update(state => ({
           ...state,
           ltv: ltv,
           loading: false
         }));
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(`Error loading LTV for ${year}/${month}:`, err);
         this._state.update(state => ({
           ...state,
