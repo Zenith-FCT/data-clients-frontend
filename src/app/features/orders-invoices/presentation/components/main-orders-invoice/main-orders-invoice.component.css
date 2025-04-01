@@ -2,6 +2,8 @@
   padding: 1rem;
   min-height: calc(100vh - 32px);
   transition: width 0.3s ease, margin 0.3s ease;
+  width: 95%;
+  margin: 0;
 }
 
 .orders-summary {
@@ -196,4 +198,44 @@
   width: 100%;
   height: 100%;
   display: flex;
+}
+
+.chart-client-section {
+  width: 100%;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  padding: 1rem 0;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+}
+
+.client-pie-section {
+  display: flex;
+  width: 50%;
+  justify-content: flex-start;
+  min-height: 500px;
+  position: relative;
+}
+
+.client-pie-chart {
+  width: 100%;
+  height: 500px;
+  display: block;
+  overflow: visible;
+  background-color: transparent;
+}
+
+@media screen and (max-width: 1366px) {
+  .client-pie-chart {
+    height: 460px;
+    width: 60%;
+  }
 }

@@ -272,7 +272,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
 
   public async refreshData(forceRefresh: boolean = false): Promise<void> {
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1; // Ajustamos para usar formato 1-12
+    const currentMonth = currentDate.getMonth() + 1; 
     
     await this.loadAllMonthWithTotals();
     
