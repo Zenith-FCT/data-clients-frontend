@@ -271,5 +271,24 @@
         <div class="echarts-container" echarts [options]="monthlyClientsChartOption"></div>
       </div>
     </div>
+
+    <!-- Pedidos por Mes Chart -->
+    <div class="chart-wrapper">
+      <div class="chart-container" *ngIf="!viewModel.loading() && !viewModel.error()">
+        <div class="chart-header-with-controls">
+          <h2 class="chart-title">Pedidos por Mes</h2>
+          <div class="chart-controls">
+            <mat-form-field appearance="outline" class="year-selector">
+              <mat-select [value]="filters.monthlyOrders.year" (selectionChange)="onMonthlyOrdersChartYearFilterChange($event)">
+                <mat-option value="2025">2025</mat-option>
+                <mat-option value="2024">2024</mat-option>
+                <mat-option value="2023">2023</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="echarts-container" echarts [options]="monthlyOrdersChartOption"></div>
+      </div>
+    </div>
   }
 </div>
