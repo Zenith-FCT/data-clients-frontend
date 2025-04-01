@@ -91,6 +91,21 @@ export class ClientsViewModel {
   getLTV(): number {
     return this.ltv();
   }
+  
+  // Método para obtener nuevos clientes por año y mes para el gráfico
+  async getNewClientsByYearMonth(year: string, month: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.getNewClientsByYearMonthUseCase.execute(year, month).subscribe({
+        next: (total) => {
+          resolve(total);
+        },
+        error: (err) => {
+          console.error(`Error obteniendo nuevos clientes para ${year}/${month}:`, err);
+          reject(err); // Propagamos el error en lugar de generar datos aleatorios
+        }
+      });
+    });
+  }
 
   loadData(): void {
     this.loadClients();
