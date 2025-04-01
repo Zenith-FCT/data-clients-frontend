@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, tap } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
@@ -7,7 +7,6 @@ import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders
 import { GetAverageTicketUseCase } from '../domain/get-average-ticket-use-case';
 import { GetClientsPerProductUseCase } from '../domain/get-clients-per-product-use-case';
 import { ProductClientDistribution } from '../domain/product-distribution.model';
-
 import { GetTotalClientsByYearUseCase } from '../domain/get-total-clients-by-year-use-case';
 import { GetNewClientsByYearMonthUseCase } from '../domain/get-new-clients-by-year-month-use-case';
 import { GetAverageOrdersByYearUseCase } from '../domain/get-average-orders-by-year-use-case';
@@ -16,7 +15,6 @@ import { GetAverageTicketByYearUseCase } from '../domain/get-average-ticket-by-y
 import { GetLTVByYearMonthUseCase } from '../domain/get-ltv-by-year-month-use-case';
 import { GetTopLocationsByClientsUseCase } from '../domain/get-top-locations-by-clients-use-case';
 import { TopLocationsByClients } from '../domain/top-locations-by-clients.model';
-
 
 interface ClientsState {
   clients: ClientsList[];
@@ -31,7 +29,6 @@ interface ClientsState {
   ltv: number;
   topLocationsByClients: TopLocationsByClients[];
   currentLocationType: 'country' | 'city';
-
 }
 
 @Injectable()
@@ -49,7 +46,6 @@ export class ClientsViewModel {
     ltv: 0,
     topLocationsByClients: [],
     currentLocationType: 'country'
-
   });
 
   private _clientsCache: ClientsList[] = [];
@@ -67,7 +63,6 @@ export class ClientsViewModel {
   readonly topLocationsByClients = computed(() => this._state().topLocationsByClients);
   readonly currentLocationType = computed(() => this._state().currentLocationType);
 
-
   private getClientsListUseCase = inject(GetClientsListUseCase);
   private getTotalClientsUseCase = inject(GetTotalClientsUseCase);
   private getTotalAverageOrdersUseCase = inject(GetTotalAverageOrdersUseCase);
@@ -81,9 +76,20 @@ export class ClientsViewModel {
   private getLTVByYearMonthUseCase = inject(GetLTVByYearMonthUseCase);
   private getTopLocationsByClientsUseCase = inject(GetTopLocationsByClientsUseCase);
 
-
   getAverageTicket(): number {
     return this.averageTicket();
+  }
+
+  getNewClients(): number {
+    return this.newClients();
+  }
+
+  getTotalOrders(): number {
+    return this.totalOrders();
+  }
+
+  getLTV(): number {
+    return this.ltv();
   }
 
   loadData(): void {
@@ -227,7 +233,6 @@ export class ClientsViewModel {
     ];
     
     return seasonalFactors[month - 1];
-
   }
 
   loadClients(): void {
@@ -368,14 +373,14 @@ export class ClientsViewModel {
     }));
 
     this.getTotalClientsByYearUseCase.execute(year).subscribe({
-      next: (total: number) => {
+      next: (total) => {
         this._state.update(state => ({
           ...state,
           totalClients: total,
           loading: false
         }));
       },
-      error: (err: Error) => {
+      error: (err) => {
         console.error(`Error loading total clients for year ${year}:`, err);
         this._state.update(state => ({
           ...state,
@@ -394,14 +399,14 @@ export class ClientsViewModel {
     }));
 
     this.getNewClientsByYearMonthUseCase.execute(year, month).subscribe({
-      next: (total: number) => {
+      next: (total) => {
         this._state.update(state => ({
           ...state,
           newClients: total,
           loading: false
         }));
       },
-      error: (err: Error) => {
+      error: (err) => {
         console.error(`Error loading new clients for ${year}/${month}:`, err);
         this._state.update(state => ({
           ...state,
@@ -420,14 +425,14 @@ export class ClientsViewModel {
     }));
 
     this.getAverageOrdersByYearUseCase.execute(year).subscribe({
-      next: (average: number) => {
+      next: (average) => {
         this._state.update(state => ({
           ...state,
           totalAverageOrders: average,
           loading: false
         }));
       },
-      error: (err: Error) => {
+      error: (err) => {
         console.error(`Error loading average orders for year ${year}:`, err);
         this._state.update(state => ({
           ...state,
@@ -446,14 +451,14 @@ export class ClientsViewModel {
     }));
 
     this.getTotalOrdersByYearMonthUseCase.execute(year, month).subscribe({
-      next: (total: number) => {
+      next: (total) => {
         this._state.update(state => ({
           ...state,
           totalOrders: total,
           loading: false
         }));
       },
-      error: (err: Error) => {
+      error: (err) => {
         console.error(`Error loading total orders for ${year}/${month}:`, err);
         this._state.update(state => ({
           ...state,
@@ -472,14 +477,14 @@ export class ClientsViewModel {
     }));
 
     this.getAverageTicketByYearUseCase.execute(year).subscribe({
-      next: (average: number) => {
+      next: (average) => {
         this._state.update(state => ({
           ...state,
           averageTicket: average,
           loading: false
         }));
       },
-      error: (err: Error) => {
+      error: (err) => {
         console.error(`Error loading average ticket for year ${year}:`, err);
         this._state.update(state => ({
           ...state,
@@ -498,14 +503,14 @@ export class ClientsViewModel {
     }));
 
     this.getLTVByYearMonthUseCase.execute(year, month).subscribe({
-      next: (ltv: number) => {
+      next: (ltv) => {
         this._state.update(state => ({
           ...state,
           ltv: ltv,
           loading: false
         }));
       },
-      error: (err: Error) => {
+      error: (err) => {
         console.error(`Error loading LTV for ${year}/${month}:`, err);
         this._state.update(state => ({
           ...state,
@@ -536,14 +541,14 @@ export class ClientsViewModel {
     const locationType = this._state().currentLocationType;
     
     this.getTopLocationsByClientsUseCase.execute(locationType).subscribe({
-      next: (locations: TopLocationsByClients[]) => {
+      next: (locations) => {
         this._state.update(state => ({
           ...state,
           topLocationsByClients: locations,
           loading: false
         }));
       },
-      error: (err: Error) => {
+      error: (err) => {
         console.error(`Error loading top ${locationType} locations:`, err);
         this._state.update(state => ({
           ...state,
