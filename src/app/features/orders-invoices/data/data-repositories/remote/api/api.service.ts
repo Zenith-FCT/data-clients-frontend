@@ -44,13 +44,8 @@ export class ApiService {
             
             throw new Error('Datos inválidos recibidos del servidor');
         } catch (error) {
-            // Generar datos de prueba para depuración
-            const mockData = [
-                new InvoiceClientsTypeModel('1', '2021', '150', '50'),
-                new InvoiceClientsTypeModel('2', '2022', '200', '75'),
-                new InvoiceClientsTypeModel('3', '2023', '300', '100')
-            ];
-            return mockData;
+            
+            return []; // Return an empty array in case of error
         } 
     }
 }
