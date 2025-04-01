@@ -1,0 +1,15 @@
+<div class="chart-container">
+  <div class="year-selector">
+    <mat-form-field appearance="outline">
+      <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
+        <mat-option *ngFor="let year of years" [value]="year">
+          {{ year }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  
+  <div class="chart-wrapper">
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>

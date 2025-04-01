@@ -6,16 +6,16 @@ export class InvoiceClientsTypeMapper {
         const date = data.fecha || data.date || '';
         const recurent = data.recurrente || data.total_recurrente || '';
         const unique = data.unico || data.total_unique ||  '';
-        const totalRecurrentSales = data.total_orders_recurrent || '';
-        const totalUniqueSales = data.total_unique_orders || '';
+        const totalRecurrentOrders = data.total_orders_recurrent || '';
+        const totalUniqueOrders = data.total_unique_orders || '';
         
         return new InvoiceClientsTypeModel(
             id,
             date,
             recurent,
             unique,
-            totalRecurrentSales,
-            totalUniqueSales
+            totalRecurrentOrders,
+            totalUniqueOrders
         );
     }
 

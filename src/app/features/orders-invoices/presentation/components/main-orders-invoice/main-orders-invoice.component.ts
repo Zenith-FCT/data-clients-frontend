@@ -8,6 +8,7 @@ import { ChartTotalOrdersInvoicesComponent } from './components/chart-total-orde
 import { ChartTmComponent } from './components/chart-tm/chart-tm.component';
 import { InvoiceClientTypeComponent } from './components/invoice-client-type/invoice-client-type.component';
 import { OrdersClientTypeComponent } from './components/orders-client-type/orders-client-type.component';
+import { ChartOrdersByClientTypeComponent } from './components/chart-orders-by-client-type/chart-orders-by-client-type.component';
 import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients-viewmodel.service';
 
 @Component({
@@ -21,7 +22,8 @@ import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients
     ChartTotalOrdersInvoicesComponent,
     ChartTmComponent,
     InvoiceClientTypeComponent,
-    OrdersClientTypeComponent
+    OrdersClientTypeComponent,
+    ChartOrdersByClientTypeComponent
   ],
   providers: [OrdersInvoiceViewModelService, InvoiceClientsViewModelService],
   templateUrl: './main-orders-invoice.component.html',
@@ -40,6 +42,10 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.ordersInvoiceViewModel.loadTotalOrdersAmount(currentYear);
     this.ordersInvoiceViewModel.loadTotalOrders(currentYear);
     this.ordersInvoiceViewModel.loadMonthlyTmList();
+    
+    // Load all three types of client data
     this.invoiceClientsViewModel.loadInvoiceClientsType();
+    this.invoiceClientsViewModel.loadOrdersClientsType();
+    this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
   }
 }

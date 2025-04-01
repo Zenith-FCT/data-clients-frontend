@@ -24,8 +24,8 @@ export class GetInvoiceClientsTypeUseCase {
                     const year = new Date(item.date).getFullYear().toString();
                     const recurent = Number(item.recurent) || 0;
                     const unique = Number(item.unique) || 0;
-                    const totalRecurrentSales = Number(item.totalRecurrentSales) || 0;
-                    const totalUniqueSales = Number(item.totalUniqueSales) || 0;
+                    const totalRecurrentSales = Number(item.totalRecurrentOrders) || 0;
+                    const totalUniqueSales = Number(item.totalUniqueOrders) || 0;
                     
                     if (yearlyData.has(year)) {
                         const currentYearData = yearlyData.get(year)!;

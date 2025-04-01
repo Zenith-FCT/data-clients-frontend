@@ -230,8 +230,29 @@
   padding-left: 0.5rem;
 }
 
+.orders-by-client-section {
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.orders-client-type-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.orders-client-type-chart {
+  width: 80%;
+  height: 460px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 @media screen and (max-width: 1366px) {
-  .client-pie-chart {
+  .orders-client-type-chart {
     height: 420px;
   }
 }

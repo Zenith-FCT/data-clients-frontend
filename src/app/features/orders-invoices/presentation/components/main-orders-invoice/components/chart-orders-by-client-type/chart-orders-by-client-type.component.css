@@ -1,0 +1,32 @@
+.chart-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  box-sizing: border-box;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.year-selector {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+mat-form-field {
+  width: 120px;
+}
+
+.chart-wrapper {
+  flex-grow: 1;
+  height: calc(100% - 70px);
+  position: relative;
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
