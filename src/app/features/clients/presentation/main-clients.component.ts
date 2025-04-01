@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { catchError, forkJoin, of } from 'rxjs'; // Importamos los operadores de RxJS necesarios
 
 import { NgxEchartsModule } from 'ngx-echarts';
 import { ClientsList } from '../domain/clients-list.model';
@@ -40,7 +41,8 @@ type FilterType =
   | 'totalOrders'
   | 'ticket'
   | 'ltv'
-  | 'monthlyClients';
+  | 'monthlyClients'
+  | 'monthlyOrders';
 
 interface FilterConfig {
   year: string;
@@ -94,7 +96,8 @@ export class ClientsComponent implements OnInit {
   ];
   chartOption: any;
   locationsChartOption: any;
-  monthlyClientsChartOption: any; // Nueva propiedad para el gráfico de barras mensual
+  monthlyClientsChartOption: any;
+  monthlyOrdersChartOption: any; // Nuevo gráfico para pedidos por mes
   isBrowser: boolean;
   // Filtros actuales con tipos correctos
   filters: Record<FilterType, FilterConfig> = {
@@ -104,11 +107,13 @@ export class ClientsComponent implements OnInit {
     totalOrders: { year: '2023', month: '3' },
     ticket: { year: 'all' },
     ltv: { year: '2023', month: '3' },
-    monthlyClients: { year: '2023' }, // Nuevo filtro para el gráfico mensual
+    monthlyClients: { year: '2023' },
+    monthlyOrders: { year: '2023' }, // Nuevo filtro para el gráfico de pedidos mensuales
   };
 
   // Datos de nuevos clientes por mes (se actualizarán según el año seleccionado)
   private monthlyNewClientsData: number[] = [];
+  private monthlyOrdersData: number[] = []; // Datos de pedidos mensuales
   private months: string[] = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -116,6 +121,7 @@ export class ClientsComponent implements OnInit {
 
   public viewModel = inject(ClientsViewModel);
   public getNewClientsByYearMonthUseCase = inject(GetNewClientsByYearMonthUseCase);
+  public getTotalOrdersByYearMonthUseCase = inject(GetTotalOrdersByYearMonthUseCase); // Para cargar pedidos por mes
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -125,194 +131,116 @@ export class ClientsComponent implements OnInit {
       if (this.isBrowser) {
         this.updateChartOption();
         this.updateLocationsChartOption();
-        this.updateMonthlyClientsChartOption(); // Actualizar el nuevo gráfico
+        this.updateMonthlyClientsChartOption();
+        this.updateMonthlyOrdersChartOption(); // Actualizar el nuevo gráfico de pedidos
       }
     });
   }
 
   ngOnInit(): void {
     this.viewModel.loadData();
-    // Inicializar los valores predeterminados con la fecha actual
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear().toString();
-    const currentMonth = (currentDate.getMonth() + 1).toString();
-
-    this.filters.newClients.year = currentYear;
-    this.filters.newClients.month = currentMonth;
-    this.filters.totalOrders.year = currentYear;
-    this.filters.totalOrders.month = currentMonth;
-    this.filters.ltv.year = currentYear;
-    this.filters.ltv.month = currentMonth;
-    this.filters.monthlyClients.year = currentYear; // Inicializar el filtro del nuevo gráfico
-
-    // Cargar datos iniciales
-    this.applyAllFilters();
-    this.loadMonthlyClientsData(currentYear); // Cargar datos para el nuevo gráfico
-  }
-
-  // Método para filtrar por año (columnas izquierda)
-  onYearFilterChange(event: any, type: FilterType): void {
-    // Para Material, el evento es diferente
-    const selectedValue = event.value;
-    this.filters[type].year = selectedValue;
-
-    console.log(
-      `Filtro de ${type} por año cambiado a:`,
-      this.filters[type].year
-    );
-    this.applyFilter(type);
-  }
-
-  // Método para filtrar por año y mes (columnas derecha)
-  onYearMonthFilterChange(
-    event: any,
-    type: FilterType,
-    filterType: 'year' | 'month'
-  ): void {
-    // Para Material, el evento es diferente
-    const selectedValue = event.value;
-    this.filters[type][filterType] = selectedValue;
-
-    console.log(
-      `Filtro de ${type} por ${filterType} cambiado a:`,
-      this.filters[type][filterType]
-    );
-    this.applyFilter(type);
-  }
-
-  // Método para cambiar el año del gráfico mensual
-  onMonthlyChartYearFilterChange(event: any): void {
-    const selectedYear = event.value;
-    this.filters.monthlyClients.year = selectedYear;
-    console.log(`Cambiando año del gráfico mensual a: ${selectedYear}`);
     
-    // Cargar datos de nuevos clientes por mes para el año seleccionado
-    this.loadMonthlyClientsData(selectedYear);
-  }
-
-  // Método para cambiar entre países y ciudades
-  onLocationTypeChange(event: any): void {
-    const newLocationType = event.value as 'country' | 'city';
-    console.log('Cambiando tipo de ubicación a:', newLocationType);
-    this.viewModel.changeLocationType(newLocationType);
-  }
-
-  // Aplicar un filtro específico
-  private applyFilter(type: FilterType): void {
-    switch (type) {
-      case 'clients':
-        // Filtrar clientes totales por año
-        this.viewModel.updateDataByYearFilter(
-          'clients',
-          this.filters.clients.year
-        );
-        break;
-
-      case 'newClients':
-        // Filtrar nuevos clientes por año y mes
-        if (this.filters.newClients.month) {
-          this.viewModel.updateDataByYearAndMonthFilter(
-            'newClients',
-            this.filters.newClients.year,
-            this.filters.newClients.month
-          );
-        }
-        break;
-
-      case 'orders':
-        // Filtrar promedio de pedidos por año
-        this.viewModel.updateDataByYearFilter(
-          'orders',
-          this.filters.orders.year
-        );
-        break;
-
-      case 'totalOrders':
-        // Filtrar pedidos totales por año y mes
-        if (this.filters.totalOrders.month) {
-          this.viewModel.updateDataByYearAndMonthFilter(
-            'totalOrders',
-            this.filters.totalOrders.year,
-            this.filters.totalOrders.month
-          );
-        }
-        break;
-
-      case 'ticket':
-        // Filtrar ticket medio por año
-        this.viewModel.updateDataByYearFilter(
-          'ticket',
-          this.filters.ticket.year
-        );
-        break;
-
-      case 'ltv':
-        // Filtrar LTV por año y mes
-        if (this.filters.ltv.month) {
-          this.viewModel.updateDataByYearAndMonthFilter(
-            'ltv',
-            this.filters.ltv.year,
-            this.filters.ltv.month
-          );
-        }
-        break;
-        
-      case 'monthlyClients':
-        // Este caso se maneja en loadMonthlyClientsData
-        break;
+    if (this.isBrowser) {
+      // Iniciar carga de datos para el gráfico de nuevos clientes por mes
+      this.loadMonthlyNewClients(this.filters.monthlyClients.year);
+      
+      // Iniciar carga de datos para el gráfico de pedidos por mes
+      this.loadMonthlyOrders(this.filters.monthlyOrders.year);
     }
   }
-
-  // Aplicar todos los filtros
-  private applyAllFilters(): void {
-    // Aplicar filtros para cada tipo de datos
-    Object.keys(this.filters).forEach((type) => {
-      this.applyFilter(type as FilterType);
-    });
+  
+  // Método para manejar cambios en el filtro de año para el gráfico de clientes mensuales
+  onMonthlyChartYearFilterChange(event: any): void {
+    const year = event.value;
+    this.filters.monthlyClients.year = year;
+    this.loadMonthlyNewClients(year);
   }
-
-  // Carga datos de nuevos clientes por mes para el año seleccionado
-  private loadMonthlyClientsData(year: string): void {
-    // Inicializamos un array con 12 posiciones (una por mes)
-    this.monthlyNewClientsData = new Array(12).fill(0);
+  
+  // Método para manejar cambios en el filtro de año para el gráfico de pedidos mensuales
+  onMonthlyOrdersChartYearFilterChange(event: any): void {
+    const year = event.value;
+    this.filters.monthlyOrders.year = year;
+    this.loadMonthlyOrders(year);
+  }
+  
+  // Cargar datos de nuevos clientes mensuales
+  private loadMonthlyNewClients(year: string): void {
+    if (!this.isBrowser) return;
     
-    console.log(`Cargando datos mensuales para el año ${year}`);
+    // Reiniciar el array con ceros
+    this.monthlyNewClientsData = Array(12).fill(0);
     
-    // Variable para controlar cuántas actualizaciones hemos hecho
-    let updateCount = 0;
+    // Mostrar un estado de carga inicial
+    this.updateMonthlyClientsChartOption();
     
-    // Para cada mes, obtenemos los datos de nuevos clientes usando el caso de uso existente
-    for (let month = 1; month <= 12; month++) {
-      const monthString = month.toString();
+    // Usamos forkJoin para hacer todas las peticiones en paralelo
+    import('rxjs').then(({ forkJoin, of }) => {
+      const requests = Array.from({length: 12}, (_, i) => {
+        const monthString = (i + 1).toString();
+        return this.getNewClientsByYearMonthUseCase.execute(year, monthString)
+          .pipe(
+            catchError(error => {
+              console.error(`Error al cargar nuevos clientes para ${year}/${monthString}:`, error);
+              return of(0);
+            })
+          );
+      });
       
-      // Usamos el caso de uso inyectado directamente
-      this.getNewClientsByYearMonthUseCase.execute(year, monthString).subscribe({
-        next: (total) => {
-          // Almacenamos el resultado en la posición correspondiente al mes (0-indexed)
-          this.monthlyNewClientsData[month - 1] = total;
-          updateCount++;
-          
-          // Actualizamos el gráfico después de cada 3 meses de datos o cuando tengamos los 12 meses
-          if (updateCount % 3 === 0 || updateCount === 12) {
-            this.updateMonthlyClientsChartOption();
-          }
+      forkJoin(requests).subscribe({
+        next: (results) => {
+          this.monthlyNewClientsData = results;
+          this.updateMonthlyClientsChartOption();
         },
         error: (err) => {
-          console.error(`Error al cargar nuevos clientes para ${year}/${month}:`, err);
-          updateCount++;
-          
-          // Actualizamos el gráfico incluso en caso de error, usando la misma frecuencia
-          if (updateCount % 3 === 0 || updateCount === 12) {
-            this.updateMonthlyClientsChartOption();
-          }
+          console.error('Error al cargar los datos de clientes mensuales:', err);
+          this.updateMonthlyClientsChartOption();
         }
       });
-    }
+    });
+  }
+  
+  // Cargar datos de pedidos mensuales
+  private loadMonthlyOrders(year: string): void {
+    if (!this.isBrowser) return;
     
-    // Actualización inicial para mostrar el gráfico mientras se cargan los datos
-    setTimeout(() => {
-      this.updateMonthlyClientsChartOption();
-    }, 100);
+    // Reiniciar el array con ceros
+    this.monthlyOrdersData = Array(12).fill(0);
+    
+    // Mostrar un estado de carga inicial
+    this.updateMonthlyOrdersChartOption();
+    
+    // Usamos forkJoin para hacer todas las peticiones en paralelo y obtener los resultados de una vez
+    import('rxjs').then(({ forkJoin, of }) => {
+      // Creamos un array con las 12 peticiones (una por mes)
+      const requests = Array.from({length: 12}, (_, i) => {
+        const monthString = (i + 1).toString();
+        // Capturamos errores individuales para que una petición fallida no haga fallar todo el conjunto
+        return this.getTotalOrdersByYearMonthUseCase.execute(year, monthString)
+          .pipe(
+            catchError(error => {
+              console.error(`Error al cargar pedidos para ${year}/${monthString}:`, error);
+              // Devolvemos 0 en caso de error para ese mes
+              return of(0);
+            })
+          );
+      });
+      
+      // Ejecutamos todas las peticiones en paralelo
+      forkJoin(requests).subscribe({
+        next: (results) => {
+          // Actualizamos el array de datos con los resultados
+          this.monthlyOrdersData = results;
+          // Actualizamos el gráfico con todos los datos completos
+          this.updateMonthlyOrdersChartOption();
+        },
+        error: (err) => {
+          // Este error solo ocurriría si hay un problema con forkJoin en sí
+          console.error('Error al cargar los datos de pedidos mensuales:', err);
+          // Aseguramos que el gráfico se actualice incluso en caso de error
+          this.updateMonthlyOrdersChartOption();
+        }
+      });
+    });
   }
 
   private updateChartOption(): void {
@@ -612,5 +540,128 @@ export class ClientsComponent implements OnInit {
         },
       ],
     };
+  }
+
+  // Actualiza el gráfico de barras de pedidos por mes
+  private updateMonthlyOrdersChartOption(): void {
+    if (!this.isBrowser) return; // No ejecutar esto en el servidor
+
+    if (!this.monthlyOrdersData || this.monthlyOrdersData.length === 0) {
+      this.monthlyOrdersChartOption = {
+        title: {
+          text: 'No hay datos disponibles',
+          left: 'center',
+          textStyle: {
+            color: '#333',
+          },
+        },
+      };
+      return;
+    }
+
+    // Configuración para el gráfico de barras de pedidos por mes
+    this.monthlyOrdersChartOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+        formatter: '{b}: {c} pedidos',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        borderColor: '#e0e0e0',
+        textStyle: {
+          color: '#333',
+        },
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'category',
+        data: this.months,
+        axisLabel: {
+          color: '#333',
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Pedidos',
+        nameLocation: 'middle',
+        nameGap: 40,
+        axisLabel: {
+          color: '#333',
+          formatter: '{value}' // Asegurar que se muestren valores sin decimales
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+        minInterval: 1, // Forzar que el intervalo mínimo sea 1 (sin decimales)
+        splitLine: {
+          show: true,
+          lineStyle: {
+            type: 'dashed',
+            color: '#ddd'
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Pedidos',
+          type: 'bar',
+          data: this.monthlyOrdersData.map(value => Math.round(value)), // Redondear valores para garantizar enteros
+          itemStyle: {
+            color: '#E53935', // Color rojo que combina bien con el tema Material
+            borderRadius: [4, 4, 0, 0], // Redondear las esquinas superiores de las barras
+          },
+          label: {
+            show: true,
+            position: 'top',
+            valueAnimation: true,
+            color: '#333',
+            formatter: '{c}', // Mostrar el valor sin decimales
+          },
+        },
+      ],
+    };
+  }
+
+  // Método para manejar cambios en el selector de año (para filtros de un solo año)
+  onYearFilterChange(event: any, type: FilterType): void {
+    const year = event.value;
+    this.filters[type].year = year;
+    this.viewModel.updateDataByYearFilter(type, year);
+  }
+  
+  // Método para manejar cambios en selectores de año-mes
+  onYearMonthFilterChange(event: any, type: FilterType, fieldName: 'year' | 'month'): void {
+    const value = event.value;
+    if (this.filters[type] && this.filters[type].hasOwnProperty(fieldName)) {
+      (this.filters[type] as any)[fieldName] = value;
+      
+      // Solo actualizamos los datos si tenemos tanto año como mes
+      if (this.filters[type].year && this.filters[type].month) {
+        this.viewModel.updateDataByYearAndMonthFilter(
+          type, 
+          this.filters[type].year, 
+          this.filters[type].month || '1'
+        );
+      }
+    }
+  }
+  
+  // Método para manejar cambios en el tipo de ubicación (país/ciudad)
+  onLocationTypeChange(event: any): void {
+    const locationType = event.value as 'country' | 'city';
+    this.viewModel.changeLocationType(locationType);
   }
 }

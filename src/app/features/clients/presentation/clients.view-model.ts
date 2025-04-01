@@ -29,6 +29,7 @@ interface ClientsState {
   ltv: number;
   topLocationsByClients: TopLocationsByClients[];
   currentLocationType: 'country' | 'city';
+  monthlyOrders: number[]; // Añadimos la propiedad para almacenar los pedidos mensuales
 }
 
 @Injectable()
@@ -45,7 +46,8 @@ export class ClientsViewModel implements OnDestroy {
     totalOrders: 0,
     ltv: 0,
     topLocationsByClients: [],
-    currentLocationType: 'country'
+    currentLocationType: 'country',
+    monthlyOrders: Array(12).fill(0) // Inicializamos con un array de 12 ceros
   });
 
   private _clientsCache: ClientsList[] = [];
@@ -63,6 +65,7 @@ export class ClientsViewModel implements OnDestroy {
   readonly ltv = computed(() => this._state().ltv);
   readonly topLocationsByClients = computed(() => this._state().topLocationsByClients);
   readonly currentLocationType = computed(() => this._state().currentLocationType);
+  readonly monthlyOrders = computed(() => this._state().monthlyOrders); // Añadimos el computed para acceder a los pedidos mensuales
 
   private getClientsListUseCase = inject(GetClientsListUseCase);
   private getTotalClientsUseCase = inject(GetTotalClientsUseCase);
