@@ -39,7 +39,8 @@ type FilterType =
   | 'orders'
   | 'totalOrders'
   | 'ticket'
-  | 'ltv';
+  | 'ltv'
+  | 'monthlyClients';
 
 interface FilterConfig {
   year: string;
@@ -93,6 +94,7 @@ export class ClientsComponent implements OnInit {
   ];
   chartOption: any;
   locationsChartOption: any;
+  monthlyClientsChartOption: any; // Nueva propiedad para el gráfico de barras mensual
   isBrowser: boolean;
   // Filtros actuales con tipos correctos
   filters: Record<FilterType, FilterConfig> = {
@@ -102,9 +104,18 @@ export class ClientsComponent implements OnInit {
     totalOrders: { year: '2023', month: '3' },
     ticket: { year: 'all' },
     ltv: { year: '2023', month: '3' },
+    monthlyClients: { year: '2023' }, // Nuevo filtro para el gráfico mensual
   };
 
+  // Datos de nuevos clientes por mes (se actualizarán según el año seleccionado)
+  private monthlyNewClientsData: number[] = [];
+  private months: string[] = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+
   public viewModel = inject(ClientsViewModel);
+  public getNewClientsByYearMonthUseCase = inject(GetNewClientsByYearMonthUseCase);
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -114,6 +125,7 @@ export class ClientsComponent implements OnInit {
       if (this.isBrowser) {
         this.updateChartOption();
         this.updateLocationsChartOption();
+        this.updateMonthlyClientsChartOption(); // Actualizar el nuevo gráfico
       }
     });
   }
@@ -131,9 +143,11 @@ export class ClientsComponent implements OnInit {
     this.filters.totalOrders.month = currentMonth;
     this.filters.ltv.year = currentYear;
     this.filters.ltv.month = currentMonth;
+    this.filters.monthlyClients.year = currentYear; // Inicializar el filtro del nuevo gráfico
 
     // Cargar datos iniciales
     this.applyAllFilters();
+    this.loadMonthlyClientsData(currentYear); // Cargar datos para el nuevo gráfico
   }
 
   // Método para filtrar por año (columnas izquierda)
@@ -164,6 +178,16 @@ export class ClientsComponent implements OnInit {
       this.filters[type][filterType]
     );
     this.applyFilter(type);
+  }
+
+  // Método para cambiar el año del gráfico mensual
+  onMonthlyChartYearFilterChange(event: any): void {
+    const selectedYear = event.value;
+    this.filters.monthlyClients.year = selectedYear;
+    console.log(`Cambiando año del gráfico mensual a: ${selectedYear}`);
+    
+    // Cargar datos de nuevos clientes por mes para el año seleccionado
+    this.loadMonthlyClientsData(selectedYear);
   }
 
   // Método para cambiar entre países y ciudades
@@ -232,6 +256,10 @@ export class ClientsComponent implements OnInit {
           );
         }
         break;
+        
+      case 'monthlyClients':
+        // Este caso se maneja en loadMonthlyClientsData
+        break;
     }
   }
 
@@ -241,6 +269,50 @@ export class ClientsComponent implements OnInit {
     Object.keys(this.filters).forEach((type) => {
       this.applyFilter(type as FilterType);
     });
+  }
+
+  // Carga datos de nuevos clientes por mes para el año seleccionado
+  private loadMonthlyClientsData(year: string): void {
+    // Inicializamos un array con 12 posiciones (una por mes)
+    this.monthlyNewClientsData = new Array(12).fill(0);
+    
+    console.log(`Cargando datos mensuales para el año ${year}`);
+    
+    // Variable para controlar cuántas actualizaciones hemos hecho
+    let updateCount = 0;
+    
+    // Para cada mes, obtenemos los datos de nuevos clientes usando el caso de uso existente
+    for (let month = 1; month <= 12; month++) {
+      const monthString = month.toString();
+      
+      // Usamos el caso de uso inyectado directamente
+      this.getNewClientsByYearMonthUseCase.execute(year, monthString).subscribe({
+        next: (total) => {
+          // Almacenamos el resultado en la posición correspondiente al mes (0-indexed)
+          this.monthlyNewClientsData[month - 1] = total;
+          updateCount++;
+          
+          // Actualizamos el gráfico después de cada 3 meses de datos o cuando tengamos los 12 meses
+          if (updateCount % 3 === 0 || updateCount === 12) {
+            this.updateMonthlyClientsChartOption();
+          }
+        },
+        error: (err) => {
+          console.error(`Error al cargar nuevos clientes para ${year}/${month}:`, err);
+          updateCount++;
+          
+          // Actualizamos el gráfico incluso en caso de error, usando la misma frecuencia
+          if (updateCount % 3 === 0 || updateCount === 12) {
+            this.updateMonthlyClientsChartOption();
+          }
+        }
+      });
+    }
+    
+    // Actualización inicial para mostrar el gráfico mientras se cargan los datos
+    setTimeout(() => {
+      this.updateMonthlyClientsChartOption();
+    }, 100);
   }
 
   private updateChartOption(): void {
@@ -321,6 +393,7 @@ export class ClientsComponent implements OnInit {
               fontSize: '16',
               fontWeight: 'bold',
               color: '#333',
+
 
             },
             itemStyle: {
@@ -442,6 +515,99 @@ export class ClientsComponent implements OnInit {
             valueAnimation: true,
             color: '#333',
             formatter: '{c}',
+          },
+        },
+      ],
+    };
+  }
+
+  // Actualiza el gráfico de barras de nuevos clientes por mes
+  private updateMonthlyClientsChartOption(): void {
+    if (!this.isBrowser) return; // No ejecutar esto en el servidor
+
+    if (!this.monthlyNewClientsData || this.monthlyNewClientsData.length === 0) {
+      this.monthlyClientsChartOption = {
+        title: {
+          text: 'No hay datos disponibles',
+          left: 'center',
+          textStyle: {
+            color: '#333',
+          },
+        },
+      };
+      return;
+    }
+
+    // Configuración para el gráfico de barras de nuevos clientes por mes
+    this.monthlyClientsChartOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+        formatter: '{b}: {c} nuevos clientes',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        borderColor: '#e0e0e0',
+        textStyle: {
+          color: '#333',
+        },
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'category',
+        data: this.months,
+        axisLabel: {
+          color: '#333',
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Nuevos Clientes',
+        nameLocation: 'middle',
+        nameGap: 40,
+        axisLabel: {
+          color: '#333',
+          formatter: '{value}' // Asegurar que se muestren valores sin decimales
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+        minInterval: 1, // Forzar que el intervalo mínimo sea 1 (sin decimales)
+        splitLine: {
+          show: true,
+          lineStyle: {
+            type: 'dashed',
+            color: '#ddd'
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Nuevos Clientes',
+          type: 'bar',
+          data: this.monthlyNewClientsData.map(value => Math.round(value)), // Redondear valores para garantizar enteros
+          itemStyle: {
+            color: '#E53935', // Color rojo que combina bien con el tema Material
+            borderRadius: [4, 4, 0, 0], // Redondear las esquinas superiores de las barras
+          },
+          label: {
+            show: true,
+            position: 'top',
+            valueAnimation: true,
+            color: '#333',
+            formatter: '{c}', // Mostrar el valor sin decimales
           },
         },
       ],

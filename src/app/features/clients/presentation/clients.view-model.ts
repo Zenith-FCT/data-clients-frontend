@@ -1,5 +1,5 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { computed, inject, Injectable, signal, OnDestroy } from '@angular/core';
+import { BehaviorSubject, catchError, finalize, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
@@ -32,8 +32,8 @@ interface ClientsState {
 }
 
 @Injectable()
-export class ClientsViewModel {
-  private _state = signal<ClientsState>({
+export class ClientsViewModel implements OnDestroy {
+  private _state = signal<ClientsState>( {
     clients: [],
     totalClients: 0,
     totalAverageOrders: 0,
@@ -49,6 +49,7 @@ export class ClientsViewModel {
   });
 
   private _clientsCache: ClientsList[] = [];
+  private destroy$ = new Subject<void>();
   
   readonly clients = computed(() => this._state().clients);
   readonly totalClients = computed(() => this._state().totalClients);
@@ -91,15 +92,80 @@ export class ClientsViewModel {
   getLTV(): number {
     return this.ltv();
   }
+  
+  // Método para obtener nuevos clientes por año y mes para el gráfico
+  async getNewClientsByYearMonth(year: string, month: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.getNewClientsByYearMonthUseCase.execute(year, month).subscribe({
+        next: (total) => {
+          resolve(total);
+        },
+        error: (err) => {
+          console.error(`Error obteniendo nuevos clientes para ${year}/${month}:`, err);
+          reject(err); // Propagamos el error en lugar de generar datos aleatorios
+        }
+      });
+    });
+  }
 
   loadData(): void {
-    this.loadClients();
-    this.loadTotalClients();
-    this.loadTotalAverageOrders();
-    this.loadAverageTicket();
-    this.loadClientsPerProduct();
-    this.loadTopLocationsByClients();
-    this.loadInitialDerivedMetrics();
+    // Actualizamos el estado una sola vez para indicar que estamos cargando
+    this._state.update(state => ({
+      ...state,
+      loading: true,
+      error: null
+    }));
+
+    // Utilizamos forkJoin para ejecutar varias peticiones en paralelo
+    import('rxjs').then(({ forkJoin }) => {
+      forkJoin({
+        clients: this.getClientsListUseCase.execute(),
+        totalClients: this.getTotalClientsUseCase.execute(),
+        totalAverageOrders: this.getTotalAverageOrdersUseCase.execute(),
+        averageTicket: this.getAverageTicketUseCase.execute(),
+        clientsPerProduct: this.getClientsPerProductUseCase.execute()
+      })
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          // Aseguramos que el estado de carga se resetee incluso en caso de error
+          this._state.update(state => ({
+            ...state,
+            loading: false
+          }));
+        })
+      )
+      .subscribe({
+        next: (results) => {
+          // Actualizamos el estado una sola vez con todos los resultados
+          this._state.update(state => ({
+            ...state,
+            clients: results.clients,
+            totalClients: results.totalClients,
+            totalAverageOrders: results.totalAverageOrders,
+            averageTicket: results.averageTicket,
+            clientsPerProduct: results.clientsPerProduct,
+            loading: false,
+            error: null
+          }));
+
+          // Guardamos en caché los clientes para uso futuro
+          this._clientsCache = results.clients;
+          
+          // Cargamos datos dependientes
+          this.loadTopLocationsByClients();
+          this.loadInitialDerivedMetrics();
+        },
+        error: (err) => {
+          console.error('Error loading client data:', err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: 'Error loading client data. Please try again.'
+          }));
+        }
+      });
+    });
   }
 
   private loadInitialDerivedMetrics(): void {
@@ -107,9 +173,38 @@ export class ClientsViewModel {
     const currentYear = currentDate.getFullYear().toString();
     const currentMonth = (currentDate.getMonth() + 1).toString();
     
-    this.loadNewClientsByYearMonth(currentYear, currentMonth);
-    this.loadTotalOrdersByYearMonth(currentYear, currentMonth);
-    this.loadLTVByYearMonth(currentYear, currentMonth);
+    // Realizamos todas las peticiones en paralelo usando forkJoin
+    import('rxjs').then(({ forkJoin }) => {
+      forkJoin({
+        newClients: this.getNewClientsByYearMonthUseCase.execute(currentYear, currentMonth),
+        totalOrders: this.getTotalOrdersByYearMonthUseCase.execute(currentYear, currentMonth),
+        ltv: this.getLTVByYearMonthUseCase.execute(currentYear, currentMonth)
+      })
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this._state.update(state => ({
+            ...state,
+            loading: false
+          }));
+        })
+      )
+      .subscribe({
+        next: (results) => {
+          // Actualizamos el estado una sola vez con todos los resultados
+          this._state.update(state => ({
+            ...state,
+            newClients: results.newClients,
+            totalOrders: results.totalOrders,
+            ltv: results.ltv
+          }));
+        },
+        error: (err) => {
+          console.error('Error cargando métricas derivadas:', err);
+          // No mostramos el error al usuario ya que esto es una carga secundaria
+        }
+      });
+    });
   }
 
   updateDataByYearFilter(type: string, year: string): void {
@@ -245,6 +340,7 @@ export class ClientsViewModel {
     
     this.getClientsListUseCase
       .execute()
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (clients) => {
             this._state.update(state => ({
@@ -271,22 +367,24 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getTotalClientsUseCase.execute().subscribe({
-      next: (total) => {
-        this._state.update(state => ({
-          ...state,
-          totalClients: total,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Error loading total clients'
-        }));
-      }
-    });
+    this.getTotalClientsUseCase.execute()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (total) => {
+          this._state.update(state => ({
+            ...state,
+            totalClients: total,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: 'Error loading total clients'
+          }));
+        }
+      });
   }
 
   private loadTotalAverageOrders(): void {
@@ -296,22 +394,24 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getTotalAverageOrdersUseCase.execute().subscribe({
-      next: (average) => {
-        this._state.update(state => ({
-          ...state,
-          totalAverageOrders: average,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Error loading average orders'
-        }));
-      }
-    });
+    this.getTotalAverageOrdersUseCase.execute()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (average) => {
+          this._state.update(state => ({
+            ...state,
+            totalAverageOrders: average,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: 'Error loading average orders'
+          }));
+        }
+      });
   }
 
   private loadAverageTicket(): void {
@@ -321,22 +421,24 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getAverageTicketUseCase.execute().subscribe({
-      next: (average) => {
-        this._state.update(state => ({
-          ...state,
-          averageTicket: average,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Error loading average ticket'
-        }));
-      }
-    });
+    this.getAverageTicketUseCase.execute()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (average) => {
+          this._state.update(state => ({
+            ...state,
+            averageTicket: average,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: 'Error loading average ticket'
+          }));
+        }
+      });
   }
 
   private loadClientsPerProduct(): void {
@@ -346,23 +448,25 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getClientsPerProductUseCase.execute().subscribe({
-      next: (distribution: ProductClientDistribution[]) => {
-        this._state.update(state => ({
-          ...state,
-          clientsPerProduct: distribution,
-          loading: false
-        }));
-      },
-      error: (err: Error) => {
-        console.error('Error loading clients per product:', err);
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Error loading clients per product distribution'
-        }));
-      }
-    });
+    this.getClientsPerProductUseCase.execute()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (distribution: ProductClientDistribution[]) => {
+          this._state.update(state => ({
+            ...state,
+            clientsPerProduct: distribution,
+            loading: false
+          }));
+        },
+        error: (err: Error) => {
+          console.error('Error loading clients per product:', err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: 'Error loading clients per product distribution'
+          }));
+        }
+      });
   }
 
   private loadTotalClientsByYear(year: string): void {
@@ -372,23 +476,25 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getTotalClientsByYearUseCase.execute(year).subscribe({
-      next: (total) => {
-        this._state.update(state => ({
-          ...state,
-          totalClients: total,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        console.error(`Error loading total clients for year ${year}:`, err);
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: `Error loading total clients for year ${year}`
-        }));
-      }
-    });
+    this.getTotalClientsByYearUseCase.execute(year)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (total) => {
+          this._state.update(state => ({
+            ...state,
+            totalClients: total,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          console.error(`Error loading total clients for year ${year}:`, err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: `Error loading total clients for year ${year}`
+          }));
+        }
+      });
   }
   
   private loadNewClientsByYearMonth(year: string, month: string): void {
@@ -398,23 +504,25 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getNewClientsByYearMonthUseCase.execute(year, month).subscribe({
-      next: (total) => {
-        this._state.update(state => ({
-          ...state,
-          newClients: total,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        console.error(`Error loading new clients for ${year}/${month}:`, err);
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: `Error loading new clients for ${year}/${month}`
-        }));
-      }
-    });
+    this.getNewClientsByYearMonthUseCase.execute(year, month)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (total) => {
+          this._state.update(state => ({
+            ...state,
+            newClients: total,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          console.error(`Error loading new clients for ${year}/${month}:`, err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: `Error loading new clients for ${year}/${month}`
+          }));
+        }
+      });
   }
   
   private loadAverageOrdersByYear(year: string): void {
@@ -424,23 +532,25 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getAverageOrdersByYearUseCase.execute(year).subscribe({
-      next: (average) => {
-        this._state.update(state => ({
-          ...state,
-          totalAverageOrders: average,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        console.error(`Error loading average orders for year ${year}:`, err);
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: `Error loading average orders for year ${year}`
-        }));
-      }
-    });
+    this.getAverageOrdersByYearUseCase.execute(year)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (average) => {
+          this._state.update(state => ({
+            ...state,
+            totalAverageOrders: average,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          console.error(`Error loading average orders for year ${year}:`, err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: `Error loading average orders for year ${year}`
+          }));
+        }
+      });
   }
   
   private loadTotalOrdersByYearMonth(year: string, month: string): void {
@@ -450,23 +560,25 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getTotalOrdersByYearMonthUseCase.execute(year, month).subscribe({
-      next: (total) => {
-        this._state.update(state => ({
-          ...state,
-          totalOrders: total,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        console.error(`Error loading total orders for ${year}/${month}:`, err);
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: `Error loading total orders for ${year}/${month}`
-        }));
-      }
-    });
+    this.getTotalOrdersByYearMonthUseCase.execute(year, month)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (total) => {
+          this._state.update(state => ({
+            ...state,
+            totalOrders: total,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          console.error(`Error loading total orders for ${year}/${month}:`, err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: `Error loading total orders for ${year}/${month}`
+          }));
+        }
+      });
   }
   
   private loadAverageTicketByYear(year: string): void {
@@ -476,23 +588,25 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getAverageTicketByYearUseCase.execute(year).subscribe({
-      next: (average) => {
-        this._state.update(state => ({
-          ...state,
-          averageTicket: average,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        console.error(`Error loading average ticket for year ${year}:`, err);
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: `Error loading average ticket for year ${year}`
-        }));
-      }
-    });
+    this.getAverageTicketByYearUseCase.execute(year)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (average) => {
+          this._state.update(state => ({
+            ...state,
+            averageTicket: average,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          console.error(`Error loading average ticket for year ${year}:`, err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: `Error loading average ticket for year ${year}`
+          }));
+        }
+      });
   }
   
   private loadLTVByYearMonth(year: string, month: string): void {
@@ -502,23 +616,25 @@ export class ClientsViewModel {
       error: null
     }));
 
-    this.getLTVByYearMonthUseCase.execute(year, month).subscribe({
-      next: (ltv) => {
-        this._state.update(state => ({
-          ...state,
-          ltv: ltv,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        console.error(`Error loading LTV for ${year}/${month}:`, err);
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: `Error loading LTV for ${year}/${month}`
-        }));
-      }
-    });
+    this.getLTVByYearMonthUseCase.execute(year, month)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (ltv) => {
+          this._state.update(state => ({
+            ...state,
+            ltv: ltv,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          console.error(`Error loading LTV for ${year}/${month}:`, err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: `Error loading LTV for ${year}/${month}`
+          }));
+        }
+      });
   }
 
   changeLocationType(locationType: 'country' | 'city'): void {
@@ -540,23 +656,25 @@ export class ClientsViewModel {
 
     const locationType = this._state().currentLocationType;
     
-    this.getTopLocationsByClientsUseCase.execute(locationType).subscribe({
-      next: (locations) => {
-        this._state.update(state => ({
-          ...state,
-          topLocationsByClients: locations,
-          loading: false
-        }));
-      },
-      error: (err) => {
-        console.error(`Error loading top ${locationType} locations:`, err);
-        this._state.update(state => ({
-          ...state,
-          loading: false,
-          error: `Error loading top ${locationType} locations`
-        }));
-      }
-    });
+    this.getTopLocationsByClientsUseCase.execute(locationType)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (locations) => {
+          this._state.update(state => ({
+            ...state,
+            topLocationsByClients: locations,
+            loading: false
+          }));
+        },
+        error: (err) => {
+          console.error(`Error loading top ${locationType} locations:`, err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: `Error loading top ${locationType} locations`
+          }));
+        }
+      });
   }
 
   // Calcular métricas derivadas a partir de los datos base
@@ -576,5 +694,10 @@ export class ClientsViewModel {
       ltv,
       newClients
     }));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
