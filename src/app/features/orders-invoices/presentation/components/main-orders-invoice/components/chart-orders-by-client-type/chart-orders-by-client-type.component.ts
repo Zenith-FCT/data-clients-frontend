@@ -50,7 +50,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
   }
 
   ngOnInit(): void {
-    // No need to call refreshData here as it would trigger all three loads
+    
   }
 
   ngAfterViewInit(): void {
@@ -138,7 +138,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
           maintainAspectRatio: false,
           layout: {
             padding: {
-              top: 30,
+              top: 20,
               bottom: 20
             }
           },
@@ -148,12 +148,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
           },
           plugins: {
             title: {
-              display: true,
-              text: 'Pedidos por Tipo de Cliente',
-              font: {
-                size: 16,
-                weight: 'bold'
-              }
+              display: false // Removido el título del gráfico
             },
             legend: {
               display: true,

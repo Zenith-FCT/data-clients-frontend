@@ -10,19 +10,32 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.year-selector {
+.header {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
-mat-form-field {
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+  padding-left: 0.5rem;
+}
+
+.year-selector {
+  margin-left: 1rem;
+}
+
+.year-selector mat-form-field {
   width: 120px;
 }
 
 .chart-wrapper {
-  flex-grow: 1;
-  height: calc(100% - 70px);
+  flex: 1;
+  min-height: 0;
   position: relative;
 }
 
