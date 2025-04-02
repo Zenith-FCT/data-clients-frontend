@@ -138,7 +138,7 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              position: 'bottom',
+              position: 'right',
               labels: {
                 padding: 20,
                 font: {
