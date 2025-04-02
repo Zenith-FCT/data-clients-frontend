@@ -35,10 +35,12 @@
 }
 
 :host {
+  --color-corporate: #d32f2f; /* Color rojo empresarial */
   display: block;
   height: 100%;
   padding: 10px; /* Reducido de 20px a 10px */
   box-sizing: border-box;
+  font-family: 'Roboto', 'Segoe UI', sans-serif; /* Única fuente para toda la vista */
 }
 
 .main-container {
@@ -72,11 +74,13 @@
   padding: 20px;
   background-color: white;
   border-radius: 8px;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 h2 {
   color: #333;
   margin-bottom: 10px; /* Reducido de 20px a 10px */
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 .clients-title {
@@ -88,6 +92,7 @@ h2 {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   border-bottom: 1px solid #e0e0e0;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 .table-container {
@@ -112,6 +117,7 @@ table {
   border-collapse: collapse;
   table-layout: fixed; /* Asegura que la tabla respete el ancho del contenedor */
   min-width: 600px; /* Asegura un mínimo ancho de tabla para evitar que las columnas se compriman demasiado */
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 th.mat-header-cell, td.mat-cell {
@@ -119,6 +125,7 @@ th.mat-header-cell, td.mat-cell {
   overflow: hidden;
   text-overflow: ellipsis; /* Muestra "..." cuando el texto es demasiado largo */
   max-width: 200px; /* Limita el ancho máximo de las celdas */
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 th.mat-header-cell {
@@ -127,12 +134,14 @@ th.mat-header-cell {
   font-weight: bold;
   padding: 12px 8px;
   border-bottom: 1px solid #e0e0e0;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 td.mat-cell {
   padding: 8px;
   color: #333 !important;
   border-bottom: 1px solid #e0e0e0;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 tr.mat-row:hover {
@@ -145,11 +154,13 @@ th {
   font-weight: 600;
   text-align: left;
   padding: 12px 15px;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 td {
   padding: 10px 15px;
   border-bottom: 1px solid #eeeeee;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 tr:hover {
@@ -187,11 +198,12 @@ tr:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 0; /* Evitar que crezca más allá del contenedor */
+  min-width: 0; 
   height: 100%;
-  box-sizing: border-box; /* Asegura que padding esté incluido en el cálculo de altura */
+  box-sizing: border-box;
   transition: transform 0.2s;
-  justify-content: space-between; /* Distribuir contenido verticalmente */
+  justify-content: flex-start; /* Cambiado de space-between a flex-start para controlar mejor el espacio */
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 
   &:hover {
     transform: translateY(-5px);
@@ -223,10 +235,10 @@ tr:hover {
     border-radius: 50%;
     
     mat-icon {
-      font-size: 20px; /* Restaurado a 20px */
-      height: 20px; /* Restaurado a 20px */
-      width: 20px; /* Restaurado a 20px */
-      color: #5c6bc0;
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+      color: var(--color-corporate); /* Cambiado de #5c6bc0 a rojo */
     }
   }
 
@@ -237,15 +249,21 @@ tr:hover {
     white-space: nowrap;
     width: 100%;
     text-align: center;
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
   }
 
   .info-box-value {
     color: #333;
-    font-size: 1.5rem; /* Restaurado a 1.5rem */
+    font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
     width: 100%;
-    margin-bottom: 2px; /* Añadido margen inferior */
+    margin: auto 0; /* Usa margin auto para centrar verticalmente */
+    flex-grow: 1; /* Permite que este elemento ocupe el espacio disponible */
+    display: flex;
+    align-items: center; /* Centra el contenido verticalmente */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
   }
 }
 
@@ -253,6 +271,7 @@ tr:hover {
 .selectors-container {
   display: flex;
   gap: 5px;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 // Material select styles
@@ -260,6 +279,7 @@ tr:hover {
   width: 90px; /* Restaurado a 90px */
   height: 32px; /* Altura fija para los selectores */
   margin-bottom: 0;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 
   ::ng-deep {
     .mat-mdc-form-field-subscript-wrapper {
@@ -275,11 +295,17 @@ tr:hover {
     .mat-mdc-form-field-infix {
       padding: 0;
       min-height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 8px; /* Mover el texto ligeramente a la derecha */
     }
     
     .mat-mdc-form-field-flex {
       margin-top: 0;
       height: 32px;
+      display: flex;
+      align-items: center;
     }
 
     .mdc-notched-outline__leading, 
@@ -293,21 +319,43 @@ tr:hover {
     }
     
     .mat-select-value {
-      color: #5c6bc0;
-      font-size: 14px; /* Restaurado a 14px */
+      color: #333;
+      font-size: 14px;
+      font-family: 'Roboto', 'Segoe UI', sans-serif;
+      text-align: center;
+      padding-right: 12px; /* Dar más espacio a la derecha para la flecha */
+    }
+    
+    .mat-mdc-select-value {
+      color: #333;
+      text-align: center;
+      padding-right: 12px; /* Dar más espacio a la derecha para la flecha */
+    }
+
+    .mat-mdc-select-value-text {
+      text-align: center;
     }
     
     .mat-select-arrow {
-      color: #5c6bc0;
+      color: #333;
+      margin-right: 12px; /* Aumentado de 6px a 12px */
     }
 
     .mat-mdc-form-field-icon-suffix {
       padding: 0;
       align-self: center;
+      margin-right: 20px; /* Aumentado sustancialmente de 12px a 20px */
     }
-
+    
+    // Añadimos una regla específica para el contenedor del ícono de la flecha
+    .mat-mdc-select-arrow-wrapper {
+      padding-right: 8px; /* Padding adicional para el contenedor de la flecha */
+    }
+    
     .mat-mdc-select {
       padding: 6px 0; /* Reducir padding vertical */
+      font-family: 'Roboto', 'Segoe UI', sans-serif;
+      text-align: center;
     }
 
     .mat-mdc-form-field-icon-prefix > .mat-icon,
@@ -333,6 +381,7 @@ tr:hover {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 .chart-title {
@@ -343,6 +392,7 @@ tr:hover {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   border-bottom: 1px solid #e0e0e0;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 .echarts-container {
@@ -350,6 +400,7 @@ tr:hover {
   width: 100%;
   border-radius: 8px;
   padding: 10px 0;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 .chart-header-with-controls {
@@ -369,16 +420,35 @@ tr:hover {
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   overflow: hidden;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 ::ng-deep .mat-button-toggle {
   background-color: white;
-  color: #5c6bc0;
+  color: var(--color-corporate); /* Cambiado de #5c6bc0 a rojo */
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 ::ng-deep .mat-button-toggle-checked {
-  background-color: #5c6bc0;
+  background-color: var(--color-corporate); /* Cambiado de #5c6bc0 a rojo */
   color: white;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+
+::ng-deep .mat-option {
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+
+::ng-deep .mat-select-panel {
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+
+::ng-deep .mat-mdc-select-panel {
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+
+::ng-deep .mat-mdc-option {
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
 
 @media (max-width: 1200px) {

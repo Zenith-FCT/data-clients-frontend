@@ -137,30 +137,131 @@ export class ClientsComponent implements OnInit {
     });
   }
 
+  // Añadimos propiedad para almacenar los años disponibles
+  years = ['all', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
+  
   ngOnInit(): void {
+    // Obtener el mes y año actuales
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear().toString();
+    const currentMonth = (currentDate.getMonth() + 1).toString(); // getMonth() es base 0
+    
+    // Asegurarse de que el año actual esté en la lista de años disponibles
+    if (!this.years.includes(currentYear)) {
+      this.years.push(currentYear);
+    }
+    
+    // Actualizar los filtros con los valores actuales
+    this.filters = {
+      clients: { year: currentYear },
+      newClients: { year: currentYear, month: currentMonth },
+      orders: { year: currentYear },
+      totalOrders: { year: currentYear, month: currentMonth },
+      ticket: { year: currentYear },
+      ltv: { year: currentYear, month: currentMonth },
+      monthlyClients: { year: currentYear },
+      monthlyOrders: { year: currentYear }
+    };
+    
+    // Cargar todos los datos principales de una vez
     this.viewModel.loadData();
     
+    // Preparar datos para los gráficos mensuales si estamos en el navegador
     if (this.isBrowser) {
-      // Iniciar carga de datos para el gráfico de nuevos clientes por mes
-      this.loadMonthlyNewClients(this.filters.monthlyClients.year);
-      
-      // Iniciar carga de datos para el gráfico de pedidos por mes
-      this.loadMonthlyOrders(this.filters.monthlyOrders.year);
+      // Inicializar los gráficos con datos de este año
+      this.loadMonthlyData(currentYear);
     }
   }
   
-  // Método para manejar cambios en el filtro de año para el gráfico de clientes mensuales
+  /**
+   * Carga los datos mensuales tanto para nuevos clientes como para pedidos
+   * @param year Año para el cual cargar los datos
+   */
+  private loadMonthlyData(year: string): void {
+    if (!this.isBrowser) return;
+    
+    // Inicializar arrays con ceros
+    this.monthlyNewClientsData = Array(12).fill(0);
+    this.monthlyOrdersData = Array(12).fill(0);
+    
+    // Actualizar los gráficos con el estado de carga
+    this.updateMonthlyClientsChartOption();
+    this.updateMonthlyOrdersChartOption();
+    
+    // Usamos forkJoin para hacer todas las peticiones en paralelo
+    import('rxjs').then(({ forkJoin, of }) => {
+      // Creamos dos arrays con las 12 peticiones cada uno (una por mes)
+      const clientRequests = this.createMonthlyRequests<number>(
+        year,
+        (y, m) => this.getNewClientsByYearMonthUseCase.execute(y, m),
+        'nuevos clientes'
+      );
+      
+      const orderRequests = this.createMonthlyRequests<number>(
+        year,
+        (y, m) => this.getTotalOrdersByYearMonthUseCase.execute(y, m),
+        'pedidos'
+      );
+      
+      // Ejecutamos ambos grupos de peticiones en paralelo
+      forkJoin({
+        clients: forkJoin(clientRequests),
+        orders: forkJoin(orderRequests)
+      }).subscribe({
+        next: (results) => {
+          this.monthlyNewClientsData = results.clients;
+          this.monthlyOrdersData = results.orders;
+          
+          // Actualizar ambos gráficos
+          this.updateMonthlyClientsChartOption();
+          this.updateMonthlyOrdersChartOption();
+        },
+        error: (err) => {
+          console.error('Error al cargar los datos mensuales:', err);
+          // Aseguramos que los gráficos se actualicen incluso en caso de error
+          this.updateMonthlyClientsChartOption();
+          this.updateMonthlyOrdersChartOption();
+        }
+      });
+    });
+  }
+  
+  /**
+   * Crea un array de peticiones mensuales con manejo de errores
+   * @param year Año para el cual crear las peticiones
+   * @param requestFn Función que genera cada petición
+   * @param entityName Nombre de la entidad para mensajes de error
+   * @returns Array de 12 observables (uno por mes)
+   */
+  private createMonthlyRequests<T>(
+    year: string, 
+    requestFn: (year: string, month: string) => any,
+    entityName: string
+  ): any[] {
+    return Array.from({length: 12}, (_, i) => {
+      const monthString = (i + 1).toString();
+      return requestFn(year, monthString).pipe(
+        catchError(error => {
+          console.error(`Error al cargar ${entityName} para ${year}/${monthString}:`, error);
+          return of(0);
+        })
+      );
+    });
+  }
+
+  // Método para manejar cambios en filtros de gráficos mensuales
   onMonthlyChartYearFilterChange(event: any): void {
     const year = event.value;
     this.filters.monthlyClients.year = year;
-    this.loadMonthlyNewClients(year);
+    this.filters.monthlyOrders.year = year; // Actualizamos ambos filtros a la vez
+    this.loadMonthlyData(year);
   }
   
   // Método para manejar cambios en el filtro de año para el gráfico de pedidos mensuales
   onMonthlyOrdersChartYearFilterChange(event: any): void {
     const year = event.value;
     this.filters.monthlyOrders.year = year;
-    this.loadMonthlyOrders(year);
+    this.loadMonthlyData(year);
   }
   
   // Cargar datos de nuevos clientes mensuales
@@ -434,7 +535,7 @@ export class ClientsComponent implements OnInit {
           type: 'bar',
           data: locationValues,
           itemStyle: {
-            color: '#5c6bc0',
+            color: '#d32f2f', // Cambiado de #5c6bc0 a rojo corporativo #d32f2f
             borderRadius: [4, 4, 0, 0], // Redondear las esquinas superiores de las barras
           },
           label: {
