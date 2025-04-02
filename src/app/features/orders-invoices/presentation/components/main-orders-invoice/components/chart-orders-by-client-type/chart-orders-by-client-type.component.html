@@ -1,0 +1,18 @@
+<div class="chart-container">
+  <div class="header">
+    <h2 class="section-title">Pedidos por Tipo de Cliente</h2>
+    <div class="year-selector">
+      <mat-form-field appearance="outline">
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
+          <mat-option *ngFor="let year of years" [value]="year">
+            {{ year }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  
+  <div class="chart-wrapper">
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>

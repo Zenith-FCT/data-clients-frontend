@@ -4,7 +4,7 @@ export class InvoiceClientsTypeModel {
         public date: string,
         public recurent: string,
         public unique: string,
-        public totalRecurrentSales: string,
-        public totalUniqueSales: string
+        public totalRecurrentOrders: string,
+        public totalUniqueOrders: string
     ) {}
 }

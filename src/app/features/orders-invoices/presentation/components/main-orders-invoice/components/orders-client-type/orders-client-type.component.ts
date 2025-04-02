@@ -30,7 +30,7 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
     this.isBrowser = isPlatformBrowser(platformId);
     
     effect(() => {
-      const clientsData = this.invoiceClientsViewModel.invoiceClientsType$();
+      const clientsData = this.invoiceClientsViewModel.ordersClientsType$();
       if (clientsData && clientsData.length > 0) {
         this.extractAvailableYears(clientsData);
         this.updateChart();
@@ -47,7 +47,7 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngOnInit(): void {
-    this.invoiceClientsViewModel.loadInvoiceClientsType();
+    this.invoiceClientsViewModel.loadOrdersClientsType();
   }
 
   ngAfterViewInit(): void {
@@ -82,7 +82,7 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   private updateChart(): void {
-    const clientsData = this.invoiceClientsViewModel.invoiceClientsType$();
+    const clientsData = this.invoiceClientsViewModel.ordersClientsType$();
     if (!clientsData || clientsData.length === 0) return;
     
     const yearData = clientsData.filter(item => parseInt(item.date) === this.selectedYear);
@@ -105,8 +105,8 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
       const ctx = this.chartCanvas.nativeElement.getContext('2d');
       if (!ctx) return;
       
-      const recurring = parseInt(clientData.totalRecurrentSales);
-      const unique = parseInt(clientData.totalUniqueSales);
+      const recurring = parseInt(clientData.totalRecurrentOrders);
+      const unique = parseInt(clientData.totalUniqueOrders);
       
       if (isNaN(recurring) || isNaN(unique)) {
         console.error('Los datos del cliente no son válidos:', clientData);
@@ -138,7 +138,7 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              position: 'bottom',
+              position: 'right',
               labels: {
                 padding: 20,
                 font: {

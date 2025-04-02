@@ -4,9 +4,12 @@ import { InvoiceClientsTypeDataRepository } from '../../data/data-repositories/i
 import { InvoiceClientsTypeModel } from '../../domain/models/invoice-clients-type.model';
 import { GetInvoiceClientsTypeUseCase } from '../../domain/use-cases/get-invoice-clients-type.use-case';
 import { GetOrdersClientsTypeUseCase } from '../../domain/use-cases/get-orders-client-type.use-case';
+import { GetOrdersByClientsMonthlyUseCase } from '../../domain/use-cases/get-orders-by-clients-monthly.use-case';
 
 export interface InvoiceClientsUiState {
     invoiceClientsType: InvoiceClientsTypeModel[];
+    ordersClientsType: InvoiceClientsTypeModel[];
+    ordersByClientsMonthly: InvoiceClientsTypeModel[];
     loading: boolean;
     error: string | null;
     selectedYear: number;
@@ -20,6 +23,8 @@ export class InvoiceClientsViewModelService implements OnDestroy {
 
     private readonly uiState = signal<InvoiceClientsUiState>({
         invoiceClientsType: [],
+        ordersClientsType: [],
+        ordersByClientsMonthly: [],
         loading: false,
         error: null,
         selectedYear: new Date().getFullYear()
@@ -28,14 +33,18 @@ export class InvoiceClientsViewModelService implements OnDestroy {
     public readonly loading$ = computed(() => this.uiState().loading);
     public readonly error$ = computed(() => this.uiState().error);
     public readonly invoiceClientsType$ = computed(() => this.uiState().invoiceClientsType);
+    public readonly ordersClientsType$ = computed(() => this.uiState().ordersClientsType);
+    public readonly ordersByClientsMonthly$ = computed(() => this.uiState().ordersByClientsMonthly);
     public readonly selectedYear$ = computed(() => this.uiState().selectedYear);
 
     private getInvoiceClientsTypeUseCase: GetInvoiceClientsTypeUseCase;
     private getOrdersClientsTypeUseCase: GetOrdersClientsTypeUseCase;
+    private getOrdersByClientsMonthlyUseCase: GetOrdersByClientsMonthlyUseCase;
 
     constructor(private invoiceClientsTypeRepository: InvoiceClientsTypeDataRepository) {
         this.getInvoiceClientsTypeUseCase = new GetInvoiceClientsTypeUseCase(this.invoiceClientsTypeRepository);
         this.getOrdersClientsTypeUseCase = new GetOrdersClientsTypeUseCase(this.invoiceClientsTypeRepository);
+        this.getOrdersByClientsMonthlyUseCase = new GetOrdersByClientsMonthlyUseCase(this.invoiceClientsTypeRepository);
     }
 
     public setSelectedYear(year: number): void {
@@ -67,6 +76,7 @@ export class InvoiceClientsViewModelService implements OnDestroy {
             this.updateState({ loading: false });
         }
     }
+    
     public async loadOrdersClientsType(): Promise<void> {
         try {
             this.updateState({ 
@@ -75,7 +85,7 @@ export class InvoiceClientsViewModelService implements OnDestroy {
             });
 
             const clientsTypeList = await firstValueFrom(this.getOrdersClientsTypeUseCase.execute());
-            this.updateState({ invoiceClientsType: clientsTypeList });
+            this.updateState({ ordersClientsType: clientsTypeList });
             
             if (clientsTypeList.length > 0) {
                 const years = clientsTypeList.map(type => parseInt(type.date));
@@ -86,7 +96,33 @@ export class InvoiceClientsViewModelService implements OnDestroy {
             console.error('Error loading orders clients type:', error);
             this.updateState({
                 error: 'Error al cargar los tipos de clientes de pedidos. Intente nuevamente.',
-                invoiceClientsType: []
+                ordersClientsType: []
+            });
+        } finally {
+            this.updateState({ loading: false });
+        }
+    }
+
+    public async loadOrdersByClientsMonthly(): Promise<void> {
+        try {
+            this.updateState({ 
+                loading: true, 
+                error: null 
+            });
+
+            const clientsTypeList = await firstValueFrom(this.getOrdersByClientsMonthlyUseCase.execute());
+            this.updateState({ ordersByClientsMonthly: clientsTypeList });
+            
+            if (clientsTypeList.length > 0) {
+                const years = clientsTypeList.map(type => parseInt(type.date));
+                const mostRecentYear = Math.max(...years);
+                this.updateState({ selectedYear: mostRecentYear });
+            }
+        } catch (error) {
+            console.error('Error loading monthly orders by clients:', error);
+            this.updateState({
+                error: 'Error al cargar los pedidos mensuales por clientes. Intente nuevamente.',
+                ordersByClientsMonthly: []
             });
         } finally {
             this.updateState({ loading: false });
@@ -94,7 +130,11 @@ export class InvoiceClientsViewModelService implements OnDestroy {
     }
 
     public async refreshData(): Promise<void> {
-        await this.loadInvoiceClientsType();
+        await Promise.all([
+            this.loadInvoiceClientsType(),
+            this.loadOrdersClientsType(),
+            this.loadOrdersByClientsMonthly()
+        ]);
     }
 
     private updateState(partialState: Partial<InvoiceClientsUiState>): void {

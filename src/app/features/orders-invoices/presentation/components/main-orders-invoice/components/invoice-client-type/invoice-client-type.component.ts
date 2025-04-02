@@ -138,7 +138,7 @@ export class InvoiceClientTypeComponent implements OnInit, AfterViewInit, OnDest
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              position: 'bottom',
+              position: 'left',
               labels: {
                 padding: 20,
                 font: {
