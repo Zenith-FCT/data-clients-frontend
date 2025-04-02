@@ -7,6 +7,7 @@ import { ChartTotalInvoiceComponent } from './components/chart-total-invoice/cha
 import { ChartTotalOrdersInvoicesComponent } from './components/chart-total-orders-invoices/chart-total-orders-invoices.component';
 import { ChartTmComponent } from './components/chart-tm/chart-tm.component';
 import { InvoiceClientTypeComponent } from './components/invoice-client-type/invoice-client-type.component';
+import { OrdersClientTypeComponent } from './components/orders-client-type/orders-client-type.component';
 import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients-viewmodel.service';
 
 @Component({
@@ -19,7 +20,8 @@ import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients
     ChartTotalInvoiceComponent,
     ChartTotalOrdersInvoicesComponent,
     ChartTmComponent,
-    InvoiceClientTypeComponent
+    InvoiceClientTypeComponent,
+    OrdersClientTypeComponent
   ],
   providers: [OrdersInvoiceViewModelService, InvoiceClientsViewModelService],
   templateUrl: './main-orders-invoice.component.html',

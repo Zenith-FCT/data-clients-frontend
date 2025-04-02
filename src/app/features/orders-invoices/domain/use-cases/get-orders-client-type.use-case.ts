@@ -2,7 +2,7 @@ import { Observable, map } from "rxjs";
 import { InvoiceClientsTypeRepository } from "../repositories/invoice-client-type-repository";
 import { InvoiceClientsTypeModel } from "../models/invoice-clients-type.model";
 
-export class GetInvoiceClientsTypeUseCase {
+export class GetOrdersClientsTypeUseCase {
     constructor(private invoiceClientsTypeRepository: InvoiceClientsTypeRepository) {}
 
     execute(): Observable<InvoiceClientsTypeModel[]> {

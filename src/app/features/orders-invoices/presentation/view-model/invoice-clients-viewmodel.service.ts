@@ -3,6 +3,7 @@ import { Subject, firstValueFrom } from 'rxjs';
 import { InvoiceClientsTypeDataRepository } from '../../data/data-repositories/invoice-client-type-repository.service';
 import { InvoiceClientsTypeModel } from '../../domain/models/invoice-clients-type.model';
 import { GetInvoiceClientsTypeUseCase } from '../../domain/use-cases/get-invoice-clients-type.use-case';
+import { GetOrdersClientsTypeUseCase } from '../../domain/use-cases/get-orders-client-type.use-case';
 
 export interface InvoiceClientsUiState {
     invoiceClientsType: InvoiceClientsTypeModel[];
@@ -30,9 +31,11 @@ export class InvoiceClientsViewModelService implements OnDestroy {
     public readonly selectedYear$ = computed(() => this.uiState().selectedYear);
 
     private getInvoiceClientsTypeUseCase: GetInvoiceClientsTypeUseCase;
+    private getOrdersClientsTypeUseCase: GetOrdersClientsTypeUseCase;
 
     constructor(private invoiceClientsTypeRepository: InvoiceClientsTypeDataRepository) {
         this.getInvoiceClientsTypeUseCase = new GetInvoiceClientsTypeUseCase(this.invoiceClientsTypeRepository);
+        this.getOrdersClientsTypeUseCase = new GetOrdersClientsTypeUseCase(this.invoiceClientsTypeRepository);
     }
 
     public setSelectedYear(year: number): void {
@@ -58,6 +61,31 @@ export class InvoiceClientsViewModelService implements OnDestroy {
             console.error('Error loading invoice clients type:', error);
             this.updateState({
                 error: 'Error al cargar los tipos de clientes de facturas. Intente nuevamente.',
+                invoiceClientsType: []
+            });
+        } finally {
+            this.updateState({ loading: false });
+        }
+    }
+    public async loadOrdersClientsType(): Promise<void> {
+        try {
+            this.updateState({ 
+                loading: true, 
+                error: null 
+            });
+
+            const clientsTypeList = await firstValueFrom(this.getOrdersClientsTypeUseCase.execute());
+            this.updateState({ invoiceClientsType: clientsTypeList });
+            
+            if (clientsTypeList.length > 0) {
+                const years = clientsTypeList.map(type => parseInt(type.date));
+                const mostRecentYear = Math.max(...years);
+                this.updateState({ selectedYear: mostRecentYear });
+            }
+        } catch (error) {
+            console.error('Error loading orders clients type:', error);
+            this.updateState({
+                error: 'Error al cargar los tipos de clientes de pedidos. Intente nuevamente.',
                 invoiceClientsType: []
             });
         } finally {
