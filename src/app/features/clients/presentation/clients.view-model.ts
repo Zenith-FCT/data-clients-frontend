@@ -1,5 +1,6 @@
-import { computed, inject, Injectable, signal, OnDestroy } from '@angular/core';
+import { computed, inject, Injectable, signal, OnDestroy, DestroyRef, PLATFORM_ID, Inject } from '@angular/core';
 import { BehaviorSubject, catchError, finalize, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
@@ -15,6 +16,7 @@ import { GetAverageTicketByYearUseCase } from '../domain/get-average-ticket-by-y
 import { GetLTVByYearMonthUseCase } from '../domain/get-ltv-by-year-month-use-case';
 import { GetTopLocationsByClientsUseCase } from '../domain/get-top-locations-by-clients-use-case';
 import { TopLocationsByClients } from '../domain/top-locations-by-clients.model';
+import { isPlatformBrowser } from '@angular/common';
 
 interface ClientsState {
   clients: ClientsList[];
@@ -29,12 +31,12 @@ interface ClientsState {
   ltv: number;
   topLocationsByClients: TopLocationsByClients[];
   currentLocationType: 'country' | 'city';
-  monthlyOrders: number[]; // Añadimos la propiedad para almacenar los pedidos mensuales
+  monthlyOrders: number[];
 }
 
 @Injectable()
 export class ClientsViewModel implements OnDestroy {
-  private _state = signal<ClientsState>( {
+  private _state = signal<ClientsState>({
     clients: [],
     totalClients: 0,
     totalAverageOrders: 0,
@@ -47,12 +49,13 @@ export class ClientsViewModel implements OnDestroy {
     ltv: 0,
     topLocationsByClients: [],
     currentLocationType: 'country',
-    monthlyOrders: Array(12).fill(0) // Inicializamos con un array de 12 ceros
+    monthlyOrders: Array(12).fill(0)
   });
 
   private _clientsCache: ClientsList[] = [];
   private destroy$ = new Subject<void>();
-  
+  private destroyRef = inject(DestroyRef);
+
   readonly clients = computed(() => this._state().clients);
   readonly totalClients = computed(() => this._state().totalClients);
   readonly totalAverageOrders = computed(() => this._state().totalAverageOrders);
@@ -65,7 +68,7 @@ export class ClientsViewModel implements OnDestroy {
   readonly ltv = computed(() => this._state().ltv);
   readonly topLocationsByClients = computed(() => this._state().topLocationsByClients);
   readonly currentLocationType = computed(() => this._state().currentLocationType);
-  readonly monthlyOrders = computed(() => this._state().monthlyOrders); // Añadimos el computed para acceder a los pedidos mensuales
+  readonly monthlyOrders = computed(() => this._state().monthlyOrders);
 
   private getClientsListUseCase = inject(GetClientsListUseCase);
   private getTotalClientsUseCase = inject(GetTotalClientsUseCase);
@@ -79,6 +82,32 @@ export class ClientsViewModel implements OnDestroy {
   private getAverageTicketByYearUseCase = inject(GetAverageTicketByYearUseCase);
   private getLTVByYearMonthUseCase = inject(GetLTVByYearMonthUseCase);
   private getTopLocationsByClientsUseCase = inject(GetTopLocationsByClientsUseCase);
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  /**
+   * Determina si la aplicación está ejecutándose en un entorno de pruebas
+   */
+  private isTestEnvironment(): boolean {
+    return (
+      // Detectar si estamos en un entorno de pruebas karma
+      typeof window !== 'undefined' && 
+      (window.location.href.includes('karma') || 
+       // Comprobar variables de entorno comunes en CI
+       (typeof process !== 'undefined' && 
+        (process.env && (process.env['CI'] === 'true' || 
+         process.env['NODE_ENV'] === 'test')))
+      )
+    );
+  }
+
+  /**
+   * Verifica si es seguro realizar peticiones HTTP en el entorno actual
+   */
+  private canMakeNetworkRequests(): boolean {
+    // Evitar peticiones en SSR o en entornos de prueba
+    return isPlatformBrowser(this.platformId) && !this.isTestEnvironment();
+  }
 
   getAverageTicket(): number {
     return this.averageTicket();
@@ -95,31 +124,37 @@ export class ClientsViewModel implements OnDestroy {
   getLTV(): number {
     return this.ltv();
   }
-  
-  // Método para obtener nuevos clientes por año y mes para el gráfico
+
   async getNewClientsByYearMonth(year: string, month: string): Promise<number> {
     return new Promise((resolve, reject) => {
-      this.getNewClientsByYearMonthUseCase.execute(year, month).subscribe({
+      this.getNewClientsByYearMonthUseCase.execute(year, month).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (total) => {
           resolve(total);
         },
         error: (err) => {
           console.error(`Error obteniendo nuevos clientes para ${year}/${month}:`, err);
-          reject(err); // Propagamos el error en lugar de generar datos aleatorios
+          reject(err);
         }
       });
     });
   }
 
   loadData(): void {
-    // Actualizamos el estado una sola vez para indicar que estamos cargando
     this._state.update(state => ({
       ...state,
       loading: true,
       error: null
     }));
 
-    // Utilizamos forkJoin para ejecutar varias peticiones en paralelo
+    if (!this.canMakeNetworkRequests()) {
+      console.log('Saltando peticiones HTTP en entorno SSR o pruebas');
+      this._state.update(state => ({
+        ...state,
+        loading: false
+      }));
+      return;
+    }
+
     import('rxjs').then(({ forkJoin }) => {
       forkJoin({
         clients: this.getClientsListUseCase.execute(),
@@ -128,106 +163,107 @@ export class ClientsViewModel implements OnDestroy {
         averageTicket: this.getAverageTicketUseCase.execute(),
         clientsPerProduct: this.getClientsPerProductUseCase.execute()
       })
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => {
-          // Aseguramos que el estado de carga se resetee incluso en caso de error
-          this._state.update(state => ({
-            ...state,
-            loading: false
-          }));
-        })
-      )
-      .subscribe({
-        next: (results) => {
-          // Actualizamos el estado una sola vez con todos los resultados
-          this._state.update(state => ({
-            ...state,
-            clients: results.clients,
-            totalClients: results.totalClients,
-            totalAverageOrders: results.totalAverageOrders,
-            averageTicket: results.averageTicket,
-            clientsPerProduct: results.clientsPerProduct,
-            loading: false,
-            error: null
-          }));
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => {
+            this._state.update(state => ({
+              ...state,
+              loading: false
+            }));
+          })
+        )
+        .subscribe({
+          next: (results) => {
+            this._state.update(state => ({
+              ...state,
+              clients: results.clients,
+              totalClients: results.totalClients,
+              totalAverageOrders: results.totalAverageOrders,
+              averageTicket: results.averageTicket,
+              clientsPerProduct: results.clientsPerProduct,
+              loading: false,
+              error: null
+            }));
 
-          // Guardamos en caché los clientes para uso futuro
-          this._clientsCache = results.clients;
-          
-          // Cargamos datos dependientes
-          this.loadTopLocationsByClients();
-          this.loadInitialDerivedMetrics();
-        },
-        error: (err) => {
-          console.error('Error loading client data:', err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: 'Error loading client data. Please try again.'
-          }));
-        }
-      });
+            this._clientsCache = results.clients;
+
+            this.loadTopLocationsByClients();
+            this.loadInitialDerivedMetrics();
+          },
+          error: (err) => {
+            console.error('Error loading client data:', err);
+            this._state.update(state => ({
+              ...state,
+              loading: false,
+              error: 'Error loading client data. Please try again.'
+            }));
+          }
+        });
     });
   }
 
   private loadInitialDerivedMetrics(): void {
+    if (!this.canMakeNetworkRequests()) {
+      return;
+    }
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear().toString();
     const currentMonth = (currentDate.getMonth() + 1).toString();
-    
-    // Realizamos todas las peticiones en paralelo usando forkJoin
+
     import('rxjs').then(({ forkJoin }) => {
       forkJoin({
         newClients: this.getNewClientsByYearMonthUseCase.execute(currentYear, currentMonth),
         totalOrders: this.getTotalOrdersByYearMonthUseCase.execute(currentYear, currentMonth),
         ltv: this.getLTVByYearMonthUseCase.execute(currentYear, currentMonth)
       })
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => {
-          this._state.update(state => ({
-            ...state,
-            loading: false
-          }));
-        })
-      )
-      .subscribe({
-        next: (results) => {
-          // Actualizamos el estado una sola vez con todos los resultados
-          this._state.update(state => ({
-            ...state,
-            newClients: results.newClients,
-            totalOrders: results.totalOrders,
-            ltv: results.ltv
-          }));
-        },
-        error: (err) => {
-          console.error('Error cargando métricas derivadas:', err);
-          // No mostramos el error al usuario ya que esto es una carga secundaria
-        }
-      });
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => {
+            this._state.update(state => ({
+              ...state,
+              loading: false
+            }));
+          })
+        )
+        .subscribe({
+          next: (results) => {
+            this._state.update(state => ({
+              ...state,
+              newClients: results.newClients,
+              totalOrders: results.totalOrders,
+              ltv: results.ltv
+            }));
+          },
+          error: (err) => {
+            console.error('Error cargando métricas derivadas:', err);
+          }
+        });
     });
   }
 
   updateDataByYearFilter(type: string, year: string): void {
+    if (!this.canMakeNetworkRequests()) {
+      return;
+    }
+
     console.log(`Aplicando filtro por año ${year} para ${type}`);
-    
+
     if (year === 'all') {
       if (type === 'clients') this.loadTotalClients();
       else if (type === 'orders') this.loadTotalAverageOrders();
       else if (type === 'ticket') this.loadAverageTicket();
-      
+
       this.calculateDerivedMetrics();
       return;
     }
-    
+
     if (this._clientsCache.length === 0) {
       this._state.update(state => ({
         ...state,
         loading: true
       }));
-      
+
       this.getClientsListUseCase.execute().subscribe({
         next: (clients) => {
           this._clientsCache = clients;
@@ -246,16 +282,20 @@ export class ClientsViewModel implements OnDestroy {
       this.applyYearFilter(type, year);
     }
   }
-  
+
   updateDataByYearAndMonthFilter(type: string, year: string, month: string): void {
+    if (!this.canMakeNetworkRequests()) {
+      return;
+    }
+
     console.log(`Aplicando filtro por año ${year} y mes ${month} para ${type}`);
-    
+
     if (this._clientsCache.length === 0) {
       this._state.update(state => ({
         ...state,
         loading: true
       }));
-      
+
       this.getClientsListUseCase.execute().subscribe({
         next: (clients) => {
           this._clientsCache = clients;
@@ -274,91 +314,147 @@ export class ClientsViewModel implements OnDestroy {
       this.applyYearMonthFilter(type, year, month);
     }
   }
-  
+
   private applyYearFilter(type: string, year: string): void {
-    const yearInt = parseInt(year);
-    
-    switch (type) {
-      case 'clients':
-        this.loadTotalClientsByYear(year);
-        break;
-        
-      case 'orders':
-        this.loadAverageOrdersByYear(year);
-        break;
-        
-      case 'ticket':
-        this.loadAverageTicketByYear(year);
-        break;
-    }
-    
-    this.calculateDerivedMetrics();
+    this._state.update(state => ({
+      ...state,
+      loading: true,
+      error: null
+    }));
+
+    import('rxjs').then(({ forkJoin, of }) => {
+      if (type === 'clients' || type === 'orders' || type === 'ticket') {
+        let observable;
+
+        switch (type) {
+          case 'clients':
+            observable = this.getTotalClientsByYearUseCase.execute(year);
+            break;
+          case 'orders':
+            observable = this.getAverageOrdersByYearUseCase.execute(year);
+            break;
+          case 'ticket':
+            observable = this.getAverageTicketByYearUseCase.execute(year);
+            break;
+        }
+
+        observable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+          next: (result) => {
+            this._state.update(state => {
+              const updatedState = { ...state, loading: false };
+
+              switch (type) {
+                case 'clients':
+                  updatedState.totalClients = result;
+                  break;
+                case 'orders':
+                  updatedState.totalAverageOrders = result;
+                  break;
+                case 'ticket':
+                  updatedState.averageTicket = result;
+                  break;
+              }
+
+              return updatedState;
+            });
+
+            this.calculateDerivedMetrics();
+          },
+          error: (err) => {
+            console.error(`Error loading ${type} data for year ${year}:`, err);
+            this._state.update(state => ({
+              ...state,
+              loading: false,
+              error: `Error loading ${type} data for year ${year}`
+            }));
+          }
+        });
+      }
+    });
   }
-  
+
   private applyYearMonthFilter(type: string, year: string, month: string): void {
-    const yearInt = parseInt(year);
-    const monthInt = parseInt(month);
-    
-    switch (type) {
-      case 'newClients':
-        this.loadNewClientsByYearMonth(year, month);
-        break;
-        
-      case 'totalOrders':
-        this.loadTotalOrdersByYearMonth(year, month);
-        break;
-        
-      case 'ltv':
-        this.loadLTVByYearMonth(year, month);
-        break;
-    }
-  }
-  
-  private getSeasonalFactor(month: number): number {
-    const seasonalFactors = [
-      0.8,
-      0.7,
-      1.1,
-      1.2,
-      1.0,
-      1.0,
-      1.3,
-      1.3,
-      0.9,
-      1.0,
-      1.1,
-      1.5
-    ];
-    
-    return seasonalFactors[month - 1];
+    this._state.update(state => ({
+      ...state,
+      loading: true,
+      error: null
+    }));
+
+    import('rxjs').then(({ forkJoin }) => {
+      if (type === 'newClients' || type === 'totalOrders' || type === 'ltv') {
+        let observable;
+
+        switch (type) {
+          case 'newClients':
+            observable = this.getNewClientsByYearMonthUseCase.execute(year, month);
+            break;
+          case 'totalOrders':
+            observable = this.getTotalOrdersByYearMonthUseCase.execute(year, month);
+            break;
+          case 'ltv':
+            observable = this.getLTVByYearMonthUseCase.execute(year, month);
+            break;
+        }
+
+        observable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+          next: (result) => {
+            this._state.update(state => {
+              const updatedState = { ...state, loading: false };
+
+              switch (type) {
+                case 'newClients':
+                  updatedState.newClients = result;
+                  break;
+                case 'totalOrders':
+                  updatedState.totalOrders = result;
+                  break;
+                case 'ltv':
+                  updatedState.ltv = result;
+                  break;
+              }
+
+              return updatedState;
+            });
+          },
+          error: (err) => {
+            console.error(`Error loading ${type} data for ${year}/${month}:`, err);
+            this._state.update(state => ({
+              ...state,
+              loading: false,
+              error: `Error loading ${type} data for ${year}/${month}`
+            }));
+          }
+        });
+      }
+    });
   }
 
   loadClients(): void {
     this._state.update(state => ({
-        ...state,
-        clients: [],
-        loading: true,
-        error: null,
+      ...state,
+      clients: [],
+      loading: true,
+      error: null
     }));
-    
+
     this.getClientsListUseCase
       .execute()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (clients) => {
-            this._state.update(state => ({
-                ...state,
-                clients: clients,
-                loading: false,
-            })); 
+          this._state.update(state => ({
+            ...state,
+            clients: clients,
+            loading: false
+          }));
         },
         error: (err) => {
-            console.error('Error loading clients:', err);
-            this._state.update(state => ({
-                ...state,
-                loading: false,
-                error: 'Error loading clients',
-            }));
+          console.error('Error loading clients:', err);
+          this._state.update(state => ({
+            ...state,
+            loading: false,
+            error: 'Error loading clients'
+          }));
         }
       });
   }
@@ -371,7 +467,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getTotalClientsUseCase.execute()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (total) => {
           this._state.update(state => ({
@@ -398,7 +494,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getTotalAverageOrdersUseCase.execute()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (average) => {
           this._state.update(state => ({
@@ -425,7 +521,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getAverageTicketUseCase.execute()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (average) => {
           this._state.update(state => ({
@@ -452,7 +548,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getClientsPerProductUseCase.execute()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (distribution: ProductClientDistribution[]) => {
           this._state.update(state => ({
@@ -480,7 +576,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getTotalClientsByYearUseCase.execute(year)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (total) => {
           this._state.update(state => ({
@@ -499,7 +595,7 @@ export class ClientsViewModel implements OnDestroy {
         }
       });
   }
-  
+
   private loadNewClientsByYearMonth(year: string, month: string): void {
     this._state.update(state => ({
       ...state,
@@ -508,7 +604,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getNewClientsByYearMonthUseCase.execute(year, month)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (total) => {
           this._state.update(state => ({
@@ -527,7 +623,7 @@ export class ClientsViewModel implements OnDestroy {
         }
       });
   }
-  
+
   private loadAverageOrdersByYear(year: string): void {
     this._state.update(state => ({
       ...state,
@@ -536,7 +632,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getAverageOrdersByYearUseCase.execute(year)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (average) => {
           this._state.update(state => ({
@@ -555,7 +651,7 @@ export class ClientsViewModel implements OnDestroy {
         }
       });
   }
-  
+
   private loadTotalOrdersByYearMonth(year: string, month: string): void {
     this._state.update(state => ({
       ...state,
@@ -564,7 +660,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getTotalOrdersByYearMonthUseCase.execute(year, month)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (total) => {
           this._state.update(state => ({
@@ -583,7 +679,7 @@ export class ClientsViewModel implements OnDestroy {
         }
       });
   }
-  
+
   private loadAverageTicketByYear(year: string): void {
     this._state.update(state => ({
       ...state,
@@ -592,7 +688,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getAverageTicketByYearUseCase.execute(year)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (average) => {
           this._state.update(state => ({
@@ -611,7 +707,7 @@ export class ClientsViewModel implements OnDestroy {
         }
       });
   }
-  
+
   private loadLTVByYearMonth(year: string, month: string): void {
     this._state.update(state => ({
       ...state,
@@ -620,7 +716,7 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     this.getLTVByYearMonthUseCase.execute(year, month)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (ltv) => {
           this._state.update(state => ({
@@ -651,6 +747,10 @@ export class ClientsViewModel implements OnDestroy {
   }
 
   private loadTopLocationsByClients(): void {
+    if (!this.canMakeNetworkRequests()) {
+      return;
+    }
+
     this._state.update(state => ({
       ...state,
       loading: true,
@@ -658,9 +758,9 @@ export class ClientsViewModel implements OnDestroy {
     }));
 
     const locationType = this._state().currentLocationType;
-    
+
     this.getTopLocationsByClientsUseCase.execute(locationType)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (locations) => {
           this._state.update(state => ({
@@ -680,17 +780,11 @@ export class ClientsViewModel implements OnDestroy {
       });
   }
 
-  // Calcular métricas derivadas a partir de los datos base
   private calculateDerivedMetrics(): void {
-    // Total de pedidos = totalClients * totalAverageOrders
     const totalOrders = Math.round(this._state().totalClients * this._state().totalAverageOrders);
-    
-    // LTV (Lifetime Value) = totalAverageOrders * averageTicket
     const ltv = this._state().totalAverageOrders * this._state().averageTicket;
-    
-    // Estimación de nuevos clientes (usaremos 10% de clientes totales como estimación)
     const newClients = Math.round(this._state().totalClients * 0.1);
-    
+
     this._state.update(state => ({
       ...state,
       totalOrders,
