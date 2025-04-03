@@ -52,7 +52,7 @@ export class ApiService {
 
     async getOrderInvoiceProductType(): Promise<any[]> {
         try {
-            const response = await fetch(`${this.url}orders_invoice_product_type`);
+            const response = await fetch(`${this.url}order_invoice_product_type`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

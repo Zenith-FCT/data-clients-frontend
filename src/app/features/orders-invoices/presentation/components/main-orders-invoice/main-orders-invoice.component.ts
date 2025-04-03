@@ -9,7 +9,9 @@ import { ChartTmComponent } from './components/chart-tm/chart-tm.component';
 import { InvoiceClientTypeComponent } from './components/invoice-client-type/invoice-client-type.component';
 import { OrdersClientTypeComponent } from './components/orders-client-type/orders-client-type.component';
 import { ChartOrdersByClientTypeComponent } from './components/chart-orders-by-client-type/chart-orders-by-client-type.component';
+import { ChartInvoiceProductTypeComponent } from './components/chart-invoice-product-type/chart-invoice-product-type.component';
 import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients-viewmodel.service';
+import { OrderInvoiceProductViewModelService } from '../../view-model/order-invoice-product-viewmodel.service';
 
 @Component({
   selector: 'app-main-orders-invoice',
@@ -23,16 +25,22 @@ import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients
     ChartTmComponent,
     InvoiceClientTypeComponent,
     OrdersClientTypeComponent,
-    ChartOrdersByClientTypeComponent
+    ChartOrdersByClientTypeComponent,
+    ChartInvoiceProductTypeComponent
   ],
-  providers: [OrdersInvoiceViewModelService, InvoiceClientsViewModelService],
+  providers: [
+    OrdersInvoiceViewModelService, 
+    InvoiceClientsViewModelService,
+    OrderInvoiceProductViewModelService
+  ],
   templateUrl: './main-orders-invoice.component.html',
   styleUrl: './main-orders-invoice.component.css'
 })
 export class MainOrdersInvoiceComponent implements OnInit {
   constructor(
     public ordersInvoiceViewModel: OrdersInvoiceViewModelService,
-    public invoiceClientsViewModel: InvoiceClientsViewModelService
+    public invoiceClientsViewModel: InvoiceClientsViewModelService,
+    public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService
   ) {}
   
   ngOnInit(): void {
@@ -47,5 +55,8 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();
     this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
+
+    // Load product type data
+    this.orderInvoiceProductViewModel.loadInvoiceProductType();
   }
 }

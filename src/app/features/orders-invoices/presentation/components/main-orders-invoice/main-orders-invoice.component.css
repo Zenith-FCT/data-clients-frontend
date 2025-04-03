@@ -306,3 +306,29 @@
   box-sizing: border-box;
   overflow: hidden;
 }
+
+.product-charts-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.product-type-chart-container {
+  width: 50%;
+}
+
+.product-type-chart-container {
+  width: 100%;
+  height: 650px;
+  margin-top: 2rem;
+  background: transparent;
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.product-type-chart-container app-chart-invoice-product-type {
+  width: 100%;
+  height: 100%;
+}
