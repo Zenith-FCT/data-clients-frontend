@@ -4,12 +4,11 @@
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: transparent;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
+  min-height: 550px;
 }
 
 .chart-header {
@@ -61,10 +60,11 @@
   flex: 1;
   position: relative;
   width: 100%;
-  height: calc(100% - 48px);
+  height: calc(100% - 60px);
   display: flex;
   align-items: stretch;
-  margin-top: -0.5rem;
+  margin-top: 0;
+  min-height: 500px;
 }
 
 .loading-state {
@@ -107,6 +107,7 @@
 canvas {
   width: 100% !important;
   height: 100% !important;
-  max-height: none !important;
+  max-height: 100% !important;
   display: block !important;
+  object-fit: contain;
 }

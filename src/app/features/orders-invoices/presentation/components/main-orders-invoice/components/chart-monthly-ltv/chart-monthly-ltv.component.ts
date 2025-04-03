@@ -154,6 +154,14 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: {
+            top: 10,
+            right: 10,
+            bottom: 10,
+            left: 10
+          }
+        },
         plugins: {
           legend: {
             display: false
