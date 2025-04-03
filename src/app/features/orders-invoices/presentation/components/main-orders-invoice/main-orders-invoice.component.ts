@@ -3,13 +3,16 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InformationBoxComponent } from './components/information-box/information-box.component';
 import { OrdersInvoiceViewModelService } from '../../view-model/orders-invoice-viewmodel.service';
+import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients-viewmodel.service';
+import { OrderInvoiceProductViewModelService } from '../../view-model/order-invoice-product-viewmodel.service';
 import { ChartTotalInvoiceComponent } from './components/chart-total-invoice/chart-total-invoice.component';
 import { ChartTotalOrdersInvoicesComponent } from './components/chart-total-orders-invoices/chart-total-orders-invoices.component';
 import { ChartTmComponent } from './components/chart-tm/chart-tm.component';
 import { InvoiceClientTypeComponent } from './components/invoice-client-type/invoice-client-type.component';
 import { OrdersClientTypeComponent } from './components/orders-client-type/orders-client-type.component';
 import { ChartOrdersByClientTypeComponent } from './components/chart-orders-by-client-type/chart-orders-by-client-type.component';
-import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients-viewmodel.service';
+import { ChartInvoiceProductTypeComponent } from './components/chart-invoice-product-type/chart-invoice-product-type.component';
+import { ChartOrdersProductTypeComponent } from './components/chart-orders-product-type/chart-orders-product-type.component';
 
 @Component({
   selector: 'app-main-orders-invoice',
@@ -23,16 +26,23 @@ import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients
     ChartTmComponent,
     InvoiceClientTypeComponent,
     OrdersClientTypeComponent,
-    ChartOrdersByClientTypeComponent
+    ChartOrdersByClientTypeComponent,
+    ChartInvoiceProductTypeComponent,
+    ChartOrdersProductTypeComponent
   ],
-  providers: [OrdersInvoiceViewModelService, InvoiceClientsViewModelService],
+  providers: [
+    OrdersInvoiceViewModelService, 
+    InvoiceClientsViewModelService,
+    OrderInvoiceProductViewModelService
+  ],
   templateUrl: './main-orders-invoice.component.html',
   styleUrl: './main-orders-invoice.component.css'
 })
 export class MainOrdersInvoiceComponent implements OnInit {
   constructor(
     public ordersInvoiceViewModel: OrdersInvoiceViewModelService,
-    public invoiceClientsViewModel: InvoiceClientsViewModelService
+    public invoiceClientsViewModel: InvoiceClientsViewModelService,
+    public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService
   ) {}
   
   ngOnInit(): void {
@@ -43,9 +53,10 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.ordersInvoiceViewModel.loadTotalOrders(currentYear);
     this.ordersInvoiceViewModel.loadMonthlyTmList();
     
-    // Load all three types of client data
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();
     this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
+
+    this.orderInvoiceProductViewModel.loadInvoiceProductType();
   }
 }
