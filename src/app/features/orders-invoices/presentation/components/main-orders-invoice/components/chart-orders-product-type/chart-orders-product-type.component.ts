@@ -9,13 +9,13 @@ import { OrderInvoiceProductTypeModel } from '../../../../../domain/models/order
 declare const Chart: any;
 
 @Component({
-  selector: 'app-chart-invoice-product-type',
+  selector: 'app-chart-orders-product-type',
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
-  templateUrl: './chart-invoice-product-type.component.html',
-  styleUrl: './chart-invoice-product-type.component.css'
+  templateUrl: './chart-orders-product-type.component.html',
+  styleUrl: './chart-orders-product-type.component.css'
 })
-export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   private chart: any;
   private destroy$ = new Subject<void>();
@@ -99,7 +99,7 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
     
     data.forEach(item => {
       const currentSum = productSums.get(item.productType) || 0;
-      const value = parseFloat(item.invoiceProductType);
+      const value = parseFloat(item.orderProductType);
       if (!isNaN(value)) {
         productSums.set(item.productType, currentSum + value);
       }
@@ -127,9 +127,10 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
         labels: productTypes,
         datasets: [{
           data: values,
-          backgroundColor: ['#000000', '#FF0000', '#808080', '#A9A9A9', '#D3D3D3', '#B22222', '#4B4B4B'],
-          hoverBackgroundColor: ['#000000', '#FF0000', '#808080', '#A9A9A9', '#D3D3D3', '#B22222', '#4B4B4B']
-    }]
+          backgroundColor: ['#2D2D2D', '#E63946', '#BDBDBD', '#6F1D1B', '#F4A261', '#3D405B', '#8D99AE'],
+          hoverBackgroundColor: ['#2D2D2D', '#E63946', '#BDBDBD', '#6F1D1B', '#F4A261', '#3D405B', '#8D99AE']
+
+        }]
       },
       options: {
         responsive: true,
@@ -150,7 +151,7 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
                 const value = context.raw;
                 const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
                 const percentage = Math.round((value / total) * 100);
-                return `${context.label}: ${value.toLocaleString('es-ES')} € (${percentage}%)`;
+                return `${context.label}: ${value.toLocaleString('es-ES')} pedidos (${percentage}%)`;
               }
             }
           }

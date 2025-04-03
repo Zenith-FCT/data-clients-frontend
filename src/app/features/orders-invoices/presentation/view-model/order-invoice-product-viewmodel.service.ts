@@ -9,6 +9,7 @@ export interface OrderInvoiceProductUiState {
     ordersProductType: OrderInvoiceProductTypeModel[];
     loading: boolean;
     error: string | null;
+    selectedYear: number;
 }
 @Injectable({
     providedIn: 'root'
@@ -20,13 +21,15 @@ export class OrderInvoiceProductViewModelService implements OnDestroy {
         InvoiceProductType: [],
         ordersProductType: [],
         loading: false,
-        error: null
+        error: null,
+        selectedYear: new Date().getFullYear()
     });
 
     public readonly loading$ = computed(() => this.uiState().loading);
     public readonly error$ = computed(() => this.uiState().error);
     public readonly InvoiceProductType$ = computed(() => this.uiState().InvoiceProductType);
     public readonly ordersProductType$ = computed(() => this.uiState().ordersProductType);
+    public readonly selectedYear$ = computed(() => this.uiState().selectedYear);
 
     private getOrderInvoiceProductTypeUseCase: GetOrderInvoiceProductTypeUseCase;
 
@@ -47,6 +50,10 @@ export class OrderInvoiceProductViewModelService implements OnDestroy {
         } finally {
             this.updateState({ loading: false });
         }
+    }
+
+    public setSelectedYear(year: number): void {
+        this.updateState({ selectedYear: year });
     }
 
     private updateState(newState: Partial<OrderInvoiceProductUiState>): void {
