@@ -6,7 +6,6 @@ export class GetOrderInvoiceProductTypeUseCase {
     constructor(private orderInvoiceProductTypeRepository: OrderInvoiceProductTypeRepository) {}
 
     execute(): Observable<OrderInvoiceProductTypeModel[]> {
-        let data =this.orderInvoiceProductTypeRepository.getOrderInvoiceProductType()
         return this.orderInvoiceProductTypeRepository.getOrderInvoiceProductType();
     }
 }
