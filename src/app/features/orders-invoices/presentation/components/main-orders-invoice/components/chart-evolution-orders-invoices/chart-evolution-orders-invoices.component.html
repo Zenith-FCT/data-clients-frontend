@@ -1,0 +1,25 @@
+<div class="chart-container">
+    <div class="chart-header">
+      <h3>Evolucion de pedidos y facturacion</h3>
+      <mat-form-field appearance="outline" class="year-selector">
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onYearChange()">
+          <mat-option *ngFor="let year of years" [value]="year">
+            {{year}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    
+    <div class="chart-content">
+      <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
+        <div class="spinner"></div>
+        <span>Generando gráfica...</span>
+      </div>
+      <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
+        <span>⚠</span>
+        <p>{{ monthlySalesViewModel.error$() }}</p>
+      </div>
+      <canvas #chartCanvas></canvas>
+    </div>
+  </div>
+  

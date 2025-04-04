@@ -13,14 +13,16 @@ import { OrdersClientTypeComponent } from './components/orders-client-type/order
 import { ChartOrdersByClientTypeComponent } from './components/chart-orders-by-client-type/chart-orders-by-client-type.component';
 import { ChartInvoiceProductTypeComponent } from './components/chart-invoice-product-type/chart-invoice-product-type.component';
 import { ChartOrdersProductTypeComponent } from './components/chart-orders-product-type/chart-orders-product-type.component';
+import { ChartMonthlyLTVComponent } from './components/chart-monthly-ltv/chart-monthly-ltv.component';
+import { ChartEvolutionOrdersInvoicesComponent } from './components/chart-evolution-orders-invoices/chart-evolution-orders-invoices.component';
 
 @Component({
   selector: 'app-main-orders-invoice',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
-    InformationBoxComponent, 
+    CommonModule,
+    RouterModule,
+    InformationBoxComponent,
     ChartTotalInvoiceComponent,
     ChartTotalOrdersInvoicesComponent,
     ChartTmComponent,
@@ -28,8 +30,10 @@ import { ChartOrdersProductTypeComponent } from './components/chart-orders-produ
     OrdersClientTypeComponent,
     ChartOrdersByClientTypeComponent,
     ChartInvoiceProductTypeComponent,
-    ChartOrdersProductTypeComponent
-  ],
+    ChartOrdersProductTypeComponent,
+    ChartMonthlyLTVComponent,
+    ChartEvolutionOrdersInvoicesComponent
+],
   providers: [
     OrdersInvoiceViewModelService, 
     InvoiceClientsViewModelService,
