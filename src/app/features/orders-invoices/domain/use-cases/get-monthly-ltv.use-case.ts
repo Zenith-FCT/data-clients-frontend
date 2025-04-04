@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { LtvRepository } from "../repositories/ltv-reposiroty";
+import { LtvRepository } from "../repositories/ltv-repository";
 import { LtvModel } from "../models/ltv.model";
 
 export class GetMonthlyLtvUseCase {
