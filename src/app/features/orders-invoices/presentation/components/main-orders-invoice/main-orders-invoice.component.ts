@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { InformationBoxComponent } from './components/information-box/information-box.component';
 import { OrdersInvoiceViewModelService } from '../../view-model/orders-invoice-viewmodel.service';
 import { InvoiceClientsViewModelService } from '../../view-model/invoice-clients-viewmodel.service';
@@ -22,6 +25,9 @@ import { ChartEvolutionOrdersInvoicesComponent } from './components/chart-evolut
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
+    MatSelectModule,
+    MatFormFieldModule,
     InformationBoxComponent,
     ChartTotalInvoiceComponent,
     ChartTotalOrdersInvoicesComponent,
@@ -43,12 +49,48 @@ import { ChartEvolutionOrdersInvoicesComponent } from './components/chart-evolut
   styleUrl: './main-orders-invoice.component.scss'
 })
 export class MainOrdersInvoiceComponent implements OnInit {
+  selectedMonth: number = new Date().getMonth() + 1;
+  selectedYear: number = new Date().getFullYear();
+  years: number[] = [];
+  months: number[] = Array.from({length: 12}, (_, i) => i + 1);
+
   constructor(
     public ordersInvoiceViewModel: OrdersInvoiceViewModelService,
     public invoiceClientsViewModel: InvoiceClientsViewModelService,
     public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService
-  ) {}
-  
+  ) {
+    effect(() => {
+      const data = this.ordersInvoiceViewModel.allMonthlySales$();
+      if (data && data.length > 0) {
+        this.extractAvailableYears(data);
+      }
+    });
+  }
+
+  getMonthName(month: number): string {
+    return new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
+  }
+
+  private extractAvailableYears(data: any[]): void {
+    const uniqueYears = new Set<number>();
+    data.forEach(item => {
+      const year = parseInt(item.date.split('-')[0]);
+      if (!isNaN(year)) {
+        uniqueYears.add(year);
+      }
+    });
+    this.years = Array.from(uniqueYears).sort((a, b) => b - a);
+    
+    if (this.years.length > 0 && !this.years.includes(this.selectedYear)) {
+      this.selectedYear = this.years[0];
+      this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
+    }
+  }
+
+  onDateChange(): void {
+    this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
+  }
+
   ngOnInit(): void {
     const currentYear = new Date().getFullYear();
     

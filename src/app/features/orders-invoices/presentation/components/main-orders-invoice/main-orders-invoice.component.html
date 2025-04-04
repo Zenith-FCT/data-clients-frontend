@@ -1,5 +1,24 @@
 <div class="orders-container">
   <div class="orders-summary">
+    <div class="chart-header">
+      
+      <div class="date-selectors">
+        <mat-form-field appearance="outline">
+          <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
+            <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
+              {{getMonthName(i + 1)}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
+            <mat-option *ngFor="let year of years" [value]="year">
+              {{year}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
     <div class="summary-cards">
       <app-information-box type="amount"></app-information-box>
       <app-information-box type="monthly"></app-information-box>
@@ -12,7 +31,6 @@
         <app-chart-total-invoice class="chart-item"></app-chart-total-invoice>
         <app-chart-total-orders-invoices class="chart-item"></app-chart-total-orders-invoices>
       </div>
-      
       
       <div class="full-width-chart-container">
         <app-chart-evolution-orders-invoices class="full-width-chart"></app-chart-evolution-orders-invoices>
