@@ -79,7 +79,7 @@ export class CouponsApiSourceService{
       try {
         const response = await fetch(`${this.url}cuponesByYear${year}`);
         const data = await response.json();
-        return data;
+        return data.map( (c:{count: number })=> c.count );
       }
       catch (error) {
         throw new Error("Error al recoger los datos");
