@@ -51,6 +51,8 @@ import { ChartEvolutionOrdersInvoicesComponent } from './components/chart-evolut
 export class MainOrdersInvoiceComponent implements OnInit {
   selectedMonth: number = new Date().getMonth() + 1;
   selectedYear: number = new Date().getFullYear();
+  selectedTmYear: number = new Date().getFullYear();
+  selectedClientYear: number = new Date().getFullYear();
   years: number[] = [];
   months: number[] = Array.from({length: 12}, (_, i) => i + 1);
 
@@ -93,6 +95,18 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
     this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
     this.ordersInvoiceViewModel.loadMonthlyTm(this.selectedYear, this.selectedMonth);
+  }
+
+  onTmYearChange(): void {
+    this.ordersInvoiceViewModel.setSelectedTmYear(this.selectedTmYear);
+    this.ordersInvoiceViewModel.loadYearTmList(this.selectedTmYear);
+  }
+
+  onClientYearChange(): void {
+    this.invoiceClientsViewModel.setSelectedYear(this.selectedClientYear);
+    this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
+    this.invoiceClientsViewModel.loadInvoiceClientsType();
+    this.invoiceClientsViewModel.loadOrdersClientsType();
   }
 
   ngOnInit(): void {

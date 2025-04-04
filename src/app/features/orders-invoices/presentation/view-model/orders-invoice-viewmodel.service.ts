@@ -19,7 +19,6 @@ export interface OrdersInvoicesUIState {
   allMonthlySales: MonthlySalesModel[];
   selectedYear: number;
   selectedMonth: number;
-  selectedOrderYear: number;
   totalOrdersAmount: number;
   totalOrders: number;
   monthlyOrders: number;
@@ -42,7 +41,6 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     allMonthlySales: [],
     selectedYear: new Date().getFullYear(),
     selectedMonth: new Date().getMonth() + 1,
-    selectedOrderYear: new Date().getFullYear(),
     totalOrdersAmount: 0,
     totalOrders: 0,
     monthlyOrders: 0,
@@ -52,14 +50,12 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     monthlyTm: 0
   });
 
-  // Computed values
   public readonly isLoading$ = computed(() => this.uiState().isLoading);
   public readonly error$ = computed(() => this.uiState().error);
   public readonly monthlySales$ = computed(() => this.uiState().monthlySales);
   public readonly allMonthlySales$ = computed(() => this.uiState().allMonthlySales);
   public readonly selectedYear$ = computed(() => this.uiState().selectedYear);
   public readonly selectedMonth$ = computed(() => this.uiState().selectedMonth);
-  public readonly selectedOrderYear$ = computed(() => this.uiState().selectedOrderYear);
   public readonly totalOrdersAmount$ = computed(() => this.uiState().totalOrdersAmount);
   public readonly totalOrders$ = computed(() => this.uiState().totalOrders);
   public readonly monthlyOrders$ = computed(() => this.uiState().monthlyOrders);
@@ -91,7 +87,6 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   public setSelectedYear(year: number): void {
     if (year) {
       this.updateState({ selectedYear: year });
-      // Actualizar datos cuando cambia el año
       this.loadMonthlySales(year, this.uiState().selectedMonth);
       this.loadMonthlyOrders(year, this.uiState().selectedMonth);
       this.loadMonthlyTm(year, this.uiState().selectedMonth);
@@ -101,7 +96,6 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   public setSelectedMonth(month: number): void {
     if (month) {
       this.updateState({ selectedMonth: month });
-      // Actualizar datos cuando cambia el mes
       const currentYear = this.uiState().selectedYear;
       this.loadMonthlySales(currentYear, month);
       this.loadMonthlyOrders(currentYear, month);
@@ -109,9 +103,6 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     }
   }
 
-  public setSelectedOrderYear(year: number): void {
-    this.updateState({ selectedOrderYear: year });
-  }
 
   public setSelectedTmYear(year: number): void {
     this.updateState({ selectedTmYear: year });
@@ -238,7 +229,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
         const mostRecentYear = Math.max(...years);
         this.updateState({ 
           selectedYear: mostRecentYear,
-          selectedOrderYear: mostRecentYear
+          
         });
       }
     } catch (error) {
@@ -296,7 +287,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     
     await Promise.all([
       this.loadMonthlySales(this.selectedYear$(), currentMonth),
-      this.loadMonthlyOrders(this.selectedOrderYear$(), currentMonth),
+      this.loadMonthlyOrders(this.selectedYear$(), currentMonth),
       this.loadTotalOrdersAmount(this.selectedYear$()),
       this.loadTotalOrders(this.selectedYear$()),
       this.loadMonthlyTmList()

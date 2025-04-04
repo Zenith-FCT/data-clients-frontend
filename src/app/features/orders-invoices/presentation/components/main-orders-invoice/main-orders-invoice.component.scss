@@ -124,7 +124,7 @@ $transition-speed: 0.3s;
   box-sizing: border-box;
   transition: all $transition-speed ease;
   margin-bottom: 2rem;
-  margin-top: 4rem;
+  margin-top: 0.5rem;
   gap: $spacing-unit;
 
   app-chart-tm {
@@ -287,7 +287,7 @@ $transition-speed: 0.3s;
 }
 
 .chart-section-monthly-ltv {
-  margin-top: 4rem;
+  margin-top: 1.5rem; 
   width: 100%;
   display: flex;
   gap: 2rem;
@@ -327,7 +327,7 @@ $transition-speed: 0.3s;
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
-  margin-bottom: 16px;
+  margin-top: 1.5rem; 
 
   h3 {
     font-size: 1.25rem;
