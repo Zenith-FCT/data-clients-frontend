@@ -19,7 +19,7 @@ import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.mo
     FormsModule
   ],
   templateUrl: './information-box.component.html',
-  styleUrl: './information-box.component.css'
+  styleUrl: './information-box.component.scss'
 })
 export class InformationBoxComponent implements OnInit, OnDestroy {
   @Input() type: 'amount' |'tm-year'| 'count' |'monthly-tm'| 'monthly' | 'monthly-order'  = 'amount';

@@ -21,7 +21,7 @@ declare const Chart: {
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './chart-tm.component.html',
-  styleUrl: './chart-tm.component.css'
+  styleUrl: './chart-tm.component.scss'
 })
 export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;

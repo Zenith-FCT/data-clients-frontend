@@ -13,7 +13,7 @@ declare const Chart: any;
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './invoice-client-type.component.html',
-  styleUrl: './invoice-client-type.component.css'
+  styleUrl: './invoice-client-type.component.scss'
 })
 export class InvoiceClientTypeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;

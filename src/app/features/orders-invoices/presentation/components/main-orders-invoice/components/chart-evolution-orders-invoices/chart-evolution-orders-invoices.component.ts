@@ -11,7 +11,7 @@ declare const Chart: any;
   selector: 'app-chart-evolution-orders-invoices',
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './chart-evolution-orders-invoices.component.html',
-  styleUrl: './chart-evolution-orders-invoices.component.css'
+  styleUrl: './chart-evolution-orders-invoices.component.scss'
 })
 export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;

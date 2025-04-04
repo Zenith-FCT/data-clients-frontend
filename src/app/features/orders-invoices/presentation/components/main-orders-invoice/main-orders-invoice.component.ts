@@ -40,7 +40,7 @@ import { ChartEvolutionOrdersInvoicesComponent } from './components/chart-evolut
     OrderInvoiceProductViewModelService
   ],
   templateUrl: './main-orders-invoice.component.html',
-  styleUrl: './main-orders-invoice.component.css'
+  styleUrl: './main-orders-invoice.component.scss'
 })
 export class MainOrdersInvoiceComponent implements OnInit {
   constructor(

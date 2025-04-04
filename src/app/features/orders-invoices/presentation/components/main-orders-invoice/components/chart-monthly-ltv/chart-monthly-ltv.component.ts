@@ -21,7 +21,7 @@ declare const Chart: {
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './chart-monthly-ltv.component.html',
-  styleUrl: './chart-monthly-ltv.component.css'
+  styleUrl: './chart-monthly-ltv.component.scss'
 })
 export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;

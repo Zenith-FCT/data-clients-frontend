@@ -12,7 +12,7 @@ declare const Chart: any;
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './chart-total-invoice.component.html',
-  styleUrl: './chart-total-invoice.component.css'
+  styleUrl: './chart-total-invoice.component.scss'
 })
 export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;

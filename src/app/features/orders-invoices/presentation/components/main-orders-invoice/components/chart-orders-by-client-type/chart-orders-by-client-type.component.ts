@@ -12,7 +12,7 @@ declare const Chart: any;
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './chart-orders-by-client-type.component.html',
-  styleUrl: './chart-orders-by-client-type.component.css'
+  styleUrl: './chart-orders-by-client-type.component.scss'
 })
 export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
@@ -148,7 +148,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
           },
           plugins: {
             title: {
-              display: false // Removido el título del gráfico
+              display: false
             },
             legend: {
               display: true,
