@@ -18,6 +18,7 @@ export interface OrdersInvoicesUIState {
   monthlySales: number;
   allMonthlySales: MonthlySalesModel[];
   selectedYear: number;
+  selectedMonth: number;
   selectedOrderYear: number;
   totalOrdersAmount: number;
   totalOrders: number;
@@ -33,13 +34,14 @@ export interface OrdersInvoicesUIState {
 })
 export class OrdersInvoiceViewModelService implements OnDestroy {
   private destroy$ = new Subject<void>();
-
+  
   private readonly uiState = signal<OrdersInvoicesUIState>({
     isLoading: false,
     error: null,
     monthlySales: 0,
     allMonthlySales: [],
     selectedYear: new Date().getFullYear(),
+    selectedMonth: new Date().getMonth() + 1,
     selectedOrderYear: new Date().getFullYear(),
     totalOrdersAmount: 0,
     totalOrders: 0,
@@ -50,13 +52,13 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     monthlyTm: 0
   });
 
-  public readonly uiState$ = this.uiState.asReadonly();
-
+  // Computed values
   public readonly isLoading$ = computed(() => this.uiState().isLoading);
   public readonly error$ = computed(() => this.uiState().error);
   public readonly monthlySales$ = computed(() => this.uiState().monthlySales);
   public readonly allMonthlySales$ = computed(() => this.uiState().allMonthlySales);
   public readonly selectedYear$ = computed(() => this.uiState().selectedYear);
+  public readonly selectedMonth$ = computed(() => this.uiState().selectedMonth);
   public readonly selectedOrderYear$ = computed(() => this.uiState().selectedOrderYear);
   public readonly totalOrdersAmount$ = computed(() => this.uiState().totalOrdersAmount);
   public readonly totalOrders$ = computed(() => this.uiState().totalOrders);
@@ -65,7 +67,6 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   public readonly totalTm$ = computed(() => this.uiState().totalTm);
   public readonly selectedTmYear$ = computed(() => this.uiState().selectedTmYear);
   public readonly monthlyTm$ = computed(() => this.uiState().monthlyTm);
-
 
   private getMonthlySalesUseCase: GetMonthlySalesUseCase;
   private getAllMonthWithTotalsUseCase: GetAllMonthWithTotalsUseCase;
@@ -88,7 +89,24 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   }
 
   public setSelectedYear(year: number): void {
-    this.updateState({ selectedYear: year });
+    if (year) {
+      this.updateState({ selectedYear: year });
+      // Actualizar datos cuando cambia el año
+      this.loadMonthlySales(year, this.uiState().selectedMonth);
+      this.loadMonthlyOrders(year, this.uiState().selectedMonth);
+      this.loadMonthlyTm(year, this.uiState().selectedMonth);
+    }
+  }
+
+  public setSelectedMonth(month: number): void {
+    if (month) {
+      this.updateState({ selectedMonth: month });
+      // Actualizar datos cuando cambia el mes
+      const currentYear = this.uiState().selectedYear;
+      this.loadMonthlySales(currentYear, month);
+      this.loadMonthlyOrders(currentYear, month);
+      this.loadMonthlyTm(currentYear, month);
+    }
   }
 
   public setSelectedOrderYear(year: number): void {

@@ -88,6 +88,7 @@ export class MainOrdersInvoiceComponent implements OnInit {
   }
 
   onDateChange(): void {
+    this.ordersInvoiceViewModel.setSelectedMonth(this.selectedMonth);
     this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
     this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
     this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
