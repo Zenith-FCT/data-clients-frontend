@@ -205,7 +205,10 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
               font: {
                 weight: 'bold',
                 size: 14
-              }
+              },
+              autoSkip: false,
+              maxRotation: 45,
+              minRotation: 45
             }
           },
           x: {
