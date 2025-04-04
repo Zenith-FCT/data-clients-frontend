@@ -14,7 +14,7 @@ import { ChartOrdersByClientTypeComponent } from './components/chart-orders-by-c
 import { ChartInvoiceProductTypeComponent } from './components/chart-invoice-product-type/chart-invoice-product-type.component';
 import { ChartOrdersProductTypeComponent } from './components/chart-orders-product-type/chart-orders-product-type.component';
 import { ChartMonthlyLTVComponent } from './components/chart-monthly-ltv/chart-monthly-ltv.component';
-import { ChartEvolutionOrdersInvoicesComponent } from "./components/chart-evolution-orders-invoices/chart-evolution-orders-invoices.component";
+import { ChartEvolutionOrdersInvoicesComponent } from './components/chart-evolution-orders-invoices/chart-evolution-orders-invoices.component';
 
 @Component({
   selector: 'app-main-orders-invoice',
@@ -31,7 +31,8 @@ import { ChartEvolutionOrdersInvoicesComponent } from "./components/chart-evolut
     ChartOrdersByClientTypeComponent,
     ChartInvoiceProductTypeComponent,
     ChartOrdersProductTypeComponent,
-    ChartMonthlyLTVComponent
+    ChartMonthlyLTVComponent,
+    ChartEvolutionOrdersInvoicesComponent
 ],
   providers: [
     OrdersInvoiceViewModelService, 
