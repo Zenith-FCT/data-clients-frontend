@@ -89,14 +89,21 @@ export class MainOrdersInvoiceComponent implements OnInit {
 
   onDateChange(): void {
     this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
+    this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
+    this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
+    this.ordersInvoiceViewModel.loadMonthlyTm(this.selectedYear, this.selectedMonth);
   }
 
   ngOnInit(): void {
     const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
     
     this.ordersInvoiceViewModel.loadAllMonthWithTotals();
+    this.ordersInvoiceViewModel.loadMonthlySales(currentYear, currentMonth);
     this.ordersInvoiceViewModel.loadTotalOrdersAmount(currentYear);
     this.ordersInvoiceViewModel.loadTotalOrders(currentYear);
+    this.ordersInvoiceViewModel.loadMonthlyTm(currentYear, currentMonth);
+    this.ordersInvoiceViewModel.loadMonthlyOrders(currentYear, currentMonth);
     this.ordersInvoiceViewModel.loadMonthlyTmList();
     
     this.invoiceClientsViewModel.loadInvoiceClientsType();
