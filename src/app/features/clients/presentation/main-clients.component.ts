@@ -33,6 +33,8 @@ import { GetTotalOrdersByYearMonthUseCase } from '../domain/get-total-orders-by-
 import { GetAverageTicketByYearUseCase } from '../domain/get-average-ticket-by-year-use-case';
 import { GetLTVByYearMonthUseCase } from '../domain/get-ltv-by-year-month-use-case';
 import { GetTopLocationsByClientsUseCase } from '../domain/get-top-locations-by-clients-use-case';
+import { ProductClientDistribution } from '../domain/product-distribution.model';
+import { TopLocationsByClients } from '../domain/top-locations-by-clients.model';
 
 type FilterType =
   | 'clients'
@@ -288,6 +290,7 @@ export class ClientsComponent implements OnInit {
   private updateChartOption(): void {
     if (!this.isBrowser) return; // No ejecutar esto en el servidor
 
+    // Fix: replaced productsDistribution() with clientsPerProduct()
     const distribution = this.viewModel.clientsPerProduct();
 
     if (!distribution || distribution.length === 0) {
@@ -305,7 +308,8 @@ export class ClientsComponent implements OnInit {
     }
 
     // Ordenar los datos por valor descendente para mejor visualización
-    const sortedData = [...distribution].sort((a, b) => b.value - a.value);
+    // Fix: add type annotations to sort parameters
+    const sortedData = [...distribution].sort((a: ProductClientDistribution, b: ProductClientDistribution) => b.value - a.value);
 
     // Limitar a las top 5 categorías para mejor visualización
     const topCategories = sortedData.slice(0, 5);
@@ -340,7 +344,7 @@ export class ClientsComponent implements OnInit {
         type: 'scroll',
         orient: 'horizontal',
         bottom: 10,
-        data: topCategories.map((item) => item.name),
+        data: topCategories.map((item: ProductClientDistribution) => item.name),
         textStyle: {
          color: '#333',
         },
@@ -411,8 +415,9 @@ export class ClientsComponent implements OnInit {
     }
 
     // Ordenar los datos por valor descendente
+    // Fix: add type annotations to sort parameters
     const sortedLocations = [...locations].sort(
-      (a, b) => b.clientCount - a.clientCount
+      (a: TopLocationsByClients, b: TopLocationsByClients) => b.clientCount - a.clientCount
     );
 
     // Preparar datos para el gráfico de barras
