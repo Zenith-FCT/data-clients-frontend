@@ -1,0 +1,31 @@
+<div class="chart-container">
+  <div class="chart-header">
+    <h3>Facturación Total por Producto</h3>
+  </div>
+  
+  <div class="chart-content">
+    <div *ngIf="viewModel.loading()" class="loading-state">
+      <div class="spinner"></div>
+      <span>Cargando datos...</span>
+    </div>
+    <div *ngIf="viewModel.error()" class="error-state">
+      <span>⚠</span>
+      <p>{{ viewModel.error() }}</p>
+    </div>
+    <div *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productBilling().length === 0" class="no-data-state">
+      <span>📊</span>
+      <p>No hay datos disponibles</p>
+    </div>
+    
+    <!-- Contenedor para eCharts con opciones inmediatas -->
+    <div 
+      *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productBilling().length > 0" 
+      class="echarts-container" 
+      echarts 
+      [options]="chartOption"
+      [loading]="viewModel.loading()"
+      [theme]="'default'"
+      [initOpts]="{renderer: 'canvas'}">
+    </div>
+  </div>
+</div>

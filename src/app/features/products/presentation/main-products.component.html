@@ -1,0 +1,57 @@
+<div class="main-container">
+  <div class="products-container">
+    <h2 class="products-title">Productos</h2>
+    
+    @if (isBrowser) {
+      <!-- Charts layout con dos mitades -->
+      <div class="charts-layout">
+        <!-- Product Earnings Chart (Mitad izquierda) -->
+        <div class="chart-wrapper left">
+          <div class="chart-container">
+            <!-- Selector para cambiar el tipo de visualización -->
+            <div class="chart-view-controls">
+              <span class="view-label">Visualizar por:</span>
+              <div class="view-toggle-buttons">
+                <button 
+                  [class.active]="currentViewMode === viewModes.ByProduct" 
+                  (click)="onViewModeChange(viewModes.ByProduct)">
+                  Producto
+                </button>
+                <button 
+                  [class.active]="currentViewMode === viewModes.ByProductType" 
+                  (click)="onViewModeChange(viewModes.ByProductType)">
+                  Tipo de producto
+                </button>
+              </div>
+            </div>
+            
+            <h3 class="chart-title">Facturación Total por Producto</h3>
+            
+            <!-- Mostrar mensaje de carga o error si aplica -->
+            @if (viewModel.loading()) {
+              <div class="loading-indicator">
+                <div class="spinner"></div>
+                <p>Cargando datos...</p>
+              </div>
+            } @else if (viewModel.error()) {
+              <div class="error-message">
+                <i class="error-icon">!</i>
+                <p>{{ viewModel.error() }}</p>
+              </div>
+            } @else {
+              <!-- Contenedor responsivo para el gráfico -->
+              <div class="echarts-responsive-container">
+                <div class="echarts-container" echarts [options]="chartOption" [loading]="viewModel.loading()" [autoResize]="true"></div>
+              </div>
+            }
+          </div>
+        </div>
+        
+        <!-- Espacio reservado para el futuro gráfico (Mitad derecha) -->
+        <div class="chart-wrapper right">
+          <!-- Aquí irá el futuro gráfico -->
+        </div>
+      </div>
+    }
+  </div>
+</div>
