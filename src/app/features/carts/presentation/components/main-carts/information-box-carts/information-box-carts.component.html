@@ -1,0 +1,24 @@
+<div class="information-box">
+  <div class="box-header">
+    <h3>{{ type === 'total' ? 'Total de Carritos Abandonados' : 'Carritos Mensuales' }}</h3>
+  </div>
+
+  <div class="box-content">
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <span>Calculando...</span>
+    </div>
+
+    <div *ngIf="cartsViewModel.error$()" class="error-state">
+      <span>⚠</span>
+      <p>{{ cartsViewModel.error$() }}</p>
+    </div>
+
+    <div *ngIf="!loading && !cartsViewModel.error$()" class="data-state">
+      <div class="amount">
+        <span class="value">{{ cartsViewModel.carts$() | number:'1.0-0' }}</span>
+      </div>
+      <p class="description">{{ type === 'total' ? 'Total de carritos abandonados' : 'Carritos abandonados del mes' }}</p>
+    </div>
+  </div>
+</div>

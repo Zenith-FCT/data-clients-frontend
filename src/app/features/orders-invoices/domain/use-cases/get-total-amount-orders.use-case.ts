@@ -5,7 +5,7 @@ export class GetTotalAmountOrdersUseCase {
   constructor(private monthlySalesRepository: MonthlySalesRepository) {}
 
   execute(year: number): Observable<number> {
-    return this.monthlySalesRepository.getOrders().pipe(
+    return this.monthlySalesRepository.getMonthlySales().pipe(
       map(orders => {
         if (!orders || orders.length === 0) {
           return 0;
