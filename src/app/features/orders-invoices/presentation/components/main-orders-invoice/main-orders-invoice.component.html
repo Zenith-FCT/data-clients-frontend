@@ -113,6 +113,19 @@
         </div>
       </div>
 
+      <div class="chart-header">
+        <h2>LTV</h2>
+        <div class="date-selectors">
+          <mat-form-field appearance="outline">
+            <mat-select [(ngModel)]="selectedLtvYear" (selectionChange)="onLtvYearChange()">
+              <mat-option *ngFor="let year of years" [value]="year">
+                {{year}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
       <div class="chart-section-monthly-ltv">
         <div class="chart-container">
           <app-chart-monthly-ltv></app-chart-monthly-ltv>

@@ -18,6 +18,7 @@ import { ChartInvoiceProductTypeComponent } from './components/chart-invoice-pro
 import { ChartOrdersProductTypeComponent } from './components/chart-orders-product-type/chart-orders-product-type.component';
 import { ChartMonthlyLTVComponent } from './components/chart-monthly-ltv/chart-monthly-ltv.component';
 import { ChartEvolutionOrdersInvoicesComponent } from './components/chart-evolution-orders-invoices/chart-evolution-orders-invoices.component';
+import { LtvViewModelService } from '../../view-model/ltv-viewmodel.service';
 
 @Component({
   selector: 'app-main-orders-invoice',
@@ -54,6 +55,7 @@ export class MainOrdersInvoiceComponent implements OnInit {
   selectedTmYear: number = new Date().getFullYear();
   selectedClientYear: number = new Date().getFullYear();
   selectedProductYear: number = new Date().getFullYear();
+  selectedLtvYear: number = new Date().getFullYear();
   years: number[] = [];
   months: number[] = Array.from({length: 12}, (_, i) => i + 1);
 
@@ -61,6 +63,7 @@ export class MainOrdersInvoiceComponent implements OnInit {
     public ordersInvoiceViewModel: OrdersInvoiceViewModelService,
     public invoiceClientsViewModel: InvoiceClientsViewModelService,
     public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService,
+    public ltvViewModel: LtvViewModelService
   ) {
     effect(() => {
       const data = this.ordersInvoiceViewModel.allMonthlySales$();
@@ -110,6 +113,11 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();
     this.orderInvoiceProductViewModel.loadInvoiceProductType();
+  }
+  
+  onLtvYearChange(): void {
+    this.ltvViewModel.setSelectedYear(this.selectedLtvYear);
+    this.ltvViewModel.loadLtv();
   }
 
   onProductYearChange(): void {
