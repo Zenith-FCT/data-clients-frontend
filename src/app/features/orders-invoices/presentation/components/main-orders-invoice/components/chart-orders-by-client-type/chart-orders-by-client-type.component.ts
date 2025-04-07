@@ -12,7 +12,7 @@ declare const Chart: any;
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './chart-orders-by-client-type.component.html',
-  styleUrl: './chart-orders-by-client-type.component.css'
+  styleUrl: './chart-orders-by-client-type.component.scss'
 })
 export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
@@ -40,7 +40,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
 
     effect(() => {
       const year = this.invoiceClientsViewModel.selectedYear$();
-      if (year !== this.selectedYear) {
+      if (year && year !== this.selectedYear) {
         this.selectedYear = year;
         if (this.currentData.length > 0) {
           this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
@@ -50,7 +50,9 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
   }
 
   ngOnInit(): void {
-    
+    if (this.isBrowser) {
+      this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -99,19 +101,19 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
   }
 
   private destroyAndRecreateChart(data: InvoiceClientsTypeModel[]): void {
-    if (!this.isBrowser) return;
+    if (!this.isBrowser || !this.chartCanvas?.nativeElement) return;
     
     if (this.chart) {
       this.chart.destroy();
       this.chart = null;
     }
     
-    if (this.chartCanvas && this.chartCanvas.nativeElement) {
-      const ctx = this.chartCanvas.nativeElement.getContext('2d');
-      if (!ctx) return;
-      
-      const monthlyData = this.organizeDataByMonth(data);
-      
+    const ctx = this.chartCanvas.nativeElement.getContext('2d');
+    if (!ctx) return;
+    
+    const monthlyData = this.organizeDataByMonth(data);
+    
+    setTimeout(() => {
       this.chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -148,7 +150,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
           },
           plugins: {
             title: {
-              display: false // Removido el título del gráfico
+              display: false
             },
             legend: {
               display: true,
@@ -213,7 +215,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
           }
         }
       });
-    }
+    }, 0);
   }
 
   private organizeDataByMonth(data: InvoiceClientsTypeModel[]): { recurrentOrders: number[], uniqueOrders: number[] } {

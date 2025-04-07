@@ -61,7 +61,7 @@ export class InvoiceClientsViewModelService implements OnDestroy {
             const clientsTypeList = await firstValueFrom(this.getInvoiceClientsTypeUseCase.execute());
             this.updateState({ invoiceClientsType: clientsTypeList });
             
-            if (clientsTypeList.length > 0) {
+            if (clientsTypeList.length > 0 && !this.uiState().selectedYear) {
                 const years = clientsTypeList.map(type => parseInt(type.date));
                 const mostRecentYear = Math.max(...years);
                 this.updateState({ selectedYear: mostRecentYear });
@@ -87,7 +87,7 @@ export class InvoiceClientsViewModelService implements OnDestroy {
             const clientsTypeList = await firstValueFrom(this.getOrdersClientsTypeUseCase.execute());
             this.updateState({ ordersClientsType: clientsTypeList });
             
-            if (clientsTypeList.length > 0) {
+            if (clientsTypeList.length > 0 && !this.uiState().selectedYear) {
                 const years = clientsTypeList.map(type => parseInt(type.date));
                 const mostRecentYear = Math.max(...years);
                 this.updateState({ selectedYear: mostRecentYear });
@@ -113,8 +113,12 @@ export class InvoiceClientsViewModelService implements OnDestroy {
             const clientsTypeList = await firstValueFrom(this.getOrdersByClientsMonthlyUseCase.execute());
             this.updateState({ ordersByClientsMonthly: clientsTypeList });
             
-            if (clientsTypeList.length > 0) {
-                const years = clientsTypeList.map(type => parseInt(type.date));
+            // Solo configuramos el año seleccionado si no hay uno ya seleccionado
+            if (clientsTypeList.length > 0 && !this.uiState().selectedYear) {
+                const years = clientsTypeList.map(type => {
+                    const dateComponents = type.date.split('-');
+                    return parseInt(dateComponents[0]);
+                });
                 const mostRecentYear = Math.max(...years);
                 this.updateState({ selectedYear: mostRecentYear });
             }

@@ -11,7 +11,7 @@ declare const Chart: any;
   selector: 'app-chart-evolution-orders-invoices',
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './chart-evolution-orders-invoices.component.html',
-  styleUrl: './chart-evolution-orders-invoices.component.css'
+  styleUrl: './chart-evolution-orders-invoices.component.scss'
 })
 export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
@@ -38,7 +38,7 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
     });
 
     effect(() => {
-      const year = this.monthlySalesViewModel.selectedOrderYear$();
+      const year = this.monthlySalesViewModel.selectedYear$();
       if (year !== this.selectedYear) {
         this.selectedYear = year;
         if (this.currentData.length > 0) {
@@ -68,13 +68,13 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
 
     if (this.years.length > 0 && !this.years.includes(this.selectedYear)) {
       this.selectedYear = this.years[0];
-      this.monthlySalesViewModel.setSelectedOrderYear(this.selectedYear);
+      this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
     }
   }
 
   onYearChange(): void {
     if (this.selectedYear) {
-      this.monthlySalesViewModel.setSelectedOrderYear(this.selectedYear);
+      this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
       if (this.currentData.length > 0) {
         this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
       }

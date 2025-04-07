@@ -21,7 +21,7 @@ declare const Chart: {
   standalone: true,
   imports: [CommonModule, MatSelectModule, FormsModule],
   templateUrl: './chart-tm.component.html',
-  styleUrl: './chart-tm.component.css'
+  styleUrl: './chart-tm.component.scss'
 })
 export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
@@ -76,11 +76,9 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentData = tmList;
         this.dataLoaded = true;
         
-        // Extract available years from data
         this.updateAvailableYears(tmList);
         
         const selectedYear = this.ordersInvoiceViewModel.selectedTmYear$();
-        // If the selected year is not in the available years, select the most recent year
         if (this.years.length > 0 && !this.years.includes(selectedYear)) {
           this.ordersInvoiceViewModel.setSelectedTmYear(this.years[0]);
         }
