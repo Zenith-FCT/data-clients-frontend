@@ -8,7 +8,7 @@ import {BoxCouponsViewModel} from './coupons-box.view-model';
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './coupon-box.component.html',
-    styleUrl: './coupon-box.component.css',
+    styleUrl: './coupon-box.component.scss',
 })
 export class CouponBoxComponent implements OnInit {
   boxType = input.required<"coupons" | "discount" | "couponsMonth" | "discountMonth">()

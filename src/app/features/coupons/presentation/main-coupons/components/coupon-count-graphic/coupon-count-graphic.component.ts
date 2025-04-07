@@ -12,7 +12,7 @@ import {CouponCountGraphicViewModel} from './coupon-count-graphic.view-model';
         FormsModule
     ],
     templateUrl: './coupon-count-graphic.component.html',
-    styleUrl: './coupon-count-graphic.component.css',
+    styleUrl: './coupon-count-graphic.component.scss',
 })
 export class CouponCountGraphicComponent implements AfterViewInit {
   viewModel = inject(CouponCountGraphicViewModel)
@@ -28,22 +28,22 @@ export class CouponCountGraphicComponent implements AfterViewInit {
     effect(() => {
       const data = this.viewModel.count();
       if (data && data.length > 0) {
-        this.chart.data.datasets[0].data = this.viewModel.count();
-        this.chart.update();
+        this.createChart()
       }
     });
   }
 
   ngAfterViewInit() {
-    if (this.isPlatformBrowser) {
-      this.createChart();
-    }
-
+    this.yearChange()
 
 
   }
 
   createChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
 
     this.chart = new Chart(ctx, {
@@ -74,12 +74,9 @@ export class CouponCountGraphicComponent implements AfterViewInit {
         }
       }
     });
-    this.yearChange()
   }
 
   yearChange() {
-    console.log(this.selectedYear);
-
     this.viewModel.getTotalCoupons(this.selectedYear)
   }
 }

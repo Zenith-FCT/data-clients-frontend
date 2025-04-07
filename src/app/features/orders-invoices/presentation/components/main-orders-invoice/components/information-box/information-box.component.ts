@@ -19,133 +19,61 @@ import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.mo
     FormsModule
   ],
   templateUrl: './information-box.component.html',
-  styleUrl: './information-box.component.css'
+  styleUrl: './information-box.component.scss'
 })
 export class InformationBoxComponent implements OnInit, OnDestroy {
   @Input() type: 'amount' |'tm-year'| 'count' |'monthly-tm'| 'monthly' | 'monthly-order'  = 'amount';
   
   private destroy$ = new Subject<void>();
   loading = false;
-  selectedYear: number = new Date().getFullYear();
-  selectedMonth: number = new Date().getMonth() + 1; 
-  years: number[] = [];
-  months = Array.from({length: 12}, (_, i) => ({ value: i }));
   
+  getMonthName(month: number): string {
+    return new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
+  }
+
   constructor(public ordersInvoiceViewModel: OrdersInvoiceViewModelService) {
-    effect(() => {
-      if (this.type === 'amount' || this.type === 'monthly' ) {
-        const year = this.ordersInvoiceViewModel.selectedYear$();
-        if (year !== this.selectedYear) {
-          this.selectedYear = year;
-          this.updateData();
-        }
-      }
-      else if (this.type === 'monthly-order' || this.type === 'count') {
-        const year = this.ordersInvoiceViewModel.selectedOrderYear$();
-        if (year !== this.selectedYear) {
-          this.selectedYear = year;
-          this.updateData();
-        }
-      }
-      else if (this.type === 'monthly-tm'|| this.type === 'tm-year') {
-        const year = this.ordersInvoiceViewModel.selectedTmYear$();
-        if (year !== this.selectedYear) {
-          this.selectedYear = year;
-          this.updateData();
-        }
-      }
-    });
-    
     effect(() => {
       this.loading = this.ordersInvoiceViewModel.isLoading$();
     });
-    
+
     effect(() => {
-      const data = this.ordersInvoiceViewModel.allMonthlySales$();
-      if (data && data.length > 0) {
-        this.extractYearsFromData(data);
+      const year = this.ordersInvoiceViewModel.selectedYear$();
+      const month = this.ordersInvoiceViewModel.selectedMonth$();
+      
+      if (year && month) {
+        this.updateData(year, month);
       }
     });
   }
   
   ngOnInit(): void {
-   
-    if (this.type === 'monthly-order' || this.type === 'count') {
-      this.selectedYear = this.ordersInvoiceViewModel.selectedOrderYear$();
-    } else {
-      this.selectedYear = this.ordersInvoiceViewModel.selectedYear$();
-    }
-    
-    const data = this.ordersInvoiceViewModel.allMonthlySales$();
-    if (data && data.length > 0) {
-      this.extractYearsFromData(data);
-    } else {
-      this.years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
-    }
-    
-    this.updateData();
-  }
-  
-  private extractYearsFromData(data: MonthlySalesModel[]): void {
-    const uniqueYears = new Set<number>();
-    
-    data.forEach(item => {
-      const year = parseInt(item.date.split('-')[0]);
-      if (!isNaN(year)) {
-        uniqueYears.add(year);
-      }
-    });
-    
-    this.years = Array.from(uniqueYears).sort((a, b) => b - a);
-    
-    if (this.years.length === 0) {
-      this.years = [new Date().getFullYear()];
-    } else if (!this.years.includes(this.selectedYear)) {
-      this.selectedYear = this.years[0];
-      this.onYearChange();
+    const year = this.ordersInvoiceViewModel.selectedYear$();
+    const month = this.ordersInvoiceViewModel.selectedMonth$();
+    if (year && month) {
+      this.updateData(year, month);
     }
   }
   
-  private updateData(): void {
+  private updateData(year: number, month: number): void {
     switch (this.type) {
       case 'monthly':
-        this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
+        this.ordersInvoiceViewModel.loadMonthlySales(year, month);
         break;
       case 'amount':
-        this.ordersInvoiceViewModel.loadTotalOrdersAmount(this.selectedYear);
+        this.ordersInvoiceViewModel.loadTotalOrdersAmount(year);
         break;
       case 'count':
-        this.ordersInvoiceViewModel.loadTotalOrders(this.selectedYear);
+        this.ordersInvoiceViewModel.loadTotalOrders(year);
         break;
       case 'monthly-order':
-        this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
+        this.ordersInvoiceViewModel.loadMonthlyOrders(year, month);
         break;
       case 'tm-year':
-        this.ordersInvoiceViewModel.loadYearTmList(this.selectedYear);
+        this.ordersInvoiceViewModel.loadYearTmList(year);
         break;
       case 'monthly-tm':
-        const tmYear = this.ordersInvoiceViewModel.selectedTmYear$();
-        this.ordersInvoiceViewModel.loadMonthlyTm(tmYear, this.selectedMonth);
+        this.ordersInvoiceViewModel.loadMonthlyTm(year, month);
         break;
-    }
-  }
-  
-  onYearChange(): void {
-    if (this.selectedYear) {
-      if (this.type === 'monthly-order' || this.type === 'count') {
-        this.ordersInvoiceViewModel.setSelectedOrderYear(this.selectedYear);
-      } else if (this.type === 'tm-year' || this.type === 'monthly-tm') {
-        this.ordersInvoiceViewModel.setSelectedTmYear(this.selectedYear);
-      } else {
-        this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
-      }
-      this.updateData();
-    }
-  }
-  
-  onMonthChange(): void {
-    if (this.selectedYear && this.selectedMonth !== undefined) {
-      this.updateData();
     }
   }
   

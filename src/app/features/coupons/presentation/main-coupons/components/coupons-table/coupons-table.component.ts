@@ -12,7 +12,7 @@ import {TableCouponsViewModel} from './coupons-table.view-model';
         MatTableModule
     ],
     templateUrl: './coupons-table.component.html',
-    styleUrl: './coupons-table.component.css',
+    styleUrl: './coupons-table.component.scss',
 })
 export class CouponsTableComponent implements OnInit  {
   dataSource = new MatTableDataSource<Coupon>([]);

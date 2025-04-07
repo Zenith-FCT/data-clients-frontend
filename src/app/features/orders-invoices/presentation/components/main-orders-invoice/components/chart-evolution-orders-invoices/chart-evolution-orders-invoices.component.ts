@@ -5,16 +5,15 @@ import { Subject } from 'rxjs';
 import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.model';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
-declare const Chart: any;
 
+declare const Chart: any;
 @Component({
-  selector: 'app-chart-total-orders-invoices',
-  standalone: true,
+  selector: 'app-chart-evolution-orders-invoices',
   imports: [CommonModule, MatSelectModule, FormsModule],
-  templateUrl: './chart-total-orders-invoices.component.html',
-  styleUrl: './chart-total-orders-invoices.component.scss'
+  templateUrl: './chart-evolution-orders-invoices.component.html',
+  styleUrl: './chart-evolution-orders-invoices.component.scss'
 })
-export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   private chart: any;
   private destroy$ = new Subject<void>();
@@ -107,19 +106,19 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
               type: 'line',
               label: 'Total Facturas',
               data: [],
-              borderColor: '#FE2800',
+              borderColor: '#2bb84b',
               backgroundColor: 'transparent',
               tension: 0,
               yAxisID: 'y',
               order: 0,
               pointRadius: 5,
-              pointBackgroundColor: '#FE2800'
+              pointBackgroundColor: '#2bb84b'
             },
             {
               type: 'bar',
               label: 'Número de Ventas',
               data: [],
-              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              backgroundColor: 'rgba(65, 75, 218, 0.2)',
               yAxisID: 'y1',
               order: 1
             }
@@ -152,7 +151,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
                 size: 12
               },
               bodyFont: {
-                size: 12
+                size: 14
               },
               callbacks: {
                 label: function(context: any) {
@@ -228,6 +227,15 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
             x: {
               grid: {
                 display: false
+              },
+              ticks: {
+                font: {
+                  size: 12,
+                  weight: '600'
+                },
+                autoSkip: false,
+                maxRotation: 0,
+                minRotation: 0
               }
             }
           }

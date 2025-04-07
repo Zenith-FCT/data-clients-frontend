@@ -1,0 +1,19 @@
+<div class="chart-container">
+    <div class="chart-header">
+      <h3>Evolucion de pedidos y facturacion</h3>
+      
+    </div>
+    
+    <div class="chart-content">
+      <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
+        <div class="spinner"></div>
+        <span>Generando gráfica...</span>
+      </div>
+      <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
+        <span>⚠</span>
+        <p>{{ monthlySalesViewModel.error$() }}</p>
+      </div>
+      <canvas #chartCanvas></canvas>
+    </div>
+  </div>
+  

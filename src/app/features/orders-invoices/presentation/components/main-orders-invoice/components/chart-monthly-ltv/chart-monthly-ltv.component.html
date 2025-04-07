@@ -1,18 +1,19 @@
 <div class="chart-container">
   <div class="chart-header">
-    <h3>Análisis de Ventas y Facturación</h3>
+    <h3>Evolución del LTV Mensual</h3>
     
   </div>
   
   <div class="chart-content">
-    <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
+    <div *ngIf="ltvViewModel.loading$()" class="loading-state">
       <div class="spinner"></div>
       <span>Generando gráfica...</span>
     </div>
-    <div *ngIf="monthlySalesViewModel.error$()" class="error-state">
+    <div *ngIf="ltvViewModel.error$()" class="error-state">
       <span>⚠</span>
-      <p>{{ monthlySalesViewModel.error$() }}</p>
+      <p>{{ ltvViewModel.error$() }}</p>
     </div>
+   
     <canvas #chartCanvas></canvas>
   </div>
 </div>

@@ -7,7 +7,7 @@ import { CouponCountGraphicComponent } from "./components/coupon-count-graphic/c
   selector: 'app-main-coupons',
   imports: [CouponsTableComponent, CouponBoxComponent, CouponCountGraphicComponent],
   templateUrl: './main-coupons.component.html',
-  styleUrl: './main-coupons.component.css'
+  styleUrl: './main-coupons.component.scss'
 })
 export class MainCouponsComponent  {
 

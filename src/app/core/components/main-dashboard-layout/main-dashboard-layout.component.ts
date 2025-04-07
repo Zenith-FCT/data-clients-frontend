@@ -16,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule
   ],
   templateUrl: './main-dashboard-layout.component.html',
-  styleUrl: './main-dashboard-layout.component.css'
+  styleUrl: './main-dashboard-layout.component.scss'
 })
 export class MainDashboardLayoutComponent {
   sidenavExpanded = false;
