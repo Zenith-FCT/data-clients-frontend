@@ -8,6 +8,23 @@
         <!-- Product Earnings Chart (Mitad izquierda) -->
         <div class="chart-wrapper left">
           <div class="chart-container">
+            <!-- Selector para cambiar el tipo de visualización -->
+            <div class="chart-view-controls">
+              <span class="view-label">Visualizar por:</span>
+              <div class="view-toggle-buttons">
+                <button 
+                  [class.active]="currentViewMode === viewModes.ByProduct" 
+                  (click)="onViewModeChange(viewModes.ByProduct)">
+                  Producto
+                </button>
+                <button 
+                  [class.active]="currentViewMode === viewModes.ByProductType" 
+                  (click)="onViewModeChange(viewModes.ByProductType)">
+                  Tipo de producto
+                </button>
+              </div>
+            </div>
+            
             <h3 class="chart-title">Facturación Total por Producto</h3>
             
             <!-- Mostrar mensaje de carga o error si aplica -->
