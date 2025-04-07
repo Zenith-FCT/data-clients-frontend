@@ -53,13 +53,14 @@ export class MainOrdersInvoiceComponent implements OnInit {
   selectedYear: number = new Date().getFullYear();
   selectedTmYear: number = new Date().getFullYear();
   selectedClientYear: number = new Date().getFullYear();
+  selectedProductYear: number = new Date().getFullYear();
   years: number[] = [];
   months: number[] = Array.from({length: 12}, (_, i) => i + 1);
 
   constructor(
     public ordersInvoiceViewModel: OrdersInvoiceViewModelService,
     public invoiceClientsViewModel: InvoiceClientsViewModelService,
-    public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService
+    public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService,
   ) {
     effect(() => {
       const data = this.ordersInvoiceViewModel.allMonthlySales$();
@@ -104,9 +105,16 @@ export class MainOrdersInvoiceComponent implements OnInit {
 
   onClientYearChange(): void {
     this.invoiceClientsViewModel.setSelectedYear(this.selectedClientYear);
+    
     this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();
+    this.orderInvoiceProductViewModel.loadInvoiceProductType();
+  }
+
+  onProductYearChange(): void {
+    this.orderInvoiceProductViewModel.setSelectedYear(this.selectedProductYear);
+    this.orderInvoiceProductViewModel.loadInvoiceProductType();
   }
 
   ngOnInit(): void {

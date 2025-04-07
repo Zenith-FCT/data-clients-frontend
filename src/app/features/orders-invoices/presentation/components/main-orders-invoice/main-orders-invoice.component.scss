@@ -266,14 +266,19 @@ $transition-speed: 0.3s;
 .product-charts-container {
   display: flex;
   gap: 20px;
+  margin-top: 0;
   width: 100%;
-  margin-top: 20px;
+  
+  .product-type-chart-container {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .product-type-chart-container {
   width: 50%;
   height: 650px;
-  margin-top: 2rem;
+  margin-top: 0; 
   background: transparent;
   border-radius: $border-radius;
   box-sizing: border-box;
@@ -326,8 +331,9 @@ $transition-speed: 0.3s;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 8px;
   padding: 0 16px;
-  margin-top: 1.5rem; 
+  margin-top: 1rem;
 
   h3 {
     font-size: 1.25rem;

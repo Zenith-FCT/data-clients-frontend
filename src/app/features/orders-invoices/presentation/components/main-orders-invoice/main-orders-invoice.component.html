@@ -90,6 +90,20 @@
           </div>
         </div>
       </div>
+
+      <div class="chart-header">
+        <h2>Pedidos y Facturación por tipo de producto</h2>
+        <div class="date-selectors">
+          <mat-form-field appearance="outline">
+            <mat-select [(ngModel)]="selectedProductYear" (selectionChange)="onProductYearChange()">
+              <mat-option *ngFor="let year of years" [value]="year">
+                {{year}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
       <div class="product-charts-container">
         <div class="product-type-chart-container">
           <app-chart-invoice-product-type></app-chart-invoice-product-type>
