@@ -34,8 +34,8 @@ export class CartsViewModelService implements OnDestroy {
         averageCartsMonthly: 0,
         loading: false,
         error: null,
-        selectedYear: null,
-        selectedMonth: null,
+        selectedYear: new Date().getFullYear(),
+        selectedMonth: new Date().getMonth() + 1,
         availableYears: [],
         cartsModelList: [],
         filteredCartsModelList: []
@@ -78,10 +78,10 @@ export class CartsViewModelService implements OnDestroy {
 
     setSelectedYear(year: number): void {
         this.updateState({ selectedYear: year });
+        this.filterAndUpdateCarts();
+        this.loadMonthlyAbandonedCarts();
         this.loadCarts();
         this.loadAverageLostCarts();
-        this.loadMonthlyAbandonedCarts();
-        this.filterCartsBySelectedYear();
     }
 
     setSelectedMonth(month: number): void {
@@ -183,17 +183,45 @@ export class CartsViewModelService implements OnDestroy {
             this.updateState({ loading: true, error: null });
             const useCase = new GetCartsModelListUseCase(this.cartsDataRepository);
             const cartsList = await firstValueFrom(useCase.execute());
+            
+            // Actualizar la lista completa
             this.updateState({ 
                 cartsModelList: cartsList,
                 loading: false 
             });
-            this.filterCartsBySelectedYear();
+
+            // Aplicar filtros inmediatamente
+            await this.filterAndUpdateCarts();
         } catch (error) {
+            console.error('Error loading carts:', error);
             this.updateState({ 
                 error: error instanceof Error ? error.message : 'Error loading carts model list',
-                loading: false
+                loading: false,
+                cartsModelList: [],
+                filteredCartsModelList: []
             });
         }
+    }
+
+    private async filterAndUpdateCarts(): Promise<void> {
+        const selectedYear = this.uiState().selectedYear;
+        const cartsList = this.uiState().cartsModelList;
+        
+        if (!selectedYear || !cartsList.length) {
+            this.updateState({ filteredCartsModelList: [] });
+            return;
+        }
+        
+        const filtered = cartsList.filter(cart => {
+            if (!cart.date) return false;
+            const [year] = cart.date.split('-').map(Number);
+            return year === selectedYear;
+        });
+        
+        this.updateState({ 
+            filteredCartsModelList: filtered,
+            error: null
+        });
     }
 
     filterCartsBySelectedYear(): void {

@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
+import { NgxEchartsModule } from 'ngx-echarts';
 import { CartsViewModelService } from '../../../viewmodel/carts-viewmodel.service';
 import { effect } from '@angular/core';
 import type { EChartsOption } from 'echarts';
+import * as echarts from 'echarts';
 
 @Component({
   selector: 'app-monthly-abandoned-carts',
@@ -12,14 +13,6 @@ import type { EChartsOption } from 'echarts';
     CommonModule,
     NgxEchartsModule
   ],
-  providers: [
-    {
-      provide: NGX_ECHARTS_CONFIG,
-      useValue: {
-        echarts: () => import('echarts')
-      }
-    }
-  ],
   templateUrl: './monthly-abandoned-carts.component.html',
   styleUrls: ['./monthly-abandoned-carts.component.scss']
 })
@@ -27,9 +20,7 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
   chartOption: EChartsOption = {};
   readonly isBrowser: boolean;
   initOpts = {
-    renderer: 'canvas',
-    width: 'auto',
-    height: '500px'
+    renderer: 'canvas'
   };
 
   constructor(
@@ -41,7 +32,7 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
     if (this.isBrowser) {
       effect(() => {
         const cartsList = this.cartsViewModel.filteredCartsModelList$();
-        if (cartsList) {
+        if (cartsList && cartsList.length > 0) {
           this.updateChartData(cartsList);
         }
       });
@@ -50,7 +41,7 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.isBrowser) {
-      this.cartsViewModel.loadMonthlyAbandonedCarts();
+      this.cartsViewModel.loadCartsModelList();
     }
   }
 
@@ -60,16 +51,16 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
     const monthlyData = new Array(12).fill(0);
     
     cartsList.forEach(cart => {
-      const month = new Date(cart.date).getMonth();
-      const total = parseFloat(cart.total);
-      if (!isNaN(total)) {
-        monthlyData[month] += total;
+      if (!cart.date) return;
+      const [, month] = cart.date.split('-').map(Number);
+      const total = parseInt(cart.total);
+      if (!isNaN(total) && month >= 1 && month <= 12) {
+        monthlyData[month - 1] = total;
       }
     });
 
     const maxValue = Math.max(...monthlyData);
-    const yAxisMax = maxValue + (maxValue * 0.1); // 10% more for padding
-
+    const yAxisMax = Math.ceil(maxValue * 1.2);
     const months = [
       'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
       'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
@@ -81,14 +72,14 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
         trigger: 'axis',
         formatter: (params: any) => {
           const data = params[0];
-          return `${data.name}<br/>${data.value.toLocaleString('es-ES')} €`;
+          return `${data.name}: ${data.value} carritos`;
         }
       },
       grid: {
-        top: '5%',
-        right: '3%',
-        bottom: '3%',
-        left: '3%',
+        top: 30,
+        right: 20,
+        bottom: 30,
+        left: 60,
         containLabel: true
       },
       xAxis: {
@@ -107,6 +98,7 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
       },
       yAxis: {
         type: 'value',
+        minInterval: 1,
         max: yAxisMax,
         axisLine: {
           show: true,
@@ -118,9 +110,7 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
           color: '#666',
           fontSize: 12,
           formatter: (value: number) => {
-            return value.toLocaleString('es-ES', { 
-              maximumFractionDigits: 0
-            }) + ' €';
+            return Math.round(value).toString();
           }
         },
         splitLine: {
@@ -133,7 +123,7 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
         data: monthlyData,
         type: 'line',
         smooth: true,
-        name: 'Total abandonado',
+        name: 'Carritos abandonados',
         itemStyle: {
           color: '#1976d2'
         },
@@ -146,6 +136,6 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cleanup handled by effect()
+    
   }
 }
