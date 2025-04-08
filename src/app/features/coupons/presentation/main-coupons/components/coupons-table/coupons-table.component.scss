@@ -33,6 +33,11 @@ h3 {
     unicode-bidi: isolate;
 }
 
+.coupons-table {
+  overflow-y: auto;
+  max-height: 675px;
+}
+
 .mat-mdc-table {
   background-color: #fff;
 }

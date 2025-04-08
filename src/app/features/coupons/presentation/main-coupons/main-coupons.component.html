@@ -1,4 +1,25 @@
 <div class="coupon-container">
+  <div class="coupon-header">
+    <h2>Cupones</h2>
+
+    <div class="coupon-date-selector">
+      <mat-form-field appearance="outline">
+        <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
+          <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
+            {{getMonthName(i + 1)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
+          <mat-option *ngFor="let year of years" [value]="year">
+            {{year}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
   <div class="coupon-element coupons-table">
     <app-coupons-table />
   </div>
