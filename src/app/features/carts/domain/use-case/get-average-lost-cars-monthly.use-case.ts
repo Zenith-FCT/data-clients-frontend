@@ -33,7 +33,7 @@ export class GetAverageLostCartsMonthlyUseCase {
                     return 0;
                 }
                 
-                const percentage = (abandonedCartsTotal / totalCompletedOrders) * 100;
+                const percentage = (abandonedCartsTotal / (totalCompletedOrders+abandonedCartsTotal)) * 100;
                 return Math.round(percentage * 100) / 100;
             })
         );

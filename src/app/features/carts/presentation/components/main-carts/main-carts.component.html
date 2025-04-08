@@ -18,12 +18,18 @@
       </mat-form-field>
     </div>
   </div>
+
   <div class="carts-summary">
     <div class="info-container">
       <app-information-box-carts type="total"></app-information-box-carts>
       <app-information-box-carts type="total-monthly"></app-information-box-carts>
       <app-information-box-carts type="rate"></app-information-box-carts>
       <app-information-box-carts type="rate-monthly"></app-information-box-carts>
+    </div>
+
+    <div class="chart-section">
+      <h3>Carritos abandonados por mes</h3>
+      <app-monthly-abandoned-carts></app-monthly-abandoned-carts>
     </div>
   </div>
 </div>

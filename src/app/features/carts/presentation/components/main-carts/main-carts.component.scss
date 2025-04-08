@@ -117,28 +117,50 @@
     }
 
     .carts-summary {
-        margin-bottom: 30px;
         display: flex;
-        gap: 16px;
+        gap: 24px;
         width: 100%;
         box-sizing: border-box;
+        margin-bottom: 30px;
 
         .info-container {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 12px; // Reduced gap from 16px to 12px
+            gap: 12px;
             min-width: 300px;
             max-width: 400px;
-            flex: 1;
-            background-color: transparent;
 
             app-information-box-carts {
-                height: 145px; // Reduced from 175px to 145px
-                background-color: var(--md-source-surface); // Updated to use theme surface color
+                height: 145px;
+                background-color: var(--md-source-surface);
                 border: 1px solid var(--md-source-outline);
                 border-radius: 8px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
+            }
+        }
+
+        .chart-section {
+            flex: 2;
+            background-color: #FFFFFF;
+            border: 1px solid var(--md-source-outline);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            min-width: 500px;
+            
+            h3 {
+                margin: 0;
+                font-size: 1.1rem;
+                font-weight: 500;
+                color: var(--md-source-on-surface);
+            }
+
+            app-monthly-abandoned-carts {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
             }
         }
     }

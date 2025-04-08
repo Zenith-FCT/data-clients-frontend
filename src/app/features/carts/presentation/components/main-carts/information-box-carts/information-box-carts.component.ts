@@ -86,7 +86,7 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
       this.cartsViewModel.loadCarts();
       this.cartsViewModel.loadAverageLostCarts();
     } else {
-      this.cartsViewModel.loadMonthlyStatistics();
+      this.cartsViewModel.loadMonthlyAbandonedCarts();
     }
   }
   

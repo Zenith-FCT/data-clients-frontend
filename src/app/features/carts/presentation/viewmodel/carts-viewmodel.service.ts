@@ -6,6 +6,8 @@ import { GetAvailableYearsUseCase } from '../../domain/use-case/get-available-ye
 import { CartsDataRepository } from '../../data/data-repositories/carts-repository.service';
 import { GetTotalLostCartsMonthlyUseCase } from '../../domain/use-case/get-total-lost-cars-monthly.use-case';
 import { GetAverageLostCartsMonthlyUseCase } from '../../domain/use-case/get-average-lost-cars-monthly.use-case';
+import { GetCartsModelListUseCase } from '../../domain/use-case/get-carts-model-list.use-case';
+import { CartModel } from '../../domain/models/carts.model';
 
 interface CartsUiState {
     totalCarts: number;
@@ -17,6 +19,8 @@ interface CartsUiState {
     selectedYear: number | null;
     selectedMonth: number | null;
     availableYears: number[];
+    cartsModelList: CartModel[];
+    filteredCartsModelList: CartModel[];
 }
 
 @Injectable({
@@ -32,7 +36,9 @@ export class CartsViewModelService implements OnDestroy {
         error: null,
         selectedYear: null,
         selectedMonth: null,
-        availableYears: []
+        availableYears: [],
+        cartsModelList: [],
+        filteredCartsModelList: []
     });
 
     readonly loading$ = computed(() => this.uiState().loading);
@@ -44,6 +50,8 @@ export class CartsViewModelService implements OnDestroy {
     readonly availableYears$ = computed(() => this.uiState().availableYears);
     readonly selectedYear$ = computed(() => this.uiState().selectedYear);
     readonly selectedMonth$ = computed(() => this.uiState().selectedMonth);
+    readonly cartsModelList$ = computed(() => this.uiState().cartsModelList);
+    readonly filteredCartsModelList$ = computed(() => this.uiState().filteredCartsModelList);
 
     constructor(private cartsDataRepository: CartsDataRepository) {
         this.loadAvailableYears();
@@ -72,12 +80,13 @@ export class CartsViewModelService implements OnDestroy {
         this.updateState({ selectedYear: year });
         this.loadCarts();
         this.loadAverageLostCarts();
-        this.loadMonthlyStatistics();
+        this.loadMonthlyAbandonedCarts();
+        this.filterCartsBySelectedYear();
     }
 
     setSelectedMonth(month: number): void {
         this.updateState({ selectedMonth: month });
-        this.loadMonthlyStatistics();
+        this.loadMonthlyAbandonedCarts();
     }
 
     async loadCarts(): Promise<void> {
@@ -122,35 +131,88 @@ export class CartsViewModelService implements OnDestroy {
         }
     }
 
-    async loadMonthlyStatistics(): Promise<void> {
+    async loadMonthlyAbandonedCarts(): Promise<void> {
         try {
             const selectedYear = this.uiState().selectedYear;
             const selectedMonth = this.uiState().selectedMonth;
 
             if (!selectedYear || !selectedMonth) {
-                console.warn('Year or month not selected');
+                console.warn('No year or month selected');
                 return;
             }
 
             this.updateState({ loading: true, error: null });
 
-            // Load both monthly statistics in parallel
-            const [totalMonthly, averageMonthly] = await Promise.all([
-                firstValueFrom(new GetTotalLostCartsMonthlyUseCase(this.cartsDataRepository).execute(selectedYear, selectedMonth)),
-                firstValueFrom(new GetAverageLostCartsMonthlyUseCase(this.cartsDataRepository).execute(selectedYear, selectedMonth))
-            ]);
+            const useCase = new GetCartsModelListUseCase(this.cartsDataRepository);
+            const cartsList = await firstValueFrom(useCase.execute());
+
+            const filtered = cartsList.filter(cart => {
+                if (!cart.date) return false;
+                const cartYear = cart.date.split('-')[0];
+                return parseInt(cartYear) === selectedYear;
+            });
 
             this.updateState({ 
-                totalCartsMonthly: totalMonthly,
-                averageCartsMonthly: averageMonthly,
+                filteredCartsModelList: filtered,
                 loading: false 
             });
+
+            const totalUseCase = new GetTotalLostCartsMonthlyUseCase(this.cartsDataRepository);
+            const total = await firstValueFrom(totalUseCase.execute(selectedYear, selectedMonth));
+            
+            const averageUseCase = new GetAverageLostCartsMonthlyUseCase(this.cartsDataRepository);
+            const average = await firstValueFrom(averageUseCase.execute(selectedYear, selectedMonth));
+            
+            this.updateState({
+                totalCartsMonthly: total,
+                averageCartsMonthly: average
+            });
+            
         } catch (error) {
             this.updateState({
                 error: error instanceof Error ? error.message : 'Error loading monthly statistics',
+                loading: false,
+                totalCartsMonthly: 0,
+                averageCartsMonthly: 0
+            });
+        }
+    }
+
+    async loadCartsModelList(): Promise<void> {
+        try {
+            this.updateState({ loading: true, error: null });
+            const useCase = new GetCartsModelListUseCase(this.cartsDataRepository);
+            const cartsList = await firstValueFrom(useCase.execute());
+            this.updateState({ 
+                cartsModelList: cartsList,
+                loading: false 
+            });
+            this.filterCartsBySelectedYear();
+        } catch (error) {
+            this.updateState({ 
+                error: error instanceof Error ? error.message : 'Error loading carts model list',
                 loading: false
             });
         }
+    }
+
+    filterCartsBySelectedYear(): void {
+        const selectedYear = this.uiState().selectedYear;
+        const cartsList = this.uiState().cartsModelList;
+        
+        if (!selectedYear || !cartsList.length) {
+            this.updateState({ filteredCartsModelList: [] });
+            return;
+        }
+        
+        const filtered = cartsList.filter(cart => {
+            if (!cart.date) return false;
+            
+            const cartYear = new Date(cart.date).getFullYear();
+            return cartYear === selectedYear;
+        });
+        
+        this.updateState({ filteredCartsModelList: filtered });
     }
 
     private updateState(partialState: Partial<CartsUiState>): void {
