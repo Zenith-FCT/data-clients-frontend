@@ -2,7 +2,9 @@ import { Injectable, OnDestroy, signal, computed } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { GetTotalLostCarsUseCase } from '../../domain/use-case/get-total-lost-cars.use-case';
 import { GetAverageLostCarsUseCase } from '../../domain/use-case/get-average-lost-cars.use-case';
+import { GetAvailableYearsUseCase } from '../../domain/use-case/get-available-years.use-case';
 import { CartsDataRepository } from '../../data/data-repositories/carts-repository.service';
+
 interface CartsUiState {
     totalCarts: number;
     averageLostCarts: number;
@@ -32,6 +34,8 @@ export class CartsViewModelService implements OnDestroy {
     readonly carts$ = computed(() => this.uiState().totalCarts);
     readonly averageLostCarts$ = computed(() => this.uiState().averageLostCarts);
     readonly availableYears$ = computed(() => this.uiState().availableYears);
+    readonly selectedYear$ = computed(() => this.uiState().selectedYear);
+    readonly selectedMonth$ = computed(() => this.uiState().selectedMonth);
 
     constructor(private cartsDataRepository: CartsDataRepository) {
         this.loadAvailableYears();
@@ -39,35 +43,11 @@ export class CartsViewModelService implements OnDestroy {
 
     async loadAvailableYears(): Promise<void> {
         try {
-            const [carts, orders] = await Promise.all([
-                firstValueFrom(this.cartsDataRepository.getCarts()),
-                firstValueFrom(this.cartsDataRepository.getTotalOrders())
-            ]);
-
-            const yearsSet = new Set<number>();
-            
-            // Obtener años de carritos abandonados
-            carts.forEach(cart => {
-                const year = parseInt(cart.date.split('-')[0]);
-                if (!isNaN(year)) {
-                    yearsSet.add(year);
-                }
-            });
-            
-            // Obtener años de órdenes totales
-            orders.forEach(order => {
-                const year = parseInt(order.date.split('-')[0]);
-                if (!isNaN(year)) {
-                    yearsSet.add(year);
-                }
-            });
-
-            // Convertir el Set a array y ordenar descendentemente
-            const years = Array.from(yearsSet).sort((a, b) => b - a);
+            const useCase = new GetAvailableYearsUseCase(this.cartsDataRepository);
+            const years = await firstValueFrom(useCase.execute());
             
             this.updateState({ availableYears: years });
             
-            // Si no hay año seleccionado, seleccionar el más reciente
             if (!this.uiState().selectedYear && years.length > 0) {
                 this.setSelectedYear(years[0]);
             }
@@ -82,16 +62,28 @@ export class CartsViewModelService implements OnDestroy {
 
     setSelectedYear(year: number): void {
         this.updateState({ selectedYear: year });
+        // Reload data when year changes
+        this.loadCarts();
+        this.loadAverageLostCarts();
     }
+
     setSelectedMonth(month: number): void {
         this.updateState({ selectedMonth: month });
+        this.loadAverageLostCarts();
     }
 
     async loadCarts(): Promise<void> {
         try {
+            const selectedYear = this.uiState().selectedYear;
+            
+            if (!selectedYear) {
+                console.warn('No year selected');
+                return;
+            }
+            
             this.updateState({ loading: true, error: null });
             const useCase = new GetTotalLostCarsUseCase(this.cartsDataRepository);
-            const carts = await firstValueFrom(useCase.execute());
+            const carts = await firstValueFrom(useCase.execute(selectedYear));
             this.updateState({ totalCarts: carts, loading: false });
         } catch (error) {
             this.updateState({ 
@@ -106,14 +98,14 @@ export class CartsViewModelService implements OnDestroy {
             const selectedYear = this.uiState().selectedYear;
             const selectedMonth = this.uiState().selectedMonth;
 
-            if (!selectedYear || !selectedMonth) {
-                console.warn('No year or month selected');
+            if (!selectedYear) {
+                console.warn('No year selected');
                 return;
             }
 
             this.updateState({ loading: true, error: null });
             const useCase = new GetAverageLostCarsUseCase(this.cartsDataRepository);
-            const average = await firstValueFrom(useCase.executeWithDate(selectedYear, selectedMonth));
+            const average = await firstValueFrom(useCase.execute(selectedYear));
             this.updateState({ averageLostCarts: average, loading: false });
         } catch (error) {
             this.updateState({
