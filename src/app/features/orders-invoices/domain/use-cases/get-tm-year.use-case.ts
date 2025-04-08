@@ -6,7 +6,7 @@ export class GetTmYearUseCase {
     constructor(private monthlySalesRepository: MonthlySalesRepository) {}
 
     execute(year: number): Observable<number> {
-        return this.monthlySalesRepository.getOrders().pipe(
+        return this.monthlySalesRepository.getMonthlySales().pipe(
             map(tm => {
                 if (!tm || tm.length === 0) {
                     return 0;
