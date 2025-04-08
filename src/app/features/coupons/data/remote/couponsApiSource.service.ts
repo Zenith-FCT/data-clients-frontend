@@ -86,4 +86,15 @@ export class CouponsApiSourceService{
       }
     }
 
+    async getAvailableYears():Promise<string[]>{
+      try {
+          const response = await fetch(`${this.url}cuponesAvailableYears`);
+          const data = await response.json();
+          return data.map( (years: {year: string;}) => years.year );
+      }
+      catch (error) {
+        throw new Error("Error al recoger los datos");
+      }
+  }
+
 }

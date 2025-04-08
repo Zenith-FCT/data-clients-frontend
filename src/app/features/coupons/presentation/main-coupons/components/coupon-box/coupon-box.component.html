@@ -44,21 +44,8 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'couponsMonth'">
-    <div>
-      <h3 class="coupons-box-title">Nº cupones mensuales</h3>
-      <div>
-        <select [value]="selectedMonth" [(ngModel)]="selectedMonth" (change)="changeDate()">
-          <option *ngFor="let month of months" [value]="month">
-            {{ month }}
-          </option>
-        </select>
-        <select [value]="selectedYear" [(ngModel)]="selectedYear" (change)="changeDate()">
-          <option *ngFor="let year of years" [value]="year">
-            {{ year }}
-          </option>
-        </select>
-      </div>
-    </div>
+    <h3 class="coupons-box-title">Nº cupones mensuales</h3>
+
 
     <div *ngIf="viewModel.isLoadingCouponsMonth()" class="loading-state">
       <div class="spinner"></div>
@@ -81,21 +68,7 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'discountMonth'">
-    <div>
-      <h3 class="coupons-box-title">Descuento mensual</h3>
-      <div>
-        <select [value]="selectedMonth" [(ngModel)]="selectedMonth" (change)="changeDate()">
-          <option *ngFor="let month of months" [value]="month">
-            {{ month }}
-          </option>
-        </select>
-        <select [value]="selectedYear" [(ngModel)]="selectedYear" (change)="changeDate()">
-          <option *ngFor="let year of years" [value]="year">
-            {{ year }}
-          </option>
-        </select>
-      </div>
-    </div>
+    <h3 class="coupons-box-title">Descuento mensual</h3>
 
     <div *ngIf="viewModel.isLoadingDiscountMonth()" class="loading-state">
       <div class="spinner"></div>

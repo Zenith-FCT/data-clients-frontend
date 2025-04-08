@@ -76,4 +76,15 @@ export class CouponsDataRepository implements CouponsRepository {
         )
       })
     }
+
+    getAvailableYears(): Observable<string[]> {
+      return new Observable(obs => {
+        this.dataSource.getAvailableYears().then(total => {
+          obs.next(total);
+          obs.complete();
+        }).catch((error) =>
+          obs.error(error)
+        )
+      })
+    }
 }
