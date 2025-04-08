@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { CartsViewModelService } from '../../../viewmodel/carts-viewmodel.service';
@@ -15,6 +16,7 @@ import { CartsViewModelService } from '../../../viewmodel/carts-viewmodel.servic
     MatIconModule,
     MatButtonModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
     FormsModule
   ],
   templateUrl: './information-box-carts.component.html',
@@ -39,6 +41,8 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.type === 'total') {
       this.cartsViewModel.loadCarts();
+    } else if (this.type === 'monthly') {
+      this.cartsViewModel.loadAverageLostCarts();
     }
   }
   
