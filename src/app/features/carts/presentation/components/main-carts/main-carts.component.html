@@ -1,5 +1,25 @@
 <div class="carts-container">
+  <div class="chart-header">
+    <h2>Pedidos y Facturación</h2>
+    <div class="date-selectors">
+      <mat-form-field appearance="outline">
+        <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
+          <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
+            {{getMonthName(i + 1)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
+          <mat-option *ngFor="let year of cartsViewModel.availableYears$()" [value]="year">
+            {{year}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
   <div class="carts-summary">
+    
     <div class="info-container">
       <div class="box-wrapper">
         <app-information-box-carts type="total"></app-information-box-carts>

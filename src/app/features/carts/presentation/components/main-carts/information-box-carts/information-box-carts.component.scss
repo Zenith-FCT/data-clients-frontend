@@ -5,6 +5,7 @@
     flex-direction: column;
     padding: 20px;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 
     .box-header {
         margin-bottom: 24px;
@@ -14,6 +15,7 @@
             color: var(--md-source-on-surface);
             font-size: 1.1rem;
             font-weight: 500;
+            font-family: 'Poppins', sans-serif;
         }
     }
 
@@ -28,6 +30,10 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
+
+            span {
+                font-family: 'Poppins', sans-serif;
+            }
 
             .spinner {
                 width: 32px;
@@ -45,6 +51,7 @@
             align-items: center;
             gap: 12px;
             color: var(--md-source-error);
+            font-family: 'Poppins', sans-serif;
 
             span {
                 font-size: 24px;
@@ -61,17 +68,20 @@
                     font-size: 2rem;
                     font-weight: 600;
                     color: var(--md-source-on-surface);
+                    font-family: 'Poppins', sans-serif;
                 }
 
                 .currency {
                     margin-left: 4px;
                     color: var(--md-source-on-surface-variant);
+                    font-family: 'Poppins', sans-serif;
                 }
 
                 .unit {
                     margin-left: 4px;
                     color: var(--md-source-on-surface-variant);
                     font-size: 1.5rem;
+                    font-family: 'Poppins', sans-serif;
                 }
             }
 
@@ -79,6 +89,7 @@
                 color: var(--md-source-on-surface-variant);
                 font-size: 0.9rem;
                 margin: 0;
+                font-family: 'Poppins', sans-serif;
             }
         }
     }
