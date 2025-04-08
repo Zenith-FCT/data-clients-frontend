@@ -184,13 +184,11 @@ export class CartsViewModelService implements OnDestroy {
             const useCase = new GetCartsModelListUseCase(this.cartsDataRepository);
             const cartsList = await firstValueFrom(useCase.execute());
             
-            // Actualizar la lista completa
             this.updateState({ 
                 cartsModelList: cartsList,
                 loading: false 
             });
 
-            // Aplicar filtros inmediatamente
             await this.filterAndUpdateCarts();
         } catch (error) {
             console.error('Error loading carts:', error);
