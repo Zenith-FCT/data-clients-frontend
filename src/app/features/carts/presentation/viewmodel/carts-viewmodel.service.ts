@@ -2,8 +2,7 @@ import { Injectable, OnDestroy, signal, computed } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { GetTotalLostCarsUseCase } from '../../domain/use-case/get-total-lost-cars.use-case';
 import { GetAverageLostCarsUseCase } from '../../domain/use-case/get-average-lost-cars.use-case';
-import { CartsDataRepository } from '../../data/data-repositories/carts-reposiroty.service';
-
+import { CartsDataRepository } from '../../data/data-repositories/carts-repository.service';
 interface CartsUiState {
     totalCarts: number;
     averageLostCarts: number;
