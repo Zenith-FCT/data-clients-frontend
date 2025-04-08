@@ -12,7 +12,7 @@ import { LtvMapper } from './mappers/ltv-mapper';
 export class ApiService {
     
     constructor() { }
-    url = 'http://localhost:3000/';
+    url = 'https://json-server-example-data.vercel.app/';
 
     async getMonthlySales(): Promise<MonthlySalesModel[]> { 
         try {

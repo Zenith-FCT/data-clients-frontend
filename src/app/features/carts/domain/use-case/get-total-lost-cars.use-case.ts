@@ -5,10 +5,19 @@ import { CartModel } from "../models/carts.model";
 export class GetTotalLostCarsUseCase {
     constructor(private cartsRepository: CartsRepository) {}
 
-    execute(): Observable<number> {
+    execute(year?: number): Observable<number> {
         return this.cartsRepository.getCarts().pipe(
             map((carts: CartModel[]) => {
-                return carts.reduce((sum, cart) => sum + parseFloat(cart.total), 0);
+                let filteredCarts = carts;
+                
+                if (year) {
+                    filteredCarts = carts.filter(cart => {
+                        const cartYear = parseInt(cart.date.split('-')[0]);
+                        return cartYear === year;
+                    });
+                }
+                
+                return filteredCarts.reduce((sum, cart) => sum + parseFloat(cart.total), 0);
             })
         );
     }

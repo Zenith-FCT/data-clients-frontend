@@ -1,6 +1,6 @@
 <div class="information-box">
   <div class="box-header">
-    <h3>{{ type === 'total' ? 'Total de Carritos Abandonados' : 'Tasa de Carritos Abandonados' }}</h3>
+    <h3>{{ getTitle() }}</h3>
   </div>
 
   <div class="box-content">
@@ -16,10 +16,10 @@
 
     <div *ngIf="!loading && !cartsViewModel.error$()" class="data-state">
       <div class="amount">
-        <span class="value">{{ type === 'total' ? (cartsViewModel.carts$() | number:'1.0-0') : (cartsViewModel.averageLostCarts$() | number:'1.2-2') }}</span>
-        <span class="unit" *ngIf="type === 'monthly'">%</span>
+        <span class="value">{{ getValue() | number:(type === 'total' || type === 'total-monthly' ? '1.0-0' : '1.2-2') }}</span>
+        <span class="unit" *ngIf="getUnit()">{{ getUnit() }}</span>
       </div>
-      <p class="description">{{ type === 'total' ? 'Total de carritos abandonados' : 'Tasa total de carritos abandonados' }}</p>
+      <p class="description">{{ getDescription() }}</p>
     </div>
   </div>
 </div>

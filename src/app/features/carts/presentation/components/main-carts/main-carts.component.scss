@@ -1,5 +1,5 @@
 .carts-container {
-    padding: 24px;
+    padding: 0px 24px 24px 24px;
     height: 100%;
     width: 100%;
     max-width: 100%;
@@ -7,36 +7,181 @@
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
     background-color: var(--md-source-surface-variant);
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+
+    .chart-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 0 16px;
+        margin-top: 16px; 
+
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--md-source-on-surface);
+        }
+
+        .date-selectors {
+            display: flex;
+            gap: 16px;
+
+            mat-form-field {
+                width: 120px;
+                height: 48px;
+                margin-bottom: 8px;
+
+                ::ng-deep {
+                    .mat-mdc-form-field {
+                        font-size: 12px;
+                        font-family: 'Poppins', sans-serif !important;
+                    }
+
+                    .mat-mdc-select-panel {
+                        font-family: 'Poppins', sans-serif !important;
+                        font-size: 12px;
+                    }
+
+                    .mat-mdc-select-value-text {
+                        font-family: 'Poppins', sans-serif !important;
+                        font-size: 12px;
+                    }
+
+                    .mat-mdc-option {
+                        font-family: 'Poppins', sans-serif !important;
+                        font-size: 12px;
+                    }
+
+                    .mat-mdc-select {
+                        font-family: 'Poppins', sans-serif !important;
+                    }
+
+                    .mdc-menu-surface {
+                        font-family: 'Poppins', sans-serif !important;
+                    }
+
+                    .mat-mdc-form-field-infix {
+                        min-height: 56px !important;
+                        padding: 0 !important;
+                        display: flex;
+                        align-items: center;
+                        font-family: 'Poppins', sans-serif !important;
+                    }
+
+                    .mat-mdc-text-field-wrapper {
+                        background-color: var(--md-source-surface);
+                        height: 56px !important;
+                        border-radius: 8px;
+                    }
+
+                    .mdc-text-field--outlined {
+                        --mdc-outlined-text-field-container-height: 56px !important;
+                    }
+
+                    .mat-mdc-form-field-flex {
+                        height: 56px !important;
+                        align-items: center;
+                        padding-top: 0;
+                    }
+
+                    .mat-mdc-select-trigger {
+                        height: 56px !important;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .mat-mdc-select-value {
+                        color: var(--md-source-on-surface);
+                    }
+
+                    .mat-mdc-select-arrow {
+                        color: var(--md-source-on-surface);
+                    }
+
+                    .mdc-notched-outline__leading,
+                    .mdc-notched-outline__notch,
+                    .mdc-notched-outline__trailing {
+                        border-color: var(--md-source-outline) !important;
+                    }
+
+                    .mat-mdc-form-field-subscript-wrapper {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
 
     .carts-summary {
-        margin-bottom: 30px;
-        height: 500px;
         display: flex;
         gap: 24px;
-        flex-wrap: wrap;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 30px;
 
         .info-container {
-            height: 100%;
-            align-self: flex-start;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
             min-width: 300px;
             max-width: 400px;
-            flex: 1;
-            background-color: transparent;
 
-            > div {
-                height: calc(50% - 8px);
-                background-color: #fff;
+            app-information-box-carts {
+                height: 145px;
+                background-color: var(--md-source-surface);
                 border: 1px solid var(--md-source-outline);
                 border-radius: 8px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
-                padding: 16px;
+            }
+        }
+
+        .chart-section {
+            flex: 2;
+            background-color: #FFFFFF;
+            border: 1px solid var(--md-source-outline);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            min-width: 500px;
+            display: flex;
+            flex-direction: column;
+            height: 570px;
+            
+            h3 {
+                margin: 0;
+                font-size: 1.1rem;
+                font-weight: 500;
+                color: var(--md-source-on-surface);
+                margin-bottom: 16px;
+            }
+
+            app-monthly-abandoned-carts {
+                flex: 1;
+                min-height: 0;
+                display: flex;
+                flex-direction: column;
             }
         }
     }
+}
+
+::ng-deep .mat-mdc-select-panel {
+    font-family: 'Poppins', sans-serif !important;
+    
+    .mat-mdc-option {
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 12px;
+    }
+}
+
+::ng-deep .mdc-menu-surface {
+    font-family: 'Poppins', sans-serif !important;
 }

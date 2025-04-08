@@ -6,7 +6,7 @@ import { CartModel, TotalOrders } from "../../../../domain/models/carts.model";
     providedIn: 'root'
 })
 export class CartsApiService {
-    url = 'http://localhost:3000/';
+    url = 'https://json-server-example-data.vercel.app/';
 
     async getCarts(): Promise<CartModel[]> {
         try {
