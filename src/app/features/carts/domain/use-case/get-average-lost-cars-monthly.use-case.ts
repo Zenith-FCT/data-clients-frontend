@@ -1,23 +1,23 @@
 import { Observable, combineLatest, map } from "rxjs";
 import { CartsRepository } from "../repositories/carts-repository";
 
-export class GetAverageLostCarsUseCase {
+export class GetAverageLostCartsMonthlyUseCase {
     constructor(private cartsRepository: CartsRepository) {}
 
-    execute(year: number): Observable<number> {
+    execute(year: number, month: number): Observable<number> {
         return combineLatest([
             this.cartsRepository.getCarts(),
             this.cartsRepository.getTotalOrders()
         ]).pipe(
             map(([carts, totalOrders]) => {
                 const filteredCarts = carts.filter(cart => {
-                    const cartYear = parseInt(cart.date.split('-')[0]);
-                    return cartYear === year;
+                    const [cartYear, cartMonth] = cart.date.split('-').map(Number);
+                    return cartYear === year && cartMonth === month;
                 });
                 
                 const filteredOrders = totalOrders.filter(order => {
-                    const orderYear = parseInt(order.date.split('-')[0]);
-                    return orderYear === year;
+                    const [orderYear, orderMonth] = order.date.split('-').map(Number);
+                    return orderYear === year && orderMonth === month;
                 });
 
                 const abandonedCartsTotal = filteredCarts.reduce((sum, cart) => {

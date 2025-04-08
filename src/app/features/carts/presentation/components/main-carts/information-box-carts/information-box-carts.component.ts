@@ -23,26 +23,70 @@ import { CartsViewModelService } from '../../../viewmodel/carts-viewmodel.servic
   styleUrls: ['./information-box-carts.component.scss']
 })
 export class InformationBoxCartsComponent implements OnInit, OnDestroy {
-  @Input() type: 'total' | 'monthly' = 'total';
+  @Input() type: 'total' | 'total-monthly' | 'rate' | 'rate-monthly' = 'total';
   
   private destroy$ = new Subject<void>();
   loading = false;
-  
-  getMonthName(month: number): string {
-    return new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
-  }
 
   constructor(public cartsViewModel: CartsViewModelService) {
     effect(() => {
       this.loading = this.cartsViewModel.loading$();
     });
   }
-  
+
+  getTitle(): string {
+    switch (this.type) {
+      case 'total': return 'Total de Carritos Abandonados';
+      case 'total-monthly': return 'Carritos Abandonados por Mes';
+      case 'rate': return 'Tasa de Carritos Abandonados';
+      case 'rate-monthly': return 'Tasa de Carritos Abandonados por Mes';
+      default: return '';
+    }
+  }
+
+  getValue(): number {
+    switch (this.type) {
+      case 'total': return this.cartsViewModel.carts$();
+      case 'total-monthly': return this.cartsViewModel.totalCartsMonthly$();
+      case 'rate': return this.cartsViewModel.averageLostCarts$();
+      case 'rate-monthly': return this.cartsViewModel.averageCartsMonthly$();
+      default: return 0;
+    }
+  }
+
+  getUnit(): string {
+    return this.type.includes('rate') ? '%' : '';
+  }
+
+  getDescription(): string {
+    const month = this.cartsViewModel.selectedMonth$();
+    const year = this.cartsViewModel.selectedYear$();
+    const monthName = month ? this.getMonthName(month) : '';
+
+    switch (this.type) {
+      case 'total':
+        return `Total de carritos abandonados en ${year}`;
+      case 'total-monthly':
+        return `Carritos abandonados en ${monthName} del ${year}`;
+      case 'rate':
+        return `Tasa total de carritos abandonados en ${year}`;
+      case 'rate-monthly':
+        return `Tasa de carritos abandonados en ${monthName} del ${year}`;
+      default:
+        return '';
+    }
+  }
+
+  getMonthName(month: number): string {
+    return new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
+  }
+
   ngOnInit(): void {
-    if (this.type === 'total') {
+    if (this.type === 'total' || this.type === 'rate') {
       this.cartsViewModel.loadCarts();
-    } else if (this.type === 'monthly') {
       this.cartsViewModel.loadAverageLostCarts();
+    } else {
+      this.cartsViewModel.loadMonthlyStatistics();
     }
   }
   
