@@ -5,10 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { ProductsDataRepository } from '../data/products-data-repository';
 import { productsProviders } from '../products.providers';
 import { ProductBillingViewModel } from './product-billing.view-model';
+import { ProductSalesViewModel } from './product-sales.view-model';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 import { GetTotalBillingPerProductUseCase } from '../domain/get-total-billing-per-product-use-case';
-import { Subject, debounceTime, fromEvent, takeUntil } from 'rxjs';
+import { GetTotalSalesPerProductUseCase } from '../domain/get-total-sales-per-product-use-case';
+import { Subject, debounceTime, fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ProductSalesChartComponent } from './components/product-sales-chart/product-sales-chart.component';
 
 export enum ChartViewMode {
   ByProduct = 'byProduct',
@@ -17,17 +20,19 @@ export enum ChartViewMode {
 
 @Component({
   selector: 'app-main-products',
-  standalone: true,
-  imports: [
+  standalone: true,  imports: [
     CommonModule, 
     RouterModule,
     NgxEchartsModule,
     FormsModule,
+    ProductSalesChartComponent,
   ],
   providers: [
     ProductBillingViewModel,
+    ProductSalesViewModel,
     ProductsDataRepository,
     GetTotalBillingPerProductUseCase,
+    GetTotalSalesPerProductUseCase,
     ...productsProviders,
     {
       provide: NGX_ECHARTS_CONFIG,
@@ -39,13 +44,11 @@ export enum ChartViewMode {
   templateUrl: './main-products.component.html',
   styleUrl: './main-products.component.scss'
 })
-export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
-  isBrowser: boolean;
+export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {  isBrowser: boolean;
   chartOption: any = {};
   private destroy$ = new Subject<void>();
   private destroyRef = inject(DestroyRef);
-  
-  // Añadir el enum para el selector y la variable para el modo actual
+    // Enums y variables para los selectores de modo de vista
   viewModes = ChartViewMode;
   currentViewMode = ChartViewMode.ByProduct;
   
@@ -60,86 +63,69 @@ export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   constructor(
-    public viewModel: ProductBillingViewModel,
+    public billingViewModel: ProductBillingViewModel,
+    public salesViewModel: ProductSalesViewModel,
     @Inject(PLATFORM_ID) platformId: Object,
     private elementRef: ElementRef
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
-    
-    // Usar effect para reaccionar a cambios en los datos
+      // Usar effect para reaccionar a cambios en los datos de facturación
     effect(() => {
-      const productBilling = this.viewModel.productBilling();
+      const productBilling = this.billingViewModel.productBilling();
       if (this.isBrowser && productBilling && productBilling.length > 0) {
         this.updateChartOption(productBilling);
       }
     });
   }
 
-  /**
-   * Determina si la aplicación está ejecutándose en un entorno de pruebas
-   */
   private isTestEnvironment(): boolean {
     return (
-      // Detectar si estamos en un entorno de pruebas karma
       typeof window !== 'undefined' && 
       (window.location.href.includes('karma') || 
-       // Comprobar variables de entorno comunes en CI
        (typeof process !== 'undefined' && 
         (process.env && (process.env['CI'] === 'true' || 
          process.env['NODE_ENV'] === 'test'))))
     );
   }
 
-  /**
-   * Verifica si es seguro realizar operaciones del DOM
-   */
   private canPerformDomOperations(): boolean {
     return this.isBrowser && !this.isTestEnvironment();
   }
-
   ngOnInit(): void {
     if (this.canPerformDomOperations()) {
-      // Reemplazamos la llamada directa a loadProductBilling por el nuevo método que verifica si ya están cargados
-      this.viewModel.ensureDataLoaded();
+      this.billingViewModel.ensureDataLoaded();
       
-      // Escuchar eventos de resize para actualizar el gráfico
       fromEvent(window, 'resize')
         .pipe(
           debounceTime(300),
           takeUntilDestroyed(this.destroyRef)
         )
         .subscribe(() => {
-          if (this.viewModel.productBilling()?.length > 0) {
-            this.updateChartOption(this.viewModel.productBilling());
+          if (this.billingViewModel.productBilling()?.length > 0) {
+            this.updateChartOption(this.billingViewModel.productBilling());
           }
         });
     }
   }
   
   ngAfterViewInit(): void {
-    // Detectar cambios en el tamaño del contenedor padre
     if (this.canPerformDomOperations()) {
       this.observeParentResize();
     }
   }
-  
-  // Observar cambios en el ancho del contenedor padre (útil cuando se abre/cierra un menú lateral)
-  private observeParentResize(): void {
+    private observeParentResize(): void {
     if (typeof ResizeObserver !== 'undefined') {
       const resizeObserver = new ResizeObserver(entries => {
-        // Al detectar cambio en el tamaño, actualizar el gráfico
-        if (this.viewModel.productBilling()?.length > 0) {
-          this.updateChartOption(this.viewModel.productBilling());
+        if (this.billingViewModel.productBilling()?.length > 0) {
+          this.updateChartOption(this.billingViewModel.productBilling());
         }
       });
       
-      // Observar el contenedor padre
       const parent = this.elementRef.nativeElement.closest('.chart-wrapper');
       if (parent) {
         resizeObserver.observe(parent);
       }
       
-      // Limpieza al destruir con la referencia de destrucción
       this.destroyRef.onDestroy(() => resizeObserver.disconnect());
     }
   }
@@ -149,9 +135,6 @@ export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Actualiza las opciones del gráfico con la leyenda pegada al margen derecho
-   */
   private updateChartOption(productBilling: any[]): void {
     if (!this.isBrowser) return;
     
@@ -168,20 +151,15 @@ export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Clonar los datos para no modificar los originales
     let chartData = [...productBilling];
     let title = '';
 
     if (this.currentViewMode === ChartViewMode.ByProduct) {
-      // Mostrar facturación por producto individual (como estaba originalmente)
       title = 'Facturación Total por Producto';
-      // Ordenar los datos por valor descendente para mejor visualización
       chartData.sort((a, b) => b.totalBilling - a.totalBilling);
       
-      // Aumentamos a mostrar los top 10 productos individuales para reducir la categoría "Otros"
       const topProducts = chartData.slice(0, 10);
       
-      // Agregar "Otros" solo si representan más del 3% del total para reducir más su presencia
       if (chartData.length > 10) {
         const otherCategories = chartData.slice(10);
         const otherValue = otherCategories.reduce(
@@ -189,11 +167,9 @@ export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
           0
         );
 
-        // Calcular el total para determinar el porcentaje que representan "Otros"
         const totalAll = chartData.reduce((sum, product) => sum + product.totalBilling, 0);
         const othersPercentage = (otherValue / totalAll) * 100;
         
-        // Solo incluir "Otros" si representan más del 3% del total
         if (othersPercentage > 3) {
           topProducts.push({
             productName: 'Otros',
@@ -204,10 +180,8 @@ export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
       
       chartData = topProducts;
     } else {
-      // Mostrar facturación agrupada por tipo de producto
       title = 'Facturación Total por Tipo de Producto';
       
-      // Agrupar por tipo de producto
       const groupedByType = chartData.reduce((groups: any, item) => {
         const type = item.productType || 'Sin categoría';
         if (!groups[type]) {
@@ -220,16 +194,13 @@ export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
         return groups;
       }, {});
       
-      // Convertir a array y ordenar por facturación
       chartData = Object.values(groupedByType).sort(
         (a: any, b: any) => b.totalBilling - a.totalBilling
       );
     }
     
-    // Calcular el total de los productos mostrados para los porcentajes
     const totalBilling = chartData.reduce((sum: number, product: any) => sum + product.totalBilling, 0);
 
-    // Configuración adaptada del gráfico
     this.chartOption = {
       title: {
         text: title,
@@ -296,7 +267,6 @@ export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
             show: true,
             position: 'outside',
             formatter: (params: any) => {
-              // Formatear el valor para que sea más legible
               let formattedValue = params.value;
               if (params.value >= 1000000) {
                 formattedValue = (params.value / 1000000).toFixed(1) + 'M €';
@@ -323,16 +293,11 @@ export class MainProductsComponent implements OnInit, AfterViewInit, OnDestroy {
       ],
     };
   }
-
-  /**
-   * Cambia el modo de visualización del gráfico y actualiza la vista
-   */
   onViewModeChange(mode: ChartViewMode): void {
     if (this.currentViewMode !== mode) {
       this.currentViewMode = mode;
-      // Actualizar el gráfico con los datos existentes
-      if (this.viewModel.productBilling()?.length > 0) {
-        this.updateChartOption(this.viewModel.productBilling());
+      if (this.billingViewModel.productBilling()?.length > 0) {
+        this.updateChartOption(this.billingViewModel.productBilling());
       }
     }
   }
