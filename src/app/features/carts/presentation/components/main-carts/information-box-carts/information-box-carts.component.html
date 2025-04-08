@@ -16,7 +16,7 @@
 
     <div *ngIf="!loading && !cartsViewModel.error$()" class="data-state">
       <div class="amount">
-        <span class="value">{{ getValue() | number:'1.2-2' }}</span>
+        <span class="value">{{ getValue() | number:(type === 'total' || type === 'total-monthly' ? '1.0-0' : '1.2-2') }}</span>
         <span class="unit" *ngIf="getUnit()">{{ getUnit() }}</span>
       </div>
       <p class="description">{{ getDescription() }}</p>
