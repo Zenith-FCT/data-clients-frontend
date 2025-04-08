@@ -36,6 +36,36 @@
   justify-content: center;
 }
 
+.view-toggle-buttons {
+  display: flex;
+  
+  button {
+    background: #eee;
+    border: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin: 0; /* Importante: elimina márgenes */
+    
+    &:first-child {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      border-right: none; /* Elimina borde derecho para que se unan */
+    }
+    
+    &:last-child {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      border-left: none; /* Elimina borde izquierdo para que se unan */
+    }
+    
+    &.active {
+      background: #007bff;
+      color: white;
+      border-color: #0069d9;
+    }
+  }
+}
+
 .echarts-container {
   width: 100%;
   height: 100%;

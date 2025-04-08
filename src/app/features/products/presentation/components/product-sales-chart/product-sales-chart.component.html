@@ -1,35 +1,17 @@
-<div class="chart-container">
-  <div class="chart-header">
-    <h3>{{ salesViewMode === viewModes.ByProduct ? 'Ventas Totales por Producto' : 'Ventas Totales por Tipo de Producto' }}</h3>
+<div class="chart-container">  <div class="chart-header">
+    <h3>Ventas Totales por Producto</h3>
     
-    <div class="chart-controls">
-      <div class="filter-controls">
-        <label for="product-type-filter">Filtrar por tipo:</label>
-        <select 
-          id="product-type-filter" 
-          class="form-control"
-          (change)="onProductTypeChange($event)">
-          <option value="">Todos los tipos</option>
-          <option *ngFor="let type of viewModel.productTypes()" 
-            [value]="type" 
-            [selected]="type === viewModel.selectedProductType()">
-            {{ type }}
-          </option>
-        </select>
-      </div>
-
-      <div class="view-toggle-buttons">
-        <button 
-          [class.active]="salesViewMode === viewModes.ByProduct" 
-          (click)="onSalesViewModeChange(viewModes.ByProduct)">
-          Producto
-        </button>
-        <button 
-          [class.active]="salesViewMode === viewModes.ByProductType" 
-          (click)="onSalesViewModeChange(viewModes.ByProductType)">
-          Tipo de producto
-        </button>
-      </div>
+    <div class="view-toggle-buttons">
+      <button 
+        [class.active]="salesViewMode === viewModes.ByProduct" 
+        (click)="onSalesViewModeChange(viewModes.ByProduct)">
+        Producto
+      </button>
+      <button 
+        [class.active]="salesViewMode === viewModes.ByProductType" 
+        (click)="onSalesViewModeChange(viewModes.ByProductType)">
+        Tipo de producto
+      </button>
     </div>
   </div>
   

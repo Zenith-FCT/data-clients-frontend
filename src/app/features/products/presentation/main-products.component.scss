@@ -32,44 +32,7 @@
   margin-bottom: 2rem;
 }
 
-.chart-container {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  height: 600px; // Altura fija para el contenedor
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  position: relative;
-  overflow: visible; // Permite que las etiquetas se muestren fuera del contenedor
-}
-
-.chart-title {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #333;
-  margin: 0 0 1rem 0;
-  transition: opacity 0.3s ease;
-}
-
-// Nuevo contenedor responsivo para el gráfico
-.echarts-responsive-container {
-  position: relative;
-  width: 100%;
-  height: calc(100% - 50px); // Altura que resta el espacio del título
-  overflow: visible;
-}
-
-.echarts-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100% !important; // Importante para sobreescribir cualquier ancho inline
-  height: 100% !important; // Importante para sobreescribir cualquier altura inline
-}
+// Los estilos de contenedores de gráficos se han movido a los componentes individuales
 
 // Estilos para los indicadores de carga y error
 .loading-indicator {
@@ -189,55 +152,4 @@
   }
 }
 
-.chart-view-controls {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-  justify-content: flex-end;
-
-  .view-label {
-    font-size: 0.9rem;
-    color: #666;
-    margin-right: 10px;
-  }
-
-  .view-toggle-buttons {
-    display: flex;
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    
-    button {
-      padding: 6px 16px;
-      background-color: #f5f5f5;
-      border: 1px solid #ddd;
-      color: #666;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      outline: none;
-      
-      &:first-child {
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
-        border-right: none;
-      }
-      
-      &:last-child {
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
-        border-left: none;
-      }
-      
-      &.active {
-        background-color: #1976d2;
-        color: white;
-        border-color: #1976d2;
-      }
-      
-      &:hover:not(.active) {
-        background-color: #e0e0e0;
-      }
-    }
-  }
-}
+// Los estilos de los selectores se han movido a los componentes individuales
