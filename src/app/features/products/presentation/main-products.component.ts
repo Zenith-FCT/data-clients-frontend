@@ -1,16 +1,14 @@
-import { Component, OnInit, Inject, PLATFORM_ID, effect, AfterViewInit, ElementRef, OnDestroy, inject, DestroyRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProductsDataRepository } from '../data/products-data-repository';
 import { productsProviders } from '../products.providers';
 import { ProductBillingViewModel } from './product-billing.view-model';
 import { ProductSalesViewModel } from './product-sales.view-model';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 import { GetTotalBillingPerProductUseCase } from '../domain/get-total-billing-per-product-use-case';
 import { GetTotalSalesPerProductUseCase } from '../domain/get-total-sales-per-product-use-case';
-import { Subject, debounceTime, fromEvent } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
 import { ProductSalesChartComponent } from './components/product-sales-chart/product-sales-chart.component';
 import { ProductBillingChartComponent } from './components/product-billing-chart/product-billing-chart.component';
 
@@ -21,14 +19,16 @@ export enum ChartViewMode {
 
 @Component({
   selector: 'app-main-products',
-  standalone: true,  imports: [
+  standalone: true,
+  imports: [
     CommonModule, 
     RouterModule,
     NgxEchartsModule,
     FormsModule,
     ProductSalesChartComponent,
     ProductBillingChartComponent,
-  ],providers: [
+  ],
+  providers: [
     GetTotalBillingPerProductUseCase,
     GetTotalSalesPerProductUseCase,
     ...productsProviders,
@@ -40,7 +40,8 @@ export enum ChartViewMode {
     }
   ],
   templateUrl: './main-products.component.html',
-  styleUrl: './main-products.component.scss'
+  styleUrl: './main-products.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainProductsComponent implements OnInit, OnDestroy {  
   isBrowser: boolean;

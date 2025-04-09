@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
 import { ProductSalesViewModel } from '../../product-sales.view-model';
@@ -12,7 +12,8 @@ import { ChartViewMode } from '../../main-products.component';
   standalone: true,
   imports: [CommonModule, NgxEchartsModule, FormsModule],
   templateUrl: './product-sales-chart.component.html',
-  styleUrl: './product-sales-chart.component.scss'
+  styleUrl: './product-sales-chart.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductSalesChartComponent implements OnInit, OnDestroy {
   isBrowser: boolean;

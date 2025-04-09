@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
 import { ProductBillingViewModel } from '../../product-billing.view-model';
@@ -12,7 +12,8 @@ import { ChartViewMode } from '../../main-products.component';
   standalone: true,
   imports: [CommonModule, NgxEchartsModule, FormsModule],
   templateUrl: './product-billing-chart.component.html',
-  styleUrl: './product-billing-chart.component.scss'
+  styleUrl: './product-billing-chart.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductBillingChartComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

@@ -138,15 +138,10 @@ export class ProductSalesViewModel implements OnDestroy {
             });
             return;
           }
-          
-          if (productSales.length > 0) {
-            console.log('ProductSalesViewModel: Primer producto recibido:', productSales[0]);
             if (productSales.length > 0) {
-              const types = Array.from(new Set(productSales.map(p => p.productType)));
-              if (types.length > 0) {
-                this.setSelectedProductType(types[0]);
-              }
-            }
+            console.log('ProductSalesViewModel: Primer producto recibido:', productSales[0]);
+            // Inicialmente mostramos todos los productos sin filtrar por tipo
+            this.setSelectedProductType(null);
           }
           
           this.updateState({ 
