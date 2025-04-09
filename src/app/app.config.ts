@@ -6,6 +6,8 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NgxEchartsModule } from 'ngx-echarts';
+// Importar los proveedores de productos para que estén disponibles a nivel global
+import { productsProviders } from './features/products/products.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,6 +20,7 @@ export const appConfig: ApplicationConfig = {
       NgxEchartsModule.forRoot({
         echarts: () => import('echarts')
       })
-    )
+    ),
+    ...productsProviders
   ]
 };

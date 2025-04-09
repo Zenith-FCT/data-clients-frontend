@@ -1,16 +1,15 @@
-<div class="chart-container">
-  <div class="chart-header">
-    <h3>Facturación Total por Producto</h3>
+<div class="chart-container">  <div class="chart-header">
+    <h3>Ventas Totales por Producto</h3>
     
     <div class="view-toggle-buttons">
       <button 
-        [class.active]="billingViewMode === viewModes.ByProduct" 
-        (click)="onBillingViewModeChange(viewModes.ByProduct)">
+        [class.active]="salesViewMode === viewModes.ByProduct" 
+        (click)="onSalesViewModeChange(viewModes.ByProduct)">
         Producto
       </button>
       <button 
-        [class.active]="billingViewMode === viewModes.ByProductType" 
-        (click)="onBillingViewModeChange(viewModes.ByProductType)">
+        [class.active]="salesViewMode === viewModes.ByProductType" 
+        (click)="onSalesViewModeChange(viewModes.ByProductType)">
         Tipo de producto
       </button>
     </div>
@@ -25,17 +24,17 @@
       <span>⚠</span>
       <p>{{ viewModel.error() }}</p>
     </div>
-    <div *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productBilling().length === 0" class="no-data-state">
+    <div *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productSales().length === 0" class="no-data-state">
       <span>📊</span>
       <p>No hay datos disponibles</p>
     </div>
     
     <!-- Contenedor para eCharts con opciones inmediatas -->
     <div 
-      *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productBilling().length > 0" 
+      *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productSales().length > 0" 
       class="echarts-container" 
       echarts 
-      [options]="chartOption"
+      [options]="salesChartOption"
       [loading]="viewModel.loading()"
       [theme]="'default'"
       [initOpts]="{renderer: 'canvas'}">
