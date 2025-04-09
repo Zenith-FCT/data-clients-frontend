@@ -26,11 +26,6 @@
   color: #333;
 }
 
-.year-selector {
-  width: 100px !important;
-  margin-bottom: -16px;
-}
-
 ::ng-deep .year-selector .mat-mdc-form-field-infix {
   padding: 8px 0 !important;
   min-height: 32px !important;
@@ -53,13 +48,13 @@
 .chart-content {
   position: relative;
   width: 100%;
-  height: calc(600px - 72px);
+  height:600px;
   overflow: hidden;
   display: flex;
   align-items: stretch;
 }
 
-canvas {
+.chart-element {
   width: 100% !important;
   height: 100% !important;
   display: block !important;

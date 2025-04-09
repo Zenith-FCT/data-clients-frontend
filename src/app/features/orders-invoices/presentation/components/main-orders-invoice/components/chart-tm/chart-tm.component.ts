@@ -126,11 +126,13 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.chart = echarts.init(this.chartContainer.nativeElement);
     
-    // Configuración base del gráfico para ECharts
+    const colors = [...this.chartColors];
+    const borderColors = [...this.chartBorderColors];
+    
     const option: echarts.EChartsOption = {
       tooltip: {
         trigger: 'item',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         padding: 10,
         formatter: function(params: any) {
           return `Ticket Medio: ${parseFloat(params.value).toLocaleString('es-ES')} €`;
@@ -139,7 +141,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
       grid: {
         left: '5%',
         right: '8%',
-        bottom: '10%', 
+        bottom: '3%', 
         top: '10%',
         containLabel: true
       },
@@ -154,8 +156,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         axisLabel: {
           fontSize: 14,
           margin: 12,
-          color: '#000000',
-          fontWeight: 'bold'
+          color: '#000000'
         }
       },
       yAxis: {
@@ -164,11 +165,11 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         nameLocation: 'end',
         nameTextStyle: {
           fontWeight: 'bold',
-          fontSize: 14
+          fontSize: 14,
+          color: '#000000'
         },
         axisLine: {
-          show: false
-        },
+          show: false        },
         axisLabel: {
           formatter: (value: number): string => value.toLocaleString('es-ES') + ' €',
           fontSize: 11
@@ -178,35 +179,35 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
             color: 'rgba(0, 0, 0, 0.1)'
           }
         }
-      },
-      series: [{
-        name: 'Ticket Medio Mensual',
-        type: 'bar',
-        barWidth: '50%',
-        itemStyle: {
-          color: (params: any) => {
-            const index = params.dataIndex % this.chartColors.length;
-            return {
-              color: this.chartColors[index],
-              borderColor: this.chartBorderColors[index],
-              borderWidth: 1
-            };
-          }
-        },
-        emphasis: {
+      },      series: [
+        {
+          name: 'Ticket Medio Mensual',
+          type: 'bar',
+          barWidth: '70%',
+          data: [],
+          markLine: {
+            silent: true,
+            data: []
+          },
           itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
+            color: function(params: echarts.DefaultLabelFormatterCallbackParams) {
+              return colors[params.dataIndex % colors.length];
+            }
+          },
+          emphasis: {
+            itemStyle: {
+              color: function(params: echarts.DefaultLabelFormatterCallbackParams) {
+                const index = params.dataIndex % colors.length;
+                const baseColor = colors[index];
+                return baseColor.replace('0.2', '0.5');
+              }
+            }
           }
-        },
-        data: []
-      }]
+        }
+      ]
     };
     
     this.chart.setOption(option);
-    
-    // Manejador de eventos de redimensionamiento
     if (this.isBrowser && typeof window !== 'undefined') {
       window.addEventListener('resize', this.resizeChart.bind(this));
     }
@@ -238,7 +239,6 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
       }]
     });
     
-    // Forzar resize después de actualizar los datos
     setTimeout(() => {
       if (this.chart) {
         this.chart.resize();
