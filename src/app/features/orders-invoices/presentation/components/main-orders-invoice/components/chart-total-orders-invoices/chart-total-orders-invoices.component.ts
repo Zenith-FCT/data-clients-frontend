@@ -118,7 +118,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
         axisPointer: {
           type: 'cross'
         },
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.88)',
         padding: 10,
         formatter: function(params: any) {
           if (!Array.isArray(params)) {
@@ -143,10 +143,11 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
             }
           });
           
-          return tooltipContent;        }
+          return tooltipContent;        
+        }
       },
       legend: {
-        show: false // Ocultamos la leyenda para que se vean mejor los meses
+        show: false 
       },
       grid: {
         left: '5%',
@@ -159,7 +160,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
         type: 'category',
         data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],        axisLine: {
           lineStyle: {
-            color: 'rgba(0, 0, 0, 0.3)'
+            color: 'rgba(0, 0, 0, 0.32)'
           }
         },
         axisLabel: {
@@ -174,8 +175,8 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
           name: 'Total Facturas (€)',
           nameLocation: 'end',
           nameTextStyle: {
-            fontWeight: 'bold',
-            fontSize: 14
+            fontSize: 14,
+            color: '#000000'
           },
           position: 'left',
           axisLabel: {
@@ -184,17 +185,17 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
           },
           splitLine: {
             lineStyle: {
-              color: 'rgba(0, 0, 0, 0.1)'
+              color: 'rgba(0, 0, 0, 0.19)'
             }
           }
         },
         {
           type: 'value',
-          name: 'Número de Ventas',
+          name: 'Nº de Ventas',
           nameLocation: 'end',
           nameTextStyle: {
-            fontWeight: 'bold',
-            fontSize: 14
+            fontSize: 14,
+            color: '#000000'
           },
           position: 'right',
           axisLabel: {
@@ -235,13 +236,13 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
           name: 'Número de Ventas',
           type: 'bar',
           yAxisIndex: 1,
-          barWidth: '40%',
+          barWidth: '60%',
           itemStyle: {
             color: 'rgba(0, 0, 0, 0.2)'
           },
           emphasis: {
             itemStyle: {
-              color: 'rgba(0, 0, 0, 0.3)'
+              color: 'rgba(0, 0, 0, 0.25)'
             }
           },
           z: 5,
@@ -290,7 +291,6 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
       ]
     });
     
-    // Forzar resize después de actualizar los datos para garantizar visualización correcta
     setTimeout(() => {
       if (this.chart) {
         this.chart.resize();

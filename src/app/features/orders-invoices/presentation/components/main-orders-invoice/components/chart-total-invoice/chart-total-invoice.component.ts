@@ -99,7 +99,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
     const option: echarts.EChartsOption = {
       tooltip: {
         trigger: 'axis',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.88)',
         padding: 10,
         formatter: function(params: any) {
           const value = params[0].value;

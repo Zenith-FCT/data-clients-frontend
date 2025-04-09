@@ -51,22 +51,20 @@
   ::ng-deep .year-selector .mat-mdc-form-field-flex {
     min-height: unset !important;
   }
-  
-  .chart-content {
+    .chart-content {
     position: relative;
     flex: 1;
     width: 100%;
     height: calc(100% - 60px);
-    min-height: 650px;
+    min-height: 498px;
     padding-top: 8px; 
     overflow: hidden;
   }
   
-  canvas {
+  .chart-element {
     display: block !important;
     width: 100% !important;
     height: 100% !important;
-    max-height: 490px !important;
     padding-bottom: 12px;
   }
   
