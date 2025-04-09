@@ -136,7 +136,8 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
         },
         axisLabel: {
           formatter: (value: number) => value.toLocaleString('es-ES') + '€',
-          fontSize: 11
+          fontSize: 12,
+          color: '#000000'
         },
         splitLine: {
           lineStyle: {

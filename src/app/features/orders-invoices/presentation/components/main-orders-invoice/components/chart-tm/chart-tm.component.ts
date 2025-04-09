@@ -175,7 +175,8 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
           show: false        },
         axisLabel: {
           formatter: (value: number): string => value.toLocaleString('es-ES') + ' €',
-          fontSize: 11
+          fontSize: 12,
+          color: '#000000'
         },
         splitLine: {
           lineStyle: {

@@ -5,6 +5,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { InvoiceClientsViewModelService } from '../../../../view-model/invoice-clients-viewmodel.service';
 import { InvoiceClientsTypeModel } from '../../../../../domain/models/invoice-clients-type.model';
+import { color } from 'echarts';
 declare const Chart: any;
 
 @Component({
@@ -36,15 +37,10 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
         this.extractAvailableYears(data);
         this.destroyAndRecreateChart(this.filterDataByYear(data));
       }
-    });
-
-    effect(() => {
+    });    effect(() => {
       const year = this.invoiceClientsViewModel.selectedYear$();
       if (year && year !== this.selectedYear) {
         this.selectedYear = year;
-        if (this.currentData.length > 0) {
-          this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
-        }
       }
     });
   }
@@ -57,6 +53,20 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
 
   ngAfterViewInit(): void {
     this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
+    
+    if (this.isBrowser && this.chartCanvas?.nativeElement) {
+      const canvas = this.chartCanvas.nativeElement;
+      const ctx = canvas.getContext('2d');
+      
+      if (ctx && window.devicePixelRatio > 1) {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+      }
+    }
   }
 
   private extractAvailableYears(data: InvoiceClientsTypeModel[]): void {
@@ -99,7 +109,6 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
       return false;
     });
   }
-
   private destroyAndRecreateChart(data: InvoiceClientsTypeModel[]): void {
     if (!this.isBrowser || !this.chartCanvas?.nativeElement) return;
     
@@ -112,26 +121,38 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
     if (!ctx) return;
     
     const monthlyData = this.organizeDataByMonth(data);
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     
-    setTimeout(() => {
+    const maxValue = Math.max(
+      ...monthlyData.recurrentOrders, 
+      ...monthlyData.uniqueOrders
+    );
+    const yAxisMax = Math.ceil(maxValue * 1.2);
+      setTimeout(() => {
       this.chart = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          labels: months,
           datasets: [
             {
               label: 'Clientes Recurrentes',
               data: monthlyData.recurrentOrders,
-              backgroundColor: '#C0C0C0',
-              borderColor: '#C0C0C0',
-              borderWidth: 1
+              backgroundColor: '#b5b5b5',
+              borderColor: '#b5b5b5',
+              borderWidth: 1,
+              borderRadius: 4,
+              barPercentage: 0.8,
+              categoryPercentage: 0.8
             },
             {
               label: 'Clientes Únicos',
               data: monthlyData.uniqueOrders,
               backgroundColor: '#FE2800',
               borderColor: '#FE2800',
-              borderWidth: 1
+              borderWidth: 1,
+              borderRadius: 4,
+              barPercentage: 0.8,
+              categoryPercentage: 0.8,
             }
           ]
         },
@@ -141,7 +162,9 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
           layout: {
             padding: {
               top: 20,
-              bottom: 20
+              right: 25,
+              bottom: 20,
+              left: 15
             }
           },
           interaction: {
@@ -155,22 +178,40 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
             legend: {
               display: true,
               position: 'top',
+              align: 'center',
               labels: {
+                boxWidth: 15,
+                usePointStyle: true,
+                pointStyle: 'rectRounded',
+                padding: 15,
                 font: {
-                  size: 12
-                }
+                  size: 14,
+                  color: '#000000'
+                },
+                color: '#000000'
               }
-            },
+            },            
             tooltip: {
               enabled: true,
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              backgroundColor: 'rgba(255, 255, 255, 0.92)',
+              titleColor: '#000000',
+              bodyColor: '#000000',
               titleFont: {
-                size: 12
+                size: 13,
+                weight: 'bold'
               },
               bodyFont: {
-                size: 12
+                size: 14
               },
+              padding: 10,
+              cornerRadius: 4,
+              displayColors: true,
+              borderColor: 'rgba(0, 0, 0, 0.1)',
+              borderWidth: 1,
               callbacks: {
+                title: function(tooltipItems: any) {
+                  return months[tooltipItems[0].dataIndex];
+                },
                 label: function(context: any) {
                   const value = context.parsed.y;
                   if (context.datasetIndex === 0) {
@@ -178,6 +219,9 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
                   } else {
                     return `Clientes Únicos: ${value.toLocaleString('es-ES')}`;
                   }
+                },
+                labelTextColor: function() {
+                  return '#000000';
                 }
               }
             }
@@ -185,31 +229,45 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
           scales: {
             y: {
               beginAtZero: true,
+              suggestedMax: yAxisMax,
               title: {
                 display: true,
                 text: 'Número de Pedidos',
                 font: {
                   weight: 'bold',
-                  size: 14
+                  size: 16,
+                  color: '#000000'
+                },
+                padding: {
+                  bottom: 10
                 }
               },
               grid: {
                 display: true,
-                color: 'rgba(0, 0, 0, 0.1)'
+                color: 'rgba(26, 24, 24, 0.18)',
+                drawBorder: false
               },
               ticks: {
-                stepSize: 1,
+                stepSize: Math.max(1, Math.ceil(yAxisMax / 6)),
                 callback: function(value: any) {
                   return Math.round(value);
                 },
                 font: {
-                  weight: '600'
-                }
+                  weight: '500'
+                },
+                padding: 10
               }
             },
             x: {
               grid: {
-                display: false
+                display: false,
+                drawBorder: false
+              },
+              ticks: {
+                font: {
+                  weight: '500'
+                },
+                padding: 8
               }
             }
           }
