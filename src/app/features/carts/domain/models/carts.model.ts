@@ -5,9 +5,17 @@ export class CartModel {
         public total: string,
     ) {}
 }
-export class TotalOrders{
+
+export class TotalOrders {
     constructor(
         public total: number,
         public date: string,
+    ) {}
+}
+
+export class CartsAbandonedRate {
+    constructor(
+        public date: string,
+        public rate: number
     ) {}
 }

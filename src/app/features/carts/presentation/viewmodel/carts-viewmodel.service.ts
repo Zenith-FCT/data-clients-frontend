@@ -1,13 +1,14 @@
 import { Injectable, OnDestroy, signal, computed } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { GetTotalLostCarsUseCase } from '../../domain/use-case/get-total-lost-cars.use-case';
-import { GetAverageLostCarsUseCase } from '../../domain/use-case/get-average-lost-cars.use-case';
+import { GetRateLostCarsUseCase } from '../../domain/use-case/get-rate-lost-cars.use-case';
 import { GetAvailableYearsUseCase } from '../../domain/use-case/get-available-years.use-case';
 import { CartsDataRepository } from '../../data/data-repositories/carts-repository.service';
 import { GetTotalLostCartsMonthlyUseCase } from '../../domain/use-case/get-total-lost-cars-monthly.use-case';
-import { GetAverageLostCartsMonthlyUseCase } from '../../domain/use-case/get-average-lost-cars-monthly.use-case';
-import { GetCartsModelListUseCase } from '../../domain/use-case/get-carts-model-list.use-case';
-import { CartModel } from '../../domain/models/carts.model';
+import { GetRateLostCartsMonthlyUseCase } from '../../domain/use-case/get-rate-lost-cars-monthly.use-case';
+import { GetCartsListUseCase } from '../../domain/use-case/get-carts-list.use-case';
+import { CartModel, CartsAbandonedRate } from '../../domain/models/carts.model';
+import { GetRateAbandonedCartsListUseCase } from '../../domain/use-case/get-rate-abandoned-carts-list.use-case';
 
 interface CartsUiState {
     totalCarts: number;
@@ -21,6 +22,7 @@ interface CartsUiState {
     availableYears: number[];
     cartsModelList: CartModel[];
     filteredCartsModelList: CartModel[];
+    filteredRateAbandonedCarts: CartsAbandonedRate[];
 }
 
 @Injectable({
@@ -38,7 +40,8 @@ export class CartsViewModelService implements OnDestroy {
         selectedMonth: new Date().getMonth() + 1,
         availableYears: [],
         cartsModelList: [],
-        filteredCartsModelList: []
+        filteredCartsModelList: [],
+        filteredRateAbandonedCarts: []
     });
 
     readonly loading$ = computed(() => this.uiState().loading);
@@ -53,14 +56,27 @@ export class CartsViewModelService implements OnDestroy {
     readonly cartsModelList$ = computed(() => this.uiState().cartsModelList);
     readonly filteredCartsModelList$ = computed(() => this.uiState().filteredCartsModelList);
 
-    constructor(private cartsDataRepository: CartsDataRepository) {
-        this.loadAvailableYears();
-    }
+    private getTotalLostCarsUseCase: GetTotalLostCarsUseCase;
+    private getRateLostCarsUseCase: GetRateLostCarsUseCase;
+    private getAvailableYearsUseCase: GetAvailableYearsUseCase;
+    private getTotalLostCartsMonthlyUseCase: GetTotalLostCartsMonthlyUseCase;
+    private getRateLostCartsMonthlyUseCase: GetRateLostCartsMonthlyUseCase;
+    private getCartsListUseCase: GetCartsListUseCase;
+    private getRateAbandonedCartsListUseCase: GetRateAbandonedCartsListUseCase;
 
-    async loadAvailableYears(): Promise<void> {
+    constructor(private cartsDataRepository: CartsDataRepository) {
+        this.getTotalLostCarsUseCase = new GetTotalLostCarsUseCase(this.cartsDataRepository);
+        this.getRateLostCarsUseCase = new GetRateLostCarsUseCase(this.cartsDataRepository);
+        this.getAvailableYearsUseCase = new GetAvailableYearsUseCase(this.cartsDataRepository);
+        this.getTotalLostCartsMonthlyUseCase = new GetTotalLostCartsMonthlyUseCase(this.cartsDataRepository);
+        this.getRateLostCartsMonthlyUseCase = new GetRateLostCartsMonthlyUseCase(this.cartsDataRepository);
+        this.getCartsListUseCase = new GetCartsListUseCase(this.cartsDataRepository);
+        this.getRateAbandonedCartsListUseCase = new GetRateAbandonedCartsListUseCase(this.cartsDataRepository);
+        
+        this.loadAvailableYears();
+    }    async loadAvailableYears(): Promise<void> {
         try {
-            const useCase = new GetAvailableYearsUseCase(this.cartsDataRepository);
-            const years = await firstValueFrom(useCase.execute());
+            const years = await firstValueFrom(this.getAvailableYearsUseCase.execute());
             
             this.updateState({ availableYears: years });
             
@@ -87,9 +103,7 @@ export class CartsViewModelService implements OnDestroy {
     setSelectedMonth(month: number): void {
         this.updateState({ selectedMonth: month });
         this.loadMonthlyAbandonedCarts();
-    }
-
-    async loadCarts(): Promise<void> {
+    }    async loadCarts(): Promise<void> {
         try {
             const selectedYear = this.uiState().selectedYear;
             
@@ -99,8 +113,7 @@ export class CartsViewModelService implements OnDestroy {
             }
             
             this.updateState({ loading: true, error: null });
-            const useCase = new GetTotalLostCarsUseCase(this.cartsDataRepository);
-            const carts = await firstValueFrom(useCase.execute(selectedYear));
+            const carts = await firstValueFrom(this.getTotalLostCarsUseCase.execute(selectedYear));
             this.updateState({ totalCarts: carts, loading: false });
         } catch (error) {
             this.updateState({ 
@@ -108,9 +121,7 @@ export class CartsViewModelService implements OnDestroy {
                 loading: false
             });
         }
-    }
-
-    async loadAverageLostCarts(): Promise<void> {
+    }    async loadAverageLostCarts(): Promise<void> {
         try {
             const selectedYear = this.uiState().selectedYear;
 
@@ -120,8 +131,7 @@ export class CartsViewModelService implements OnDestroy {
             }
 
             this.updateState({ loading: true, error: null });
-            const useCase = new GetAverageLostCarsUseCase(this.cartsDataRepository);
-            const average = await firstValueFrom(useCase.execute(selectedYear));
+            const average = await firstValueFrom(this.getRateLostCarsUseCase.execute(selectedYear));
             this.updateState({ averageLostCarts: average, loading: false });
         } catch (error) {
             this.updateState({
@@ -129,8 +139,7 @@ export class CartsViewModelService implements OnDestroy {
                 loading: false
             });
         }
-    }
-
+    }    
     async loadMonthlyAbandonedCarts(): Promise<void> {
         try {
             const selectedYear = this.uiState().selectedYear;
@@ -143,8 +152,7 @@ export class CartsViewModelService implements OnDestroy {
 
             this.updateState({ loading: true, error: null });
 
-            const useCase = new GetCartsModelListUseCase(this.cartsDataRepository);
-            const cartsList = await firstValueFrom(useCase.execute());
+            const cartsList = await firstValueFrom(this.getCartsListUseCase.execute());
 
             const filtered = cartsList.filter(cart => {
                 if (!cart.date) return false;
@@ -157,11 +165,9 @@ export class CartsViewModelService implements OnDestroy {
                 loading: false 
             });
 
-            const totalUseCase = new GetTotalLostCartsMonthlyUseCase(this.cartsDataRepository);
-            const total = await firstValueFrom(totalUseCase.execute(selectedYear, selectedMonth));
+            const total = await firstValueFrom(this.getTotalLostCartsMonthlyUseCase.execute(selectedYear, selectedMonth));
             
-            const averageUseCase = new GetAverageLostCartsMonthlyUseCase(this.cartsDataRepository);
-            const average = await firstValueFrom(averageUseCase.execute(selectedYear, selectedMonth));
+            const average = await firstValueFrom(this.getRateLostCartsMonthlyUseCase.execute(selectedYear, selectedMonth));
             
             this.updateState({
                 totalCartsMonthly: total,
@@ -176,13 +182,10 @@ export class CartsViewModelService implements OnDestroy {
                 averageCartsMonthly: 0
             });
         }
-    }
-
-    async loadCartsModelList(): Promise<void> {
+    }    async loadCartsModelList(): Promise<void> {
         try {
             this.updateState({ loading: true, error: null });
-            const useCase = new GetCartsModelListUseCase(this.cartsDataRepository);
-            const cartsList = await firstValueFrom(useCase.execute());
+            const cartsList = await firstValueFrom(this.getCartsListUseCase.execute());
             
             this.updateState({ 
                 cartsModelList: cartsList,
@@ -197,6 +200,53 @@ export class CartsViewModelService implements OnDestroy {
                 loading: false,
                 cartsModelList: [],
                 filteredCartsModelList: []
+            });
+        }
+    }    async loadAbandonedRateCarts(): Promise<void> {
+        try {
+            const selectedYear = this.uiState().selectedYear;
+            
+            if (!selectedYear) {
+                console.warn('No year selected');
+                return;
+            }
+            
+            this.updateState({ loading: true, error: null });
+            
+            let cartsResult: CartsAbandonedRate[] = [];
+            
+            try {
+                const result = await firstValueFrom(this.getRateAbandonedCartsListUseCase.execute());
+                if (Array.isArray(result)) {
+                    cartsResult = result;
+                }
+            } catch (err) {
+                console.error('Error executing use case:', err);
+                cartsResult = [];
+            }
+            
+            const filteredCarts = cartsResult.filter((cart: CartsAbandonedRate) => {
+                if (!cart || !cart.date) return false;
+                try {
+                    const dateObj = new Date(cart.date);
+                    if (isNaN(dateObj.getTime())) return false;
+                    const cartYear = dateObj.getFullYear();
+                    return cartYear === selectedYear;
+                } catch {
+                    return false;
+                }
+            });
+
+            this.updateState({
+                filteredRateAbandonedCarts: filteredCarts,
+                loading: false
+            });
+
+        } catch (error) {
+            this.updateState({ 
+                error: error instanceof Error ? error.message : 'Error loading abandoned rate carts',
+                loading: false,
+                filteredRateAbandonedCarts: []
             });
         }
     }
