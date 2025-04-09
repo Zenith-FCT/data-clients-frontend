@@ -22,7 +22,6 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   private isBrowser: boolean;
   years: number[] = [];
   
-  // Mantenemos los mismos colores que en la versión original
   private readonly chartColors = [
     'rgba(255, 99, 132, 0.2)',   
     'rgba(54, 162, 235, 0.2)', 
@@ -136,7 +135,11 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         padding: 10,
         formatter: function(params: any) {
           return `Ticket Medio: ${parseFloat(params.value).toLocaleString('es-ES')} €`;
-        }
+        },
+        textStyle: {
+          color: '#000000',
+          fontSize: 14
+        },
       },
       grid: {
         left: '5%',
