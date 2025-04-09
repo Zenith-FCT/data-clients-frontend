@@ -6,16 +6,16 @@ import { effect } from '@angular/core';
 import type { EChartsOption } from 'echarts';
 
 @Component({
-  selector: 'app-monthly-abandoned-carts',
+  selector: 'app-evolution-abandoned-carts',
   standalone: true,
   imports: [
     CommonModule,
     NgxEchartsModule
   ],
-  templateUrl: './monthly-abandoned-carts.component.html',
-  styleUrls: ['./monthly-abandoned-carts.component.scss']
+  templateUrl: './evolution-abandoned-carts.component.html',
+  styleUrls: ['./evolution-abandoned-carts.component.scss']
 })
-export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
+export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
   chartOption: EChartsOption = {};
   readonly isBrowser: boolean;
   initOpts = {
@@ -87,7 +87,7 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
         boundaryGap: false,
         axisLine: {
           lineStyle: {
-            color: '#666'
+            color: '#ff0c00'
           }
         },
         axisLabel: {
@@ -124,17 +124,17 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
         smooth: true,
         name: 'Carritos abandonados',
         itemStyle: {
-          color: '#1976d2'
+          color: '#ff0c00'
         },
         areaStyle: {
           opacity: 0.3,
-          color: '#1976d2'
+          color: '#ff0c00'
         }
       }]
     };
   }
 
   ngOnDestroy(): void {
-    
+   
   }
 }

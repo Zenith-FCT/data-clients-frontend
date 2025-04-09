@@ -6,6 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { InformationBoxCartsComponent } from './information-box-carts/information-box-carts.component';
 import { MonthlyAbandonedCartsComponent } from './monthly-abandoned-carts/monthly-abandoned-carts.component';
 import { CartsViewModelService } from '../../viewmodel/carts-viewmodel.service';
+import { EvolutionAbandonedCartsComponent } from './evolution-abandoned-carts/evolution-abandoned-carts.component';
 
 @Component({
   selector: 'app-main-carts',
@@ -16,7 +17,8 @@ import { CartsViewModelService } from '../../viewmodel/carts-viewmodel.service';
     MatFormFieldModule,
     MatSelectModule,
     InformationBoxCartsComponent,
-    MonthlyAbandonedCartsComponent
+    MonthlyAbandonedCartsComponent,
+    EvolutionAbandonedCartsComponent,
   ],
   templateUrl: './main-carts.component.html',
   styleUrls: ['./main-carts.component.scss']
