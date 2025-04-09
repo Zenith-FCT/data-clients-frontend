@@ -149,10 +149,10 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
         show: false
       },
       grid: {
-        left: '5%',
-        right: '5%',
+        left: '2%',
+        right: '2%',
         bottom: '8%',
-        top: '10%',
+        top: '7%',
         containLabel: true
       },
       xAxis: {
@@ -164,7 +164,7 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
           }
         },
         axisLabel: {
-          fontSize: 14,
+          fontSize: 12,
           margin: 14,
           color: '#000000',
           rotate: 0
@@ -193,7 +193,7 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
         },
         {
           type: 'value',
-          name: 'Número de Ventas',
+          name: 'Nº de Ventas',
           nameLocation: 'end',
           nameTextStyle: {
             fontSize: 14,
