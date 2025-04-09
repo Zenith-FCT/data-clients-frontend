@@ -3,6 +3,7 @@ import { environment } from '../../../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map, catchError, of, tap } from 'rxjs';
 import { TotalBillingPerProductModel } from '../../../domain/total-billing-per-product.model';
+import { TotalSalesPerProductModel } from '../../../domain/total-sales-per-product.model';
 
 // Interfaces para representar los datos crudos de la API
 interface ProductApi {
@@ -17,6 +18,7 @@ interface OrderProductApi {
   nombre_producto: string;
   sku: string;
   categoria: string;
+  cantidad?: number; // Cantidad de unidades del producto en el pedido
 }
 
 interface OrderApi {
@@ -110,6 +112,64 @@ export class ProductsApiService {
       }),
       tap(result => {
         console.log(`Calculada facturación para ${result.length} productos`);
+        if (result.length > 0) {
+          console.log('Muestra del primer producto:', result[0]);
+        }
+      }),
+      catchError(error => {
+        console.error('Error al obtener o procesar datos de productos y pedidos:', error);
+        return of([]);
+      })
+    );
+  }
+
+  /**
+   * Obtiene el total de ventas por producto directamente calculado en el servicio
+   */
+  getTotalSalesPerProduct(): Observable<TotalSalesPerProductModel[]> {
+    console.log('Obteniendo datos de productos y pedidos para calcular ventas totales');
+    
+    // Utilizamos forkJoin para obtener productos y pedidos en paralelo
+    return forkJoin({
+      products: this.http.get<ProductApi[]>(this.productsUrl),
+      orders: this.http.get<OrderApi[]>(this.ordersUrl)
+    }).pipe(
+      tap(data => {
+        console.log(`Recibidos ${data.products.length} productos y ${data.orders.length} pedidos`);
+      }),
+      map(({ products, orders }) => {
+        // Crear un mapa para acumular las ventas por producto
+        const productSalesMap = new Map<string, TotalSalesPerProductModel>();
+        
+        // Inicializar el mapa con todos los productos
+        products.forEach(product => {
+          productSalesMap.set(product.SKU, new TotalSalesPerProductModel(
+            product.Categoria,
+            product.Nombre_producto,
+            0 // Inicializamos las ventas en cero
+          ));
+        });
+        
+        // Procesar los pedidos para calcular las ventas totales por producto
+        orders.forEach(order => {
+          const orderProducts = order.productos || [];
+            // Contar las unidades vendidas de cada producto
+          orderProducts.forEach(orderProduct => {
+            const product = productSalesMap.get(orderProduct.sku);
+            if (product) {
+              product.totalSales += orderProduct.cantidad || 1; // Incrementamos según la cantidad del producto en el pedido
+              productSalesMap.set(orderProduct.sku, product);
+            }
+          });
+        });
+        
+        // Convertir el mapa a un array y ordenar por ventas totales
+        return Array.from(productSalesMap.values())
+          .filter(product => product.totalSales > 0) // Incluir solo productos con ventas
+          .sort((a, b) => b.totalSales - a.totalSales); // Ordenar de mayor a menor
+      }),
+      tap(result => {
+        console.log(`Calculadas ventas totales para ${result.length} productos`);
         if (result.length > 0) {
           console.log('Muestra del primer producto:', result[0]);
         }

@@ -1,40 +1,40 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
-import { ProductBillingViewModel } from '../../product-billing.view-model';
+import { ProductSalesViewModel } from '../../product-sales.view-model';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { TotalBillingPerProductModel } from '../../../domain/total-billing-per-product.model';
+import { TotalSalesPerProductModel } from '../../../domain/total-sales-per-product.model';
 import { FormsModule } from '@angular/forms';
 import { ChartViewMode } from '../../main-products.component';
 
 @Component({
-  selector: 'app-product-billing-chart',
+  selector: 'app-product-sales-chart',
   standalone: true,
   imports: [CommonModule, NgxEchartsModule, FormsModule],
-  templateUrl: './product-billing-chart.component.html',
-  styleUrl: './product-billing-chart.component.scss',
+  templateUrl: './product-sales-chart.component.html',
+  styleUrl: './product-sales-chart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductBillingChartComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
-  private isBrowser: boolean;
-  chartOption: any = {};
+export class ProductSalesChartComponent implements OnInit, OnDestroy {
+  isBrowser: boolean;
+  salesChartOption: any = {};
   dataLoaded = false;
+  private destroy$ = new Subject<void>();
   viewModes = ChartViewMode;
-  billingViewMode = ChartViewMode.ByProduct;
+  salesViewMode = ChartViewMode.ByProduct;
 
   constructor(
-    public viewModel: ProductBillingViewModel,
+    public viewModel: ProductSalesViewModel,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     effect(() => {
-      const productBilling = this.viewModel.productBilling();
-      if (productBilling && productBilling.length > 0) {
-        console.log('ProductBilling data loaded:', productBilling);
+      const productSales = this.viewModel.filteredProductSales();
+      if (productSales && productSales.length > 0) {
+        console.log('ProductSales data loaded:', productSales);
         this.dataLoaded = true;
-        this.updateChartOption(productBilling);
+        this.updateSalesChartOption(productSales);
       }
     });
 
@@ -46,12 +46,11 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
     effect(() => {
       const error = this.viewModel.error();
       if (error) {
-        console.error('Error loading product billing:', error);
+        console.error('Error loading product sales:', error);
       }
     });
   }
   ngOnInit(): void {
-    console.log('ProductBillingChartComponent initialized');
     if (this.isBrowser && !this.isTestEnvironment()) {
       this.viewModel.ensureDataLoaded();
     }
@@ -70,13 +69,19 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
          process.env['NODE_ENV'] === 'test'))))
     );
   }
-  private updateChartOption(productBilling: TotalBillingPerProductModel[]): void {
-    if (!this.isBrowser) return;
 
-    if (!productBilling || productBilling.length === 0) {
-      this.chartOption = {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  updateSalesChartOption(productSales: any[]): void {
+    if (!this.isBrowser) return;
+    
+    if (!productSales || productSales.length === 0) {
+      this.salesChartOption = {
         title: {
-          text: 'No hay datos de facturación disponibles',
+          text: 'No hay datos de ventas disponibles',
           left: 'center',
           textStyle: {
             color: '#333',
@@ -86,78 +91,78 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let chartData = [...productBilling];
+    let chartData = [...productSales];
     let title = '';
 
-    if (this.billingViewMode === ChartViewMode.ByProduct) {
-      title = 'Facturación Total por Producto';
-      chartData.sort((a, b) => b.totalBilling - a.totalBilling);
+    if (this.salesViewMode === ChartViewMode.ByProduct) {
+      title = 'Total de Ventas por Producto';
+      chartData.sort((a, b) => b.totalSales - a.totalSales);
       
       const topProducts = chartData.slice(0, 10);
       
       if (chartData.length > 10) {
-        const otherCategories = chartData.slice(10);
-        const otherValue = otherCategories.reduce(
-          (sum, product) => sum + product.totalBilling,
+        const otherProducts = chartData.slice(10);
+        const otherValue = otherProducts.reduce(
+          (sum, product) => sum + product.totalSales,
           0
         );
 
-        const totalAll = chartData.reduce((sum, product) => sum + product.totalBilling, 0);
+        const totalAll = chartData.reduce((sum, product) => sum + product.totalSales, 0);
         const othersPercentage = (otherValue / totalAll) * 100;
-          if (othersPercentage > 3) {
+        
+        if (othersPercentage > 3) {
           topProducts.push({
-            productType: 'Otros',
             productName: 'Otros',
-            totalBilling: otherValue
+            totalSales: otherValue
           });
         }
       }
       
       chartData = topProducts;
     } else {
-      title = 'Facturación Total por Tipo de Producto';
+      title = 'Total de Ventas por Tipo de Producto';
       
       const groupedByType = chartData.reduce((groups: any, item) => {
         const type = item.productType || 'Sin categoría';
         if (!groups[type]) {
           groups[type] = {
             productType: type,
-            totalBilling: 0
+            totalSales: 0
           };
         }
-        groups[type].totalBilling += item.totalBilling;
+        groups[type].totalSales += item.totalSales;
         return groups;
       }, {});
-        chartData = Object.values(groupedByType).sort(
-        (a: any, b: any) => b.totalBilling - a.totalBilling
-      ) as TotalBillingPerProductModel[];
+      
+      chartData = Object.values(groupedByType).sort(
+        (a: any, b: any) => b.totalSales - a.totalSales
+      );
     }
     
-    const totalBilling = chartData.reduce((sum: number, product: any) => sum + product.totalBilling, 0);    // Configuración para el gráfico circular de eCharts
-    this.chartOption = {
-      // Quitamos el título, ya que se muestra en el HTML
+    const totalSales = chartData.reduce((sum: number, product: any) => 
+      sum + product.totalSales, 0);    this.salesChartOption = {
+      // Eliminamos el título del gráfico ya que lo tenemos en el HTML
       title: {
         show: false
       },
       tooltip: {
         trigger: 'item',
         formatter: (params: any) => {
-          const percentage = (params.value / totalBilling * 100).toFixed(2);
-          return `${params.name}: ${params.value.toLocaleString('es-ES')}€ (${percentage}%)`;
+          const percentage = (params.value / totalSales * 100).toFixed(2);
+          return `${params.name}: ${params.value.toLocaleString()} unidades (${percentage}%)`;
         },
         backgroundColor: 'rgba(33, 33, 33, 0.9)',
         borderColor: '#444',
         textStyle: {
           color: '#fff',
-        },
-      },
-      legend: {
+        },      
+      },        legend: {
         type: 'scroll',
         orient: 'horizontal',
         bottom: 10,
         left: 'center',
         data: chartData.map((item: any) => 
-          this.billingViewMode === ChartViewMode.ByProduct ? item.productName : item.productType
+          this.salesViewMode === ChartViewMode.ByProduct ? item.productName : item.productType
         ),
         textStyle: {
           color: '#333',
@@ -166,10 +171,9 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
         pageTextStyle: {
           color: '#666'
         }
-      },
-      series: [
+      },      series: [
         {
-          name: this.billingViewMode === ChartViewMode.ByProduct ? 'Facturación por Producto' : 'Facturación por Tipo de Producto',
+          name: 'Ventas por Producto',
           type: 'pie',
           radius: ['40%', '70%'],
           center: ['50%', '45%'],
@@ -198,11 +202,9 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
             formatter: (params: any) => {
               let formattedValue = params.value;
               if (params.value >= 1000000) {
-                formattedValue = (params.value / 1000000).toFixed(1) + 'M €';
+                formattedValue = (params.value / 1000000).toFixed(1) + 'M';
               } else if (params.value >= 1000) {
-                formattedValue = (params.value / 1000).toFixed(1) + 'k €';
-              } else {
-                formattedValue = params.value + ' €';
+                formattedValue = (params.value / 1000).toFixed(1) + 'k';
               }
               return `${params.name}: ${formattedValue}`;
             },
@@ -215,26 +217,26 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
             },
           },
           data: chartData.map((item: any) => ({
-            name: this.billingViewMode === ChartViewMode.ByProduct ? item.productName : item.productType,
-            value: item.totalBilling,
-          }))
+            name: this.salesViewMode === ChartViewMode.ByProduct ? item.productName : item.productType,
+            value: item.totalSales
+          })),
         }
       ]
     };
-
-    console.log('Chart options updated:', this.chartOption);
   }
-  onBillingViewModeChange(mode: ChartViewMode): void {
-    if (this.billingViewMode !== mode) {
-      this.billingViewMode = mode;
-      if (this.viewModel.productBilling()?.length > 0) {
-        this.updateChartOption(this.viewModel.productBilling());
+
+  onSalesViewModeChange(mode: ChartViewMode): void {
+    if (this.salesViewMode !== mode) {
+      this.salesViewMode = mode;
+      if (this.viewModel.filteredProductSales()?.length > 0) {
+        this.updateSalesChartOption(this.viewModel.filteredProductSales());
       }
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  onProductTypeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const productType = target.value || null;
+    this.viewModel.setSelectedProductType(productType);
   }
 }
