@@ -8,8 +8,7 @@ import {CouponsMapper} from './couponsMappers';
 })
 export class CouponsApiSourceService{
 
-    constructor() { }
-    url = 'http://localhost:3000/';
+    url = 'https://json-server-example-data.vercel.app/';
 
     async getMostUsedCoupons():Promise<Coupon[]>{
         try {
@@ -47,13 +46,9 @@ export class CouponsApiSourceService{
 
     async getTotalCouponsByMonth(month: string, year: string): Promise<number> {
       try {
-        const response = await fetch(`${this.url}cuponesByMonth`);
+        const response = await fetch(`${this.url}cuponesByYear${year}`);
         const data = await response.json();
-        const totalData = data.find((item: {year: string; month: string;}) => item.year == year && item.month == month)
-        if (totalData == undefined) {
-          return 0
-        }
-        return totalData.count;
+        return data[Number(month)].count;
       }
       catch (error) {
         throw new Error("Error al recoger los datos");
@@ -62,13 +57,9 @@ export class CouponsApiSourceService{
 
     async getTotalDiscountByMonth(month: string, year: string): Promise<number> {
       try {
-        const response = await fetch(`${this.url}cuponesByMonth`);
+        const response = await fetch(`${this.url}cuponesByYear${year}`);
         const data = await response.json();
-        const totalData = data.find((item: {year: string; month: string;}) => item.year == year && item.month == month)
-        if (totalData == undefined) {
-          return 0
-        }
-        return totalData.discount;
+        return data[Number(month)].count;
       }
       catch (error) {
         throw new Error("Error al recoger los datos");
