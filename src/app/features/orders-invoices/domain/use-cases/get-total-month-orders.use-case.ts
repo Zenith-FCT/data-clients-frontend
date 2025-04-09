@@ -9,7 +9,6 @@ export class GetTotalMonthOrdersUseCase {
         let monthlySales = this.monthlySalesRepository.getMonthlySales();
         return monthlySales.pipe(
             map((monthlySales: MonthlySalesModel[]) => {
-                // El mes ya viene en el formato correcto (1-12)
                 const actualMonth = month;
                 const formattedMonth = actualMonth < 10 ? `0${actualMonth}` : `${actualMonth}`;
                 const searchFormat = `${year}-${formattedMonth}`;

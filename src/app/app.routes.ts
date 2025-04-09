@@ -32,7 +32,7 @@ export const routes: Routes = [
             },
             {
                 path: 'carts',
-                loadComponent: () => import('./features/carts/components/main-carts/main-carts.component').then(m => m.MainCartsComponent)
+                loadComponent: () => import('./features/carts/presentation/components/main-carts/main-carts.component').then(m => m.MainCartsComponent)
             },
             {
                 path: 'coupons',

@@ -1,11 +1,6 @@
 <div class="chart-container">
   <div class="header">
     <h3>Cupones usados por mes</h3>
-    <select [(ngModel)]="selectedYear" (change)="yearChange()">
-      <option *ngFor="let year of years" [value]="year">
-        {{year}}
-      </option>
-    </select>
   </div>
 
   <div *ngIf="viewModel.isLoading()" class="loading-state">

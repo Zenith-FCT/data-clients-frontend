@@ -1,3 +1,23 @@
+.coupon-container {
+  margin: 0 1%;
+}
+
+.coupon-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  > * {
+    margin: 0 0.5%;
+  }
+}
+
+.coupon-date-selector {
+  display: flex;
+  gap: 16px;
+}
+
 .coupon-element {
   background: #fff;
   border-radius: 8px;
@@ -8,7 +28,6 @@
 
 .coupon-container {
   display: flex;
-  align-items: flex-start;
   flex-wrap: wrap;
 }
 
@@ -26,7 +45,7 @@
 .coupon-box {
   width: 48%;
   margin: 1%;
-  min-height: 125px;
+  height: 125px;
 }
 
 .coupon-graphic {

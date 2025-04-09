@@ -17,8 +17,6 @@ import {CouponCountGraphicViewModel} from './coupon-count-graphic.view-model';
 export class CouponCountGraphicComponent implements AfterViewInit {
   viewModel = inject(CouponCountGraphicViewModel)
   @ViewChild('chartCanvas') chartCanvas!: ElementRef;
-  selectedYear: string = new Date().getFullYear() + "";
-  years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i);
   private isPlatformBrowser: boolean;
   private chart: any;
 
@@ -34,8 +32,6 @@ export class CouponCountGraphicComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.yearChange()
-
 
   }
 
@@ -43,6 +39,7 @@ export class CouponCountGraphicComponent implements AfterViewInit {
     if (this.chart) {
       this.chart.destroy();
     }
+    if(!isPlatformBrowser) return;
 
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
 
@@ -76,7 +73,4 @@ export class CouponCountGraphicComponent implements AfterViewInit {
     });
   }
 
-  yearChange() {
-    this.viewModel.getTotalCoupons(this.selectedYear)
-  }
 }

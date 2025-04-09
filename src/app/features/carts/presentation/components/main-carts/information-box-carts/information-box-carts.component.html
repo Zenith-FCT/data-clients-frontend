@@ -1,0 +1,25 @@
+<div class="information-box">
+  <div class="box-header">
+    <h3>{{ getTitle() }}</h3>
+  </div>
+
+  <div class="box-content">
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <span>Calculando...</span>
+    </div>
+
+    <div *ngIf="cartsViewModel.error$()" class="error-state">
+      <span>⚠</span>
+      <p>{{ cartsViewModel.error$() }}</p>
+    </div>
+
+    <div *ngIf="!loading && !cartsViewModel.error$()" class="data-state">
+      <div class="amount">
+        <span class="value">{{ getValue() | number:(type === 'total' || type === 'total-monthly' ? '1.0-0' : '1.2-2') }}</span>
+        <span class="unit" *ngIf="getUnit()">{{ getUnit() }}</span>
+      </div>
+      <p class="description">{{ getDescription() }}</p>
+    </div>
+  </div>
+</div>
