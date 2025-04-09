@@ -1,1 +1,23 @@
-<p>monthly-cart-rate-abandoned works!</p>
+<div class="chart-container">
+    <div class="loading-state" *ngIf="cartsViewModel.loading$()">
+        <div class="spinner"></div>
+        <span>Cargando datos...</span>
+    </div>
+
+    <div class="error-state" *ngIf="cartsViewModel.error$()">
+        <span>Error: {{ cartsViewModel.error$() }}</span>
+    </div>
+
+    <ng-container *ngIf="isBrowser && !cartsViewModel.loading$() && !cartsViewModel.error$()">
+        <div echarts 
+             [options]="chartOption" 
+             [initOpts]="initOpts" 
+             class="chart">
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!isBrowser">
+        <div class="ssr-placeholder">
+            <p>Cargando gráfica...</p>
+        </div>
+    </ng-container>
+</div>

@@ -55,6 +55,7 @@ export class CartsViewModelService implements OnDestroy {
     readonly selectedMonth$ = computed(() => this.uiState().selectedMonth);
     readonly cartsModelList$ = computed(() => this.uiState().cartsModelList);
     readonly filteredCartsModelList$ = computed(() => this.uiState().filteredCartsModelList);
+    readonly filteredRateAbandonedCarts$ = computed(() => this.uiState().filteredRateAbandonedCarts);
 
     private getTotalLostCarsUseCase: GetTotalLostCarsUseCase;
     private getRateLostCarsUseCase: GetRateLostCarsUseCase;
