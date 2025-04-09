@@ -18,6 +18,7 @@ interface OrderProductApi {
   nombre_producto: string;
   sku: string;
   categoria: string;
+  cantidad?: number; // Cantidad de unidades del producto en el pedido
 }
 
 interface OrderApi {
@@ -152,12 +153,11 @@ export class ProductsApiService {
         // Procesar los pedidos para calcular las ventas totales por producto
         orders.forEach(order => {
           const orderProducts = order.productos || [];
-          
-          // Contar cada producto como una venta
+            // Contar las unidades vendidas de cada producto
           orderProducts.forEach(orderProduct => {
             const product = productSalesMap.get(orderProduct.sku);
             if (product) {
-              product.totalSales += 1; // Incrementamos en 1 la venta por producto
+              product.totalSales += orderProduct.cantidad || 1; // Incrementamos según la cantidad del producto en el pedido
               productSalesMap.set(orderProduct.sku, product);
             }
           });
