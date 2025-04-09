@@ -38,9 +38,14 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
       this.cartsViewModel.loadAbandonedRateCarts();
       console.log('Iniciando carga de datos de tasa de carritos abandonados');
       
-      // Obtener los datos actuales para depuración
       const currentData = this.cartsViewModel.filteredRateAbandonedCarts$();
       console.log('Datos actuales:', currentData);
+      
+      effect(() => {
+        const selectedYear = this.cartsViewModel.selectedYear$();
+        console.log('Año seleccionado cambiado:', selectedYear);
+        this.cartsViewModel.loadAbandonedRateCarts();
+      });
     }
   }
   private updateChartData(cartsList: any[]): void {
@@ -56,10 +61,8 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
           return;
         }
         
-        // Asegurémonos de que estamos parseando la fecha correctamente
         console.log('Procesando cart:', cart, 'con fecha:', cart.date);
         
-        // Validar el formato de fecha (asumiendo formato YYYY-MM-DD)
         if (cart.date.includes('-')) {
           const [year, month] = cart.date.split('-').map(Number);
           const total = parseFloat(cart.total || cart.rate || '0');
@@ -86,12 +89,11 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
 
 
       this.chartOption = {
-        backgroundColor: '#ffffff',
-        tooltip: {
+        backgroundColor: '#ffffff',        tooltip: {
           trigger: 'axis',
           formatter: (params: any) => {
             const data = params[0];
-            return `${data.name}: ${data.value} carritos`;
+            return `${data.name}: ${data.value.toFixed(2)}%`;
           }
         },
         grid: {
@@ -124,12 +126,11 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
             lineStyle: {
               color: '#666'
             }
-          },
-          axisLabel: {
+          },          axisLabel: {
             color: '#666',
             fontSize: 12,
             formatter: (value: number) => {
-              return Math.round(value).toString();
+              return value.toFixed(2) + '%';
             }
           },
           splitLine: {
@@ -144,11 +145,11 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
           smooth: true,
           name: 'Carritos abandonados',
           itemStyle: {
-            color: '#1976d2'
+            color: '#aeaeae'
           },
           areaStyle: {
             opacity: 0.3,
-            color: '#1976d2'
+            color: '#aeaeae'
           }
         }]
       };

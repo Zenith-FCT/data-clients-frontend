@@ -91,14 +91,13 @@ export class CartsViewModelService implements OnDestroy {
                 availableYears: []
             });
         }
-    }
-
-    setSelectedYear(year: number): void {
+    }    setSelectedYear(year: number): void {
         this.updateState({ selectedYear: year });
         this.filterAndUpdateCarts();
         this.loadMonthlyAbandonedCarts();
         this.loadCarts();
         this.loadAverageLostCarts();
+        this.loadAbandonedRateCarts();
     }
 
     setSelectedMonth(month: number): void {

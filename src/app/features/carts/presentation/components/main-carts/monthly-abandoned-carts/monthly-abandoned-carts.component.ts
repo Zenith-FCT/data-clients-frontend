@@ -124,11 +124,11 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
         smooth: true,
         name: 'Carritos abandonados',
         itemStyle: {
-          color: '#1976d2'
+          color: '#000000'
         },
         areaStyle: {
           opacity: 0.3,
-          color: '#1976d2'
+          color: '#000000'
         }
       }]
     };
