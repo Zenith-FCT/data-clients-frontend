@@ -98,9 +98,9 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
         },
         grid: {
           top: 30,
-          right: 20,
+          right: '2%',
           bottom: 30,
-          left: 60,
+          left: '3%',
           containLabel: true
         },
         xAxis: {
