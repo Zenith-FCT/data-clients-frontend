@@ -104,13 +104,10 @@
   100% { transform: rotate(360deg); }
 }
 
-canvas {
+.echarts-container {
   width: 100% !important;
-  height: auto !important;
-  max-height: 650px !important;
+  height: 570px !important;
   display: block !important;
-  object-fit: contain;
   margin: 0;
   padding: 0;
-  margin-bottom: 27px;
 }
