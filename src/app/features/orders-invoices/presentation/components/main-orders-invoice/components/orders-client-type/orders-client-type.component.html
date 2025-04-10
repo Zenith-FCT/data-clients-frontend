@@ -17,6 +17,6 @@
       <span>📊</span>
       <p>No hay datos disponibles para mostrar</p>
     </div>
-    <canvas #chartCanvas></canvas>
+    <div *ngIf="isBrowser" echarts [options]="chartOption" class="echarts-container"></div>
   </div>
 </div>

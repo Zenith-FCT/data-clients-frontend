@@ -131,6 +131,7 @@ export class InvoiceClientTypeComponent implements OnInit, AfterViewInit, OnDest
           name: 'Facturación por Tipo de Cliente',
           type: 'pie',
           radius: '85%', 
+          center: ['60%', '50%'],
           avoidLabelOverlap: false,
           itemStyle: {
             borderRadius: 0,
