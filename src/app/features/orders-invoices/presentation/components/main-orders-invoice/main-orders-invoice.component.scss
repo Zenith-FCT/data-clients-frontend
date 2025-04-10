@@ -6,22 +6,63 @@ $transition-speed: 0.3s;
 .main-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  position: absolute; 
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 98vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+  background-color: #f5f5f5;
+  padding: 6px 16px;
+  width: 100%;
+  box-sizing: border-box;
   height: auto;
-  overflow: visible; 
-  padding-bottom: 2.5rem;
-  flex: 0 0 60px;
+  min-height: 50px;
+  flex-shrink: 0;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 4%;
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .date-selectors {
+    display: flex;
+    gap: 16px;
+    padding-right: 8%;
+
+    mat-form-field {
+      width: 120px;
+      margin: 0;
+      transform: scale(0.9);
+      transform-origin: right center;
+    }
+  }
 }
 
 .orders-container {
-  flex: 1;                
-  overflow-y: auto;        
+  flex: 1;
+  overflow-y: auto;
   padding: $spacing-unit;
-  margin-bottom: 2rem;
-  min-height: 100%;
-  transition: width $transition-speed ease, margin $transition-speed ease;
-  width: 96%;
-  margin: 0 2%;
+  padding-bottom: 5rem;
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(100vh - 50px);
 }
 
 .orders-summary {
@@ -303,19 +344,21 @@ $transition-speed: 0.3s;
   width: 100%;
   display: flex;
   gap: 2rem;
-  min-height: 700px;
-  height: auto;
+  min-height: 550px;
+  height: 550px;
   margin-bottom: 2rem;
   overflow: visible;
+  padding-top: 10px;
 
   .chart-container {
     width: 100%;
     background-color: white;
     border-radius: $border-radius;
-    padding: 1.5rem;
+    padding: 1rem;
+    padding-top: 0.5rem;
     box-shadow: $primary-shadow;
-    min-height: 700px;
-    height: auto;
+    min-height: 550px;
+    height: 550px;
     display: flex;
     flex-direction: column;
     overflow: visible;
@@ -336,44 +379,6 @@ $transition-speed: 0.3s;
     width: 100%;
     height: 100%;
     display: block;
-  }
-}
-
-.sticky-header {
-  position: sticky;
-  background-color: #f5f5f5;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 0 16px;
-  top: 0;
-  transition: all 0.3s ease;
-  margin: 0;
-  
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 8px;
-  padding: 0 4%;
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin: 0;
-  }
-
-  .date-selectors {
-    display: flex;
-    gap: 16px;
-
-    mat-form-field {
-      width: 120px;
-    }
   }
 }
 

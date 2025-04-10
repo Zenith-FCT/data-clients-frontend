@@ -1,88 +1,107 @@
 <div class="main-wrapper">
-<div class="sticky-header">
-  <div class="chart-header">
-    <h2>Pedidos y Facturación</h2>
-    <div class="date-selectors">
-      <mat-form-field appearance="outline">
-        <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
-          <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
-            {{getMonthName(i + 1)}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
-          <mat-option *ngFor="let year of years" [value]="year">
-            {{year}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+  <div class="sticky-header">
+    <div class="chart-header">
+      <h3>Pedidos y Facturación</h3>
+      <div class="date-selectors">
+        <mat-form-field appearance="outline">
+          <mat-select
+            [(ngModel)]="selectedMonth"
+            (selectionChange)="onDateChange()"
+          >
+            <mat-option
+              *ngFor="let month of months; let i = index"
+              [value]="i + 1"
+            >
+              {{ getMonthName(i + 1) }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-select
+            [(ngModel)]="selectedYear"
+            (selectionChange)="onDateChange()"
+          >
+            <mat-option *ngFor="let year of years" [value]="year">
+              {{ year }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
   </div>
-</div>
-<div class="orders-container">
-  
-  <div class="orders-summary">
-    <div class="summary-cards">
-      <app-information-box type="amount"></app-information-box>
-      <app-information-box type="monthly"></app-information-box>
-      <app-information-box type="count"></app-information-box>
-      <app-information-box type="monthly-order"></app-information-box>
-    </div>
-    
-    <div class="all-charts-wrapper">
-      <div class="charts-section">
-        <app-chart-total-invoice class="chart-item"></app-chart-total-invoice>
-        <app-chart-total-orders-invoices class="chart-item"></app-chart-total-orders-invoices>
+
+  <div class="orders-container">
+    <div class="orders-summary">
+      <div class="summary-cards">
+        <app-information-box type="amount"></app-information-box>
+        <app-information-box type="monthly"></app-information-box>
+        <app-information-box type="count"></app-information-box>
+        <app-information-box type="monthly-order"></app-information-box>
       </div>
-      
-      <div class="full-width-chart-container">
-        <app-chart-evolution-orders-invoices class="full-width-chart"></app-chart-evolution-orders-invoices>
-      </div>
-      
-        
+
+      <div class="all-charts-wrapper">
+        <div class="charts-section">
+          <app-chart-total-invoice class="chart-item"></app-chart-total-invoice>
+          <app-chart-total-orders-invoices
+            class="chart-item"
+          ></app-chart-total-orders-invoices>
+        </div>
+
+        <div class="full-width-chart-container">
+          <app-chart-evolution-orders-invoices
+            class="full-width-chart"
+          ></app-chart-evolution-orders-invoices>
+        </div>
+
         <div class="chart-section-tm">
-        <div class="info-container" style="align-self: flex-start; margin-top: -10px;">
-          <div>
-            <app-information-box type="tm-year"></app-information-box>
+          <div
+            class="info-container"
+            style="align-self: flex-start; margin-top: -10px"
+          >
+            <div>
+              <app-information-box type="tm-year"></app-information-box>
+            </div>
+            <div>
+              <app-information-box type="monthly-tm"></app-information-box>
+            </div>
           </div>
-          <div>
-            <app-information-box type="monthly-tm"></app-information-box>
+          <app-chart-tm></app-chart-tm>
+        </div>
+
+        <div class="clients-charts-container">
+          <div class="orders-by-client-section">
+            <app-chart-orders-by-client-type
+              class="orders-client-type-chart"
+            ></app-chart-orders-by-client-type>
+          </div>
+
+          <div class="chart-client-section">
+            <div class="client-pie-section">
+              <app-invoice-client-type
+                class="client-pie-chart"
+              ></app-invoice-client-type>
+              <app-orders-client-type
+                class="client-pie-chart"
+              ></app-orders-client-type>
+            </div>
           </div>
         </div>
-        <app-chart-tm></app-chart-tm>
-      </div>
-      
-      <div class="clients-charts-container">
-        <div class="orders-by-client-section">
-          <app-chart-orders-by-client-type class="orders-client-type-chart"></app-chart-orders-by-client-type>
-        </div>
-        
-        <div class="chart-client-section">
-          <div class="client-pie-section">
-            <app-invoice-client-type class="client-pie-chart"></app-invoice-client-type>
-            <app-orders-client-type class="client-pie-chart"></app-orders-client-type>
+
+        <div class="product-charts-container">
+          <div class="product-type-chart-container">
+            <app-chart-invoice-product-type></app-chart-invoice-product-type>
+          </div>
+          <div class="product-type-chart-container">
+            <app-chart-orders-product-type></app-chart-orders-product-type>
           </div>
         </div>
-      </div>
 
-    
-
-      <div class="product-charts-container">
-        <div class="product-type-chart-container">
-          <app-chart-invoice-product-type></app-chart-invoice-product-type>
-        </div>
-        <div class="product-type-chart-container">
-          <app-chart-orders-product-type></app-chart-orders-product-type>
-        </div>
-      </div>
-
-      <div class="chart-section-monthly-ltv">
-        <div class="chart-container">
-          <app-chart-monthly-ltv></app-chart-monthly-ltv>
+        <div class="chart-section-monthly-ltv">
+          <div class="chart-container">
+            <app-chart-monthly-ltv></app-chart-monthly-ltv>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>
