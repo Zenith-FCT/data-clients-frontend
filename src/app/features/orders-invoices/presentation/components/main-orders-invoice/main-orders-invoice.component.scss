@@ -3,9 +3,22 @@ $border-radius: 8px;
 $spacing-unit: 1rem;
 $transition-speed: 0.3s;
 
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  height: auto;
+  overflow: visible; 
+  padding-bottom: 2.5rem;
+  flex: 0 0 60px;
+}
+
 .orders-container {
+  flex: 1;                
+  overflow-y: auto;        
   padding: $spacing-unit;
-  min-height: calc(100vh - 32px);
+  margin-bottom: 2rem;
+  min-height: 100%;
   transition: width $transition-speed ease, margin $transition-speed ease;
   width: 96%;
   margin: 0 2%;
@@ -140,12 +153,6 @@ $transition-speed: 0.3s;
     flex: 1;
     min-height: 0;
     position: relative;
-    height: 630px;
-  }
-
-  canvas {
-    max-height: 100%;
-    max-width: 100%;
     height: 630px;
   }
 }
@@ -296,7 +303,10 @@ $transition-speed: 0.3s;
   width: 100%;
   display: flex;
   gap: 2rem;
-  height: 700px;
+  min-height: 700px;
+  height: auto;
+  margin-bottom: 2rem;
+  overflow: visible;
 
   .chart-container {
     width: 100%;
@@ -304,10 +314,11 @@ $transition-speed: 0.3s;
     border-radius: $border-radius;
     padding: 1.5rem;
     box-shadow: $primary-shadow;
-    height: 100%;
+    min-height: 700px;
+    height: auto;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
   }
 }
 
@@ -328,13 +339,27 @@ $transition-speed: 0.3s;
   }
 }
 
+.sticky-header {
+  position: sticky;
+  background-color: #f5f5f5;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 16px;
+  top: 0;
+  transition: all 0.3s ease;
+  margin: 0;
+  
+}
+
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
   margin-bottom: 8px;
-  padding: 0 16px;
-  margin-top: 1rem;
+  padding: 0 4%;
 
   h3 {
     font-size: 1.25rem;
