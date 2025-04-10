@@ -22,7 +22,6 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
   dataLoaded = false;
   viewModes = ChartViewMode;
   billingViewMode = ChartViewMode.ByProduct;
-
   constructor(
     public viewModel: ProductBillingViewModel,
     @Inject(PLATFORM_ID) platformId: Object
@@ -44,8 +43,7 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      const error = this.viewModel.error();
-      if (error) {
+      const error = this.viewModel.error();      if (error) {
         console.error('Error loading product billing:', error);
       }
     });

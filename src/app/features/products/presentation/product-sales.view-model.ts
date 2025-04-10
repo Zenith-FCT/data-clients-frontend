@@ -43,7 +43,6 @@ export class ProductSalesViewModel implements OnDestroy {
     const types = Array.from(new Set(this.productSales().map(p => p.productType)));
     return types.sort();
   });
-  
   public readonly filteredProductSales = computed(() => {
     if (!this.selectedProductType()) {
       return this.productSales();
@@ -161,7 +160,6 @@ export class ProductSalesViewModel implements OnDestroy {
     this.updateState({ selectedProductType: type });
     this.updateChartOption();
   }
-
   private updateChartOption(): void {
     console.log(`ProductSalesViewModel: Generando opciones del gráfico con datos filtrados`);
     
@@ -191,7 +189,36 @@ export class ProductSalesViewModel implements OnDestroy {
       return;
     }
     
-    console.log('ProductSalesViewModel: Datos de productos actualizados para el gráfico');
+    // Generamos opciones básicas para el gráfico
+    const chartOptionData = {
+      title: {
+        text: 'Ventas por Producto',
+        left: 'center',
+        textStyle: {
+          color: '#333',
+        }
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)'
+      },
+      series: [
+        {
+          type: 'pie',
+          radius: ['40%', '70%'],
+          data: topProducts.map(p => ({
+            name: p.productName || 'Sin nombre',
+            value: p.totalSales
+          }))
+        }
+      ]
+    };
+    
+    this.updateState({
+      chartOption: chartOptionData
+    });
+    
+    console.log('ProductSalesViewModel: Opciones del gráfico actualizadas correctamente');
   }
 
   private updateState(partialState: Partial<SalesUiState>): void {
@@ -200,13 +227,10 @@ export class ProductSalesViewModel implements OnDestroy {
       ...partialState
     }));
   }
-
   public ensureDataLoaded(): void {
-    if (!this.initialized() || this.productSales().length === 0) {
-      this.loadProductSales();
-    } else {
-      console.log('ProductSalesViewModel: Los datos ya están cargados, no es necesario recargar');
-    }
+    // Siempre recargamos los datos al entrar en la vista para garantizar que estén actualizados
+    console.log('ProductSalesViewModel: Forzando recarga de datos al entrar en la vista');
+    this.loadProductSales();
   }
 
   ngOnDestroy(): void {

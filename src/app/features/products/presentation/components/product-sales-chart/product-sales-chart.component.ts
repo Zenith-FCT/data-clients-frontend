@@ -16,13 +16,13 @@ import { ChartViewMode } from '../../main-products.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductSalesChartComponent implements OnInit, OnDestroy {
-  isBrowser: boolean;
+  private destroy$ = new Subject<void>();
+  isBrowser: boolean; // Cambiado de private a público para que sea accesible desde la plantilla
   salesChartOption: any = {};
   dataLoaded = false;
-  private destroy$ = new Subject<void>();
   viewModes = ChartViewMode;
   salesViewMode = ChartViewMode.ByProduct;
-
+  
   constructor(
     public viewModel: ProductSalesViewModel,
     @Inject(PLATFORM_ID) platformId: Object
@@ -50,6 +50,7 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
       }
     });
   }
+  
   ngOnInit(): void {
     if (this.isBrowser && !this.isTestEnvironment()) {
       this.viewModel.ensureDataLoaded();
@@ -95,23 +96,23 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
     let title = '';
 
     if (this.salesViewMode === ChartViewMode.ByProduct) {
-      title = 'Total de Ventas por Producto';
+      title = 'Ventas Totales por Producto';
       chartData.sort((a, b) => b.totalSales - a.totalSales);
       
       const topProducts = chartData.slice(0, 10);
       
       if (chartData.length > 10) {
-        const otherProducts = chartData.slice(10);
-        const otherValue = otherProducts.reduce(
+        const otherCategories = chartData.slice(10);
+        const otherValue = otherCategories.reduce(
           (sum, product) => sum + product.totalSales,
           0
         );
 
         const totalAll = chartData.reduce((sum, product) => sum + product.totalSales, 0);
         const othersPercentage = (otherValue / totalAll) * 100;
-        
         if (othersPercentage > 3) {
           topProducts.push({
+            productType: 'Otros',
             productName: 'Otros',
             totalSales: otherValue
           });
@@ -120,7 +121,7 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
       
       chartData = topProducts;
     } else {
-      title = 'Total de Ventas por Tipo de Producto';
+      title = 'Ventas Totales por Tipo de Producto';
       
       const groupedByType = chartData.reduce((groups: any, item) => {
         const type = item.productType || 'Sin categoría';
@@ -136,12 +137,13 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
       
       chartData = Object.values(groupedByType).sort(
         (a: any, b: any) => b.totalSales - a.totalSales
-      );
+      ) as TotalSalesPerProductModel[];
     }
     
-    const totalSales = chartData.reduce((sum: number, product: any) => 
-      sum + product.totalSales, 0);    this.salesChartOption = {
-      // Eliminamos el título del gráfico ya que lo tenemos en el HTML
+    const totalSales = chartData.reduce((sum: number, product: any) => sum + product.totalSales, 0);
+    
+    this.salesChartOption = {
+      // Quitamos el título, ya que se muestra en el HTML
       title: {
         show: false
       },
@@ -149,14 +151,15 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
         trigger: 'item',
         formatter: (params: any) => {
           const percentage = (params.value / totalSales * 100).toFixed(2);
-          return `${params.name}: ${params.value.toLocaleString()} unidades (${percentage}%)`;
+          return `${params.name}: ${params.value.toLocaleString('es-ES')} unidades (${percentage}%)`;
         },
         backgroundColor: 'rgba(33, 33, 33, 0.9)',
         borderColor: '#444',
         textStyle: {
           color: '#fff',
-        },      
-      },        legend: {
+        },
+      },
+      legend: {
         type: 'scroll',
         orient: 'horizontal',
         bottom: 10,
@@ -171,9 +174,10 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
         pageTextStyle: {
           color: '#666'
         }
-      },      series: [
+      },
+      series: [
         {
-          name: 'Ventas por Producto',
+          name: this.salesViewMode === ChartViewMode.ByProduct ? 'Ventas por Producto' : 'Ventas por Tipo de Producto',
           type: 'pie',
           radius: ['40%', '70%'],
           center: ['50%', '45%'],
@@ -205,6 +209,8 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
                 formattedValue = (params.value / 1000000).toFixed(1) + 'M';
               } else if (params.value >= 1000) {
                 formattedValue = (params.value / 1000).toFixed(1) + 'k';
+              } else {
+                formattedValue = params.value;
               }
               return `${params.name}: ${formattedValue}`;
             },
@@ -218,13 +224,15 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
           },
           data: chartData.map((item: any) => ({
             name: this.salesViewMode === ChartViewMode.ByProduct ? item.productName : item.productType,
-            value: item.totalSales
-          })),
+            value: item.totalSales,
+          }))
         }
       ]
     };
-  }
 
+    console.log('Sales chart options updated:', this.salesChartOption);
+  }
+  
   onSalesViewModeChange(mode: ChartViewMode): void {
     if (this.salesViewMode !== mode) {
       this.salesViewMode = mode;
@@ -233,7 +241,7 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
       }
     }
   }
-
+  
   onProductTypeChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const productType = target.value || null;

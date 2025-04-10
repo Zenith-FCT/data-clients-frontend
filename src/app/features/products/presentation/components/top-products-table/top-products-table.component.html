@@ -1,0 +1,41 @@
+<div class="top-products-container">
+  <h3>Top 10 Productos Más Vendidos</h3>
+  
+  <div class="table-container">
+    <div *ngIf="viewModel.loading$()" class="loading-state">
+      <div class="spinner"></div>
+      <span>Cargando productos...</span>
+    </div>
+    
+    <div *ngIf="viewModel.error$()" class="error-state">
+      <span>⚠</span>
+      <p>{{ viewModel.error$() }}</p>
+    </div>
+    
+    <div *ngIf="!viewModel.loading$() && !viewModel.error$() && viewModel.topProducts$().length === 0" class="no-data-state">
+      <span>📊</span>
+      <p>No hay datos disponibles</p>
+    </div>
+    
+    <table *ngIf="!viewModel.loading$() && !viewModel.error$() && viewModel.topProducts$().length > 0" class="products-table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Ventas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of viewModel.topProducts$(); let i = index">
+          <td>{{ product.productName }}</td>
+          <td>{{ product.category }}</td>
+          <td>{{ product.price | currency:'EUR':'symbol':'1.2-2' }}</td>
+          <td>{{ product.stock }}</td>
+          <td>{{ product.salesCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

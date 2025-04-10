@@ -3,9 +3,15 @@
     <h2 class="products-title">Productos</h2>
     
     @if (isBrowser) {
-      <!-- Charts layout con dos mitades -->      <div class="charts-layout">        <!-- Product Earnings Chart (Mitad izquierda) -->        <div class="chart-wrapper left">
+      <!-- Charts layout con dos mitades -->
+      <div class="charts-layout">
+        <!-- Product Earnings Chart (Mitad izquierda) -->
+        <div class="chart-wrapper left">
           <app-product-billing-chart></app-product-billing-chart>
-        </div>        <!-- Total Sales Per Product Chart (Mitad derecha) -->
+          <app-top-products-table></app-top-products-table>
+        </div>
+        
+        <!-- Total Sales Per Product Chart (Mitad derecha) -->
         <div class="chart-wrapper right">
           <app-product-sales-chart></app-product-sales-chart>
         </div>
