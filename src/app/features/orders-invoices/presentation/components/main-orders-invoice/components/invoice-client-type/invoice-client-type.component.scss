@@ -80,10 +80,9 @@
   max-width: 80%;
 }
 
-canvas {
+.echarts-container {
   width: 100% !important;
-  height: 100% !important;
-  max-height: 250px !important; 
+  height: 270px !important;
   display: block !important;
   margin: auto;
 }
