@@ -227,13 +227,10 @@ export class ProductSalesViewModel implements OnDestroy {
       ...partialState
     }));
   }
-
   public ensureDataLoaded(): void {
-    if (!this.initialized() || this.productSales().length === 0) {
-      this.loadProductSales();
-    } else {
-      console.log('ProductSalesViewModel: Los datos ya están cargados, no es necesario recargar');
-    }
+    // Siempre recargamos los datos al entrar en la vista para garantizar que estén actualizados
+    console.log('ProductSalesViewModel: Forzando recarga de datos al entrar en la vista');
+    this.loadProductSales();
   }
 
   ngOnDestroy(): void {

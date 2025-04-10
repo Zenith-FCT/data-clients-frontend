@@ -219,15 +219,11 @@ export class ProductBillingViewModel implements OnDestroy {
       ...partialState
     }));
   }
-
   // Método para verificar si es necesario volver a cargar los datos
   public ensureDataLoaded(): void {
-    // Si no se han inicializado los datos o no hay datos cargados, los cargamos
-    if (!this.initialized() || this.productBilling().length === 0) {
-      this.loadProductBilling();
-    } else {
-      console.log('ProductBillingViewModel: Los datos ya están cargados, no es necesario recargar');
-    }
+    // Siempre recargamos los datos al entrar en la vista para garantizar que estén actualizados
+    console.log('ProductBillingViewModel: Forzando recarga de datos al entrar en la vista');
+    this.loadProductBilling();
   }
 
   ngOnDestroy(): void {
