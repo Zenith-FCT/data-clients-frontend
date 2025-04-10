@@ -153,7 +153,6 @@ export class ProductBillingViewModel implements OnDestroy {
         }
       });
   }
-
   private updateChartOption(productBilling: TotalBillingPerProductModel[]): void {
     console.log(`ProductBillingViewModel: Generando opciones del gráfico con ${productBilling.length} productos`);
     
@@ -182,9 +181,36 @@ export class ProductBillingViewModel implements OnDestroy {
       return;
     }
     
-    // No calculamos las opciones del gráfico aquí porque lo hace el componente principal
-    // solo actualizamos los datos para que el componente reaccione y renderice el gráfico
-    console.log('ProductBillingViewModel: Datos de productos actualizados para el gráfico');
+    // Generamos opciones básicas para el gráfico
+    const chartOptionData = {
+      title: {
+        text: 'Facturación por Producto',
+        left: 'center',
+        textStyle: {
+          color: '#333',
+        }
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)'
+      },
+      series: [
+        {
+          type: 'pie',
+          radius: ['40%', '70%'],
+          data: topProducts.map(p => ({
+            name: p.productName || 'Sin nombre',
+            value: p.totalBilling
+          }))
+        }
+      ]
+    };
+    
+    this.updateState({
+      chartOption: chartOptionData
+    });
+    
+    console.log('ProductBillingViewModel: Opciones del gráfico actualizadas correctamente');
   }
 
   private updateState(partialState: Partial<ProductsUiState>): void {

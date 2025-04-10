@@ -30,7 +30,7 @@
 .chart-content {
   position: relative;
   flex: 1;
-  min-height: 400px;
+  min-height: 400px; // Restaurado al tamaño original
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,7 +39,7 @@
 .echarts-container {
   width: 100%;
   height: 100%;
-  min-height: 400px;
+  min-height: 400px; // Restaurado al tamaño original
 }
 
 .chart-controls {

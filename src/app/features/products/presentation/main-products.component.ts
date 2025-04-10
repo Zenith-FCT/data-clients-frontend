@@ -11,6 +11,7 @@ import { GetTotalSalesPerProductUseCase } from '../domain/get-total-sales-per-pr
 import { Subject } from 'rxjs';
 import { ProductSalesChartComponent } from './components/product-sales-chart/product-sales-chart.component';
 import { ProductBillingChartComponent } from './components/product-billing-chart/product-billing-chart.component';
+import { TopProductsTableComponent } from './components/top-products-table/top-products-table.component';
 
 export enum ChartViewMode {
   ByProduct = 'byProduct',
@@ -27,6 +28,7 @@ export enum ChartViewMode {
     FormsModule,
     ProductSalesChartComponent,
     ProductBillingChartComponent,
+    TopProductsTableComponent
   ],
   providers: [
     GetTotalBillingPerProductUseCase,

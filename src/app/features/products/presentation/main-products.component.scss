@@ -30,6 +30,8 @@
   flex: 1 1 calc(50% - 1rem); // Más responsivo: flex-grow, flex-shrink y base con calc
   min-width: 300px; // Ancho mínimo para evitar que sea demasiado estrecho
   margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
 }
 
 // Los estilos de contenedores de gráficos se han movido a los componentes individuales

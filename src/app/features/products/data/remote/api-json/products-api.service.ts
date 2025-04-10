@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map, catchError, of, tap } from 'rxjs';
 import { TotalBillingPerProductModel } from '../../../domain/total-billing-per-product.model';
 import { TotalSalesPerProductModel } from '../../../domain/total-sales-per-product.model';
+import { TopProductModel } from '../../../domain/top-products.model';
 
 // Interfaces para representar los datos crudos de la API
 interface ProductApi {
@@ -43,6 +44,75 @@ export class ProductsApiService {
 
   constructor(private http: HttpClient) {
     console.log('ProductsApiService initialized');
+  }
+
+  /**
+   * Obtiene la lista de productos más vendidos
+   */
+  getTopProducts(): Observable<TopProductModel[]> {
+    console.log('Obteniendo datos de productos y pedidos para los más vendidos');
+    
+    // Utilizamos forkJoin para obtener productos y pedidos en paralelo
+    return forkJoin({
+      products: this.http.get<ProductApi[]>(this.productsUrl),
+      orders: this.http.get<OrderApi[]>(this.ordersUrl)
+    }).pipe(
+      tap(data => {
+        console.log(`Recibidos ${data.products.length} productos y ${data.orders.length} pedidos para top products`);
+      }),
+      map(({ products, orders }) => {
+        // Crear un mapa para acumular las ventas por producto y su información completa
+        const productsMap = new Map<string, {
+          product: ProductApi,
+          salesCount: number
+        }>();
+        
+        // Inicializar el mapa con todos los productos
+        products.forEach(product => {
+          productsMap.set(product.SKU, {
+            product,
+            salesCount: 0
+          });
+        });
+        
+        // Procesar los pedidos para calcular las ventas totales por producto
+        orders.forEach(order => {
+          const orderProducts = order.productos || [];
+          // Contar las unidades vendidas de cada producto
+          orderProducts.forEach(orderProduct => {
+            const productInfo = productsMap.get(orderProduct.sku);
+            if (productInfo) {
+              productInfo.salesCount += orderProduct.cantidad || 1;
+              productsMap.set(orderProduct.sku, productInfo);
+            }
+          });
+        });
+        
+        // Convertir el mapa a un array y ordenar por número de ventas
+        return Array.from(productsMap.values())
+          .filter(info => info.salesCount > 0) // Incluir solo productos con ventas
+          .sort((a, b) => b.salesCount - a.salesCount) // Ordenar de mayor a menor
+          .slice(0, 10) // Obtener solo los 10 más vendidos
+          .map(info => ({
+            id: info.product.SKU,
+            productName: info.product.Nombre_producto,
+            category: info.product.Categoria, // Usar category en lugar de productType
+            price: info.product.Precio,
+            stock: info.product.Stock,
+            salesCount: info.salesCount
+          }));
+      }),
+      tap(result => {
+        console.log(`Obtenidos ${result.length} productos más vendidos`);
+        if (result.length > 0) {
+          console.log('Muestra del primer producto más vendido:', result[0]);
+        }
+      }),
+      catchError(error => {
+        console.error('Error al obtener o procesar datos para productos más vendidos:', error);
+        return of([]);
+      })
+    );
   }
 
   /**
@@ -153,7 +223,7 @@ export class ProductsApiService {
         // Procesar los pedidos para calcular las ventas totales por producto
         orders.forEach(order => {
           const orderProducts = order.productos || [];
-            // Contar las unidades vendidas de cada producto
+          // Contar las unidades vendidas de cada producto
           orderProducts.forEach(orderProduct => {
             const product = productSalesMap.get(orderProduct.sku);
             if (product) {
