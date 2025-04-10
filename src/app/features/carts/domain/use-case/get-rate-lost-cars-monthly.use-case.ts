@@ -1,7 +1,7 @@
 import { Observable, combineLatest, map } from "rxjs";
 import { CartsRepository } from "../repositories/carts-repository";
 
-export class GetAverageLostCartsMonthlyUseCase {
+export class GetRateLostCartsMonthlyUseCase {
     constructor(private cartsRepository: CartsRepository) {}
 
     execute(year: number, month: number): Observable<number> {
