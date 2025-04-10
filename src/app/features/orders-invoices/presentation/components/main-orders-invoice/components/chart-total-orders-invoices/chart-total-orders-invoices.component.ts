@@ -144,7 +144,8 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
           });
           
           return tooltipContent;        
-        }
+        },
+        confine: true
       },
       legend: {
         show: false 

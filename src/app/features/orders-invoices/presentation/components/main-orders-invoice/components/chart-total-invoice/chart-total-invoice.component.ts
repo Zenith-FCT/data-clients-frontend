@@ -104,7 +104,8 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
         formatter: function(params: any) {
           const value = params[0].value;
           return `${params[0].name}: ${parseFloat(value).toLocaleString('es-ES')} €`;
-        }
+        },
+        confine: true
       },
       grid: {
         left: '3%',

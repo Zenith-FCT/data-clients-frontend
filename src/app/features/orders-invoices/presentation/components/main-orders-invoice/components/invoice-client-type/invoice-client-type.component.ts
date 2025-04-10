@@ -116,7 +116,9 @@ export class InvoiceClientTypeComponent implements OnInit, AfterViewInit, OnDest
           const value = params.value;
           const percentage = Math.round((value / total) * 100);
           return `${params.name}: ${value.toLocaleString('es-ES')} € (${percentage}%)`;
-        }
+        },
+        position: 'right', 
+        confine: true  
       },
       legend: {
         orient: 'vertical',

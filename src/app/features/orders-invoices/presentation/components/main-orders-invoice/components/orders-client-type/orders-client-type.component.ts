@@ -117,7 +117,9 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
           const value = params.value;
           const percentage = Math.round((value / total) * 100);
           return `${params.name}: ${value.toLocaleString('es-ES')} pedidos (${percentage}%)`;
-        }
+        },
+        position: 'right', 
+        confine: true  
       },
       legend: {
         orient: 'vertical',

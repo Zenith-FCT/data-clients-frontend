@@ -143,7 +143,8 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
           });
           
           return tooltipContent;
-        }
+        },
+        confine: true,
       },
       legend: {
         show: false

@@ -140,6 +140,7 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
           color: '#000000',
           fontSize: 14
         },
+        confine: true,
       },
       grid: {
         left: '5%',

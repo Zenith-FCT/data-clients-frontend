@@ -110,7 +110,8 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
           const value = params.value;
           const percentage = Math.round((value / total) * 100);
           return `${params.name}: ${value.toLocaleString('es-ES')} pedidos (${percentage}%)`;
-        }
+        },
+        confine: true
       },
       legend: {
         orient: 'vertical',

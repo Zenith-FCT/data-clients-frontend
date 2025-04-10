@@ -223,7 +223,8 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
                 labelTextColor: function() {
                   return '#000000';
                 }
-              }
+              },
+              confine: true
             }
           },
           scales: {
