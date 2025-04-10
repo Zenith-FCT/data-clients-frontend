@@ -1,27 +1,28 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { NgxEchartsModule } from 'ngx-echarts';
+import { EChartsOption } from 'echarts';
 import { OrderInvoiceProductViewModelService } from '../../../../view-model/order-invoice-product-viewmodel.service';
 import { OrderInvoiceProductTypeModel } from '../../../../../domain/models/order-invoice-product-type.model';
-
-declare const Chart: any;
 
 @Component({
   selector: 'app-chart-orders-product-type',
   standalone: true,
-  imports: [CommonModule, MatSelectModule, FormsModule],
+  imports: [CommonModule, MatSelectModule, FormsModule, NgxEchartsModule],
   templateUrl: './chart-orders-product-type.component.html',
   styleUrl: './chart-orders-product-type.component.scss'
 })
 export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
-  private chart: any;
   private destroy$ = new Subject<void>();
   selectedYear: number = new Date().getFullYear();
   years: number[] = [];
-  private isBrowser: boolean;
+  public isBrowser: boolean;
+  chartOption: EChartsOption = {};
+  
+  private colors = ['#2D2D2D', '#E63946', '#BDBDBD', '#6F1D1B', '#F4A261', '#3D405B', '#8D99AE'];
 
   constructor(
     public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService,
@@ -29,21 +30,23 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
     
-    effect(() => {
-      const productData = this.orderInvoiceProductViewModel.InvoiceProductType$();
-      if (productData && productData.length > 0) {
-        this.extractAvailableYears(productData);
-        this.updateChart();
-      }
-    });
+    if (this.isBrowser) {
+      effect(() => {
+        const productData = this.orderInvoiceProductViewModel.InvoiceProductType$();
+        if (productData && productData.length > 0) {
+          this.extractAvailableYears(productData);
+          this.updateChart();
+        }
+      });
 
-    effect(() => {
-      const selectedYear = this.orderInvoiceProductViewModel.selectedYear$();
-      if (selectedYear !== this.selectedYear) {
-        this.selectedYear = selectedYear;
-        this.updateChart();
-      }
-    });
+      effect(() => {
+        const selectedYear = this.orderInvoiceProductViewModel.selectedYear$();
+        if (selectedYear !== this.selectedYear) {
+          this.selectedYear = selectedYear;
+          this.updateChart();
+        }
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -80,7 +83,7 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
   }
 
   private updateChart(): void {
-    if (!this.isBrowser || !this.chartCanvas) return;
+    if (!this.isBrowser) return;
 
     const data = this.orderInvoiceProductViewModel.InvoiceProductType$();
     if (!data || data.length === 0) return;
@@ -88,7 +91,65 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
     const yearData = data.filter(item => new Date(item.date).getFullYear() === this.selectedYear);
     if (yearData.length === 0) return;
 
-    this.createChart(yearData);
+    const { productTypes, values } = this.processChartData(yearData);
+    
+    const chartData = productTypes.map((type, index) => ({
+      name: type,
+      value: values[index],
+      itemStyle: {
+        color: this.colors[index % this.colors.length]
+      }
+    }));
+
+    const total = values.reduce((sum, value) => sum + value, 0);
+    
+    this.chartOption = {
+      tooltip: {
+        trigger: 'item',
+        formatter: (params: any) => {
+          const value = params.value;
+          const percentage = Math.round((value / total) * 100);
+          return `${params.name}: ${value.toLocaleString('es-ES')} pedidos (${percentage}%)`;
+        }
+      },
+      legend: {
+        orient: 'vertical',
+        left: '2%',
+        top: 'top',
+        padding: 20,
+        textStyle: {
+          fontSize: 12
+        }
+      },
+      series: [
+        {
+          name: 'Pedidos por tipo de producto',
+          type: 'pie',
+          radius: ['50%', '80%'],
+          center: ['60%', '50%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 0,
+            borderColor: '#fff',
+            borderWidth: 1
+          },
+          label: {
+            show: false
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 14,
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: false
+          },
+          data: chartData
+        }
+      ]
+    };
   }
 
   private processChartData(data: OrderInvoiceProductTypeModel[]): {
@@ -111,60 +172,8 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
     return { productTypes, values };
   }
 
-  private createChart(data: OrderInvoiceProductTypeModel[]): void {
-    if (this.chart) {
-      this.chart.destroy();
-    }
-
-    const ctx = this.chartCanvas.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    const { productTypes, values } = this.processChartData(data);
-
-    this.chart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: productTypes,
-        datasets: [{
-          data: values,
-          backgroundColor: ['#2D2D2D', '#E63946', '#BDBDBD', '#6F1D1B', '#F4A261', '#3D405B', '#8D99AE'],
-          hoverBackgroundColor: ['#2D2D2D', '#E63946', '#BDBDBD', '#6F1D1B', '#F4A261', '#3D405B', '#8D99AE']
-
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'left',
-            labels: {
-              padding: 20,
-              font: {
-                size: 12
-              }
-            }
-          },
-          tooltip: {
-            callbacks: {
-              label: (context: any): string => {
-                const value = context.raw;
-                const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
-                const percentage = Math.round((value / total) * 100);
-                return `${context.label}: ${value.toLocaleString('es-ES')} pedidos (${percentage}%)`;
-              }
-            }
-          }
-        }
-      }
-    });
-  }
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    if (this.chart) {
-      this.chart.destroy();
-    }
   }
 }
