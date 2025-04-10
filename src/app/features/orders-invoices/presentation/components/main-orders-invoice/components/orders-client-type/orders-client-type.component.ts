@@ -145,13 +145,6 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
           label: {
             show: false
           },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 14,
-              fontWeight: 'bold'
-            }
-          },
           labelLine: {
             show: false
           },

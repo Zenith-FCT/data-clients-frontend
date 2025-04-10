@@ -136,13 +136,6 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
           label: {
             show: false
           },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 14,
-              fontWeight: 'bold'
-            }
-          },
           labelLine: {
             show: false
           },
