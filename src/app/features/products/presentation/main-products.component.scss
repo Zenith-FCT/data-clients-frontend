@@ -24,17 +24,31 @@
   width: 100%;
   gap: 1.5rem; // Espacio entre las dos mitades
   flex-wrap: wrap; // Permite que se reorganicen en pantallas pequeñas
+  margin-bottom: 1.5rem; // Espacio entre la primera y segunda fila
 }
 
 .chart-wrapper {
   flex: 1 1 calc(50% - 1rem); // Más responsivo: flex-grow, flex-shrink y base con calc
   min-width: 300px; // Ancho mínimo para evitar que sea demasiado estrecho
-  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
 }
 
-// Los estilos de contenedores de gráficos se han movido a los componentes individuales
+/* Layout para top products (tabla y gráfico por mes) */
+.top-products-row {
+  display: flex;
+  width: 100%;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.top-products-left, .top-products-right {
+  flex: 1 1 calc(50% - 1rem);
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
 
 // Estilos para los indicadores de carga y error
 .loading-indicator {
@@ -88,18 +102,18 @@
     color: white;
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 15px;
-  }
+    margin-bottom: 15px;  }
 }
 
 // Ajustes responsivos para pantallas pequeñas
 @media screen and (max-width: 1200px) {
-  .charts-layout {
+  .charts-layout, .top-products-row {
     flex-direction: column;
   }
 
-  .chart-wrapper {
-    flex: 0 0 100%;
+  .chart-wrapper, .top-products-left, .top-products-right {
+    width: 100%;
+    margin-bottom: 1.5rem;
   }
 }
 
