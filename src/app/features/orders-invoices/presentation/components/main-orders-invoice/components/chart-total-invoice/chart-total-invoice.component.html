@@ -4,7 +4,8 @@
     
   </div>
   
-  <div class="chart-content">    <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
+  <div class="chart-content">
+    <div *ngIf="monthlySalesViewModel.isLoading$()" class="loading-state">
       <div class="spinner"></div>
       <span>Generando gráfica...</span>
     </div>
@@ -13,6 +14,6 @@
       <p>{{ monthlySalesViewModel.error$() }}</p>
     </div>
    
-    <div #chartContainer class="chart-element"></div>
+    <canvas #chartCanvas></canvas>
   </div>
 </div>

@@ -52,19 +52,21 @@
   min-height: unset !important;
 }
 
-.chart-content {  position: relative;
+.chart-content {
+  position: relative;
   flex: 1;
   width: 100%;
   height: calc(100% - 60px);
-  min-height: 520px;
+  min-height: 650px;
   padding-top: 8px; 
   overflow: hidden;
 }
 
-.chart-element {
+canvas {
   display: block !important;
   width: 100% !important;
   height: 100% !important;
+  max-height: 490px !important;
 }
 
 .loading-state, .error-state {

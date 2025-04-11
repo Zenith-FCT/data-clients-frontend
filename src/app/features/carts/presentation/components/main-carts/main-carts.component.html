@@ -1,50 +1,46 @@
-<div class="main-wrapper">
-  <div class="sticky-header">
-    <div class="chart-header">
-      <h3>Carritos</h3>
-      <div class="date-selectors">
-        <mat-form-field appearance="outline">
-          <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
-            <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
-              {{getMonthName(i + 1)}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
-            <mat-option *ngFor="let year of cartsViewModel.availableYears$()" [value]="year">
-              {{year}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+<div class="carts-container">
+  <div class="chart-header">
+    <h2>Pedidos y Facturación</h2>
+    <div class="date-selectors">
+      <mat-form-field appearance="outline">
+        <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
+          <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
+            {{getMonthName(i + 1)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
+          <mat-option *ngFor="let year of cartsViewModel.availableYears$()" [value]="year">
+            {{year}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
 
-  <div class="orders-container">
-    <div class="carts-summary">
-      <div class="info-container">
-        <app-information-box-carts type="total"></app-information-box-carts>
-        <app-information-box-carts type="total-monthly"></app-information-box-carts>
-        <app-information-box-carts type="rate"></app-information-box-carts>
-        <app-information-box-carts type="rate-monthly"></app-information-box-carts>
-      </div>
-
-      <div class="chart-section">
-        <h3>Carritos abandonados por mes</h3>
-        <app-monthly-abandoned-carts></app-monthly-abandoned-carts>
-      </div>
+  <div class="carts-summary">
+    <div class="info-container">
+      <app-information-box-carts type="total"></app-information-box-carts>
+      <app-information-box-carts type="total-monthly"></app-information-box-carts>
+      <app-information-box-carts type="rate"></app-information-box-carts>
+      <app-information-box-carts type="rate-monthly"></app-information-box-carts>
     </div>
-    
-    <div class="charts-row">
-      <div class="chart-section-evolution">
-        <h3>Evolucion de carritos abandonados por mes</h3>
-        <app-evolution-abandoned-carts></app-evolution-abandoned-carts>
-      </div>    
-      <div class="chart-section-rate">
-        <h3>Tasa de carritos abandonados por mes</h3>
-        <app-monthly-cart-rate-abandoned></app-monthly-cart-rate-abandoned>
-      </div>
+
+    <div class="chart-section">
+      <h3>Carritos abandonados por mes</h3>
+      <app-monthly-abandoned-carts></app-monthly-abandoned-carts>
+    </div>
+  </div>
+  
+  <div class="charts-row">
+    <div class="chart-section-evolution">
+      <h3>Evolucion de carritos abandonados por mes</h3>
+      <app-evolution-abandoned-carts></app-evolution-abandoned-carts>
+    </div>    
+    <div class="chart-section-rate">
+      <h3>Tasa de carritos abandonados por mes</h3>
+      <app-monthly-cart-rate-abandoned></app-monthly-cart-rate-abandoned>
     </div>
   </div>
 </div>

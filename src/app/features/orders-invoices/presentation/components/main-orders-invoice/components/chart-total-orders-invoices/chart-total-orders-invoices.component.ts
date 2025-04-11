@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.model';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
-import * as echarts from 'echarts';
+declare const Chart: any;
 
 @Component({
   selector: 'app-chart-total-orders-invoices',
@@ -15,8 +15,8 @@ import * as echarts from 'echarts';
   styleUrl: './chart-total-orders-invoices.component.scss'
 })
 export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('chartContainer') chartContainer!: ElementRef<HTMLDivElement>;
-  private chart: echarts.ECharts | null = null;
+  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
+  private chart: any;
   private destroy$ = new Subject<void>();
   selectedYear: number = new Date().getFullYear();
   years: number[] = [];
@@ -29,12 +29,12 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
-    effect(() => {
+   effect(() => {
       const data = this.monthlySalesViewModel.allMonthlySales$();
       if (data && data.length > 0) {
         this.currentData = data;
         this.extractAvailableYears(data);
-        this.updateChartData(this.filterDataByYear(data));
+        this.destroyAndRecreateChart(this.filterDataByYear(data));
       }
     });
 
@@ -43,7 +43,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
       if (year !== this.selectedYear) {
         this.selectedYear = year;
         if (this.currentData.length > 0) {
-          this.updateChartData(this.filterDataByYear(this.currentData));
+          this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
         }
       }
     });
@@ -54,26 +54,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
   }
 
   ngAfterViewInit(): void {
-    if (this.isBrowser) {
-      this.initChart();
-      // Observador para ajustar el gráfico cuando cambie el tamaño del contenedor
-      this.observeContainerResize();
-    }
     this.monthlySalesViewModel.loadAllMonthWithTotals();
-  }
-
-  private observeContainerResize(): void {
-    if (!this.isBrowser || !window.ResizeObserver) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      if (this.chart) {
-        this.chart.resize();
-      }
-    });
-
-    if (this.chartContainer && this.chartContainer.nativeElement) {
-      resizeObserver.observe(this.chartContainer.nativeElement);
-    }
   }
 
   private extractAvailableYears(data: MonthlySalesModel[]): void {
@@ -96,7 +77,7 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
     if (this.selectedYear) {
       this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
       if (this.currentData.length > 0) {
-        this.updateChartData(this.filterDataByYear(this.currentData));
+        this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
       }
     }
   }
@@ -105,171 +86,161 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
     return data.filter(item => item.date.startsWith(this.selectedYear.toString()));
   }
 
-  private initChart(): void {
+  private destroyAndRecreateChart(data: MonthlySalesModel[]): void {
     if (!this.isBrowser) return;
     
-    if (!this.chartContainer || !this.chartContainer.nativeElement) return;
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
     
-    this.chart = echarts.init(this.chartContainer.nativeElement);
-    
-    const option: echarts.EChartsOption = {
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'cross'
+    if (this.chartCanvas && this.chartCanvas.nativeElement) {
+      const ctx = this.chartCanvas.nativeElement.getContext('2d');
+      if (!ctx) return;
+      
+      this.chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          datasets: [
+            {
+              type: 'line',
+              label: 'Total Facturas',
+              data: [],
+              borderColor: '#FE2800',
+              backgroundColor: 'transparent',
+              tension: 0,
+              yAxisID: 'y',
+              order: 0,
+              pointRadius: 5,
+              pointBackgroundColor: '#FE2800'
+            },
+            {
+              type: 'bar',
+              label: 'Número de Ventas',
+              data: [],
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              yAxisID: 'y1',
+              order: 1
+            }
+          ]
         },
-        backgroundColor: 'rgba(255, 255, 255, 0.88)',
-        padding: 10,
-        formatter: function(params: any) {
-          if (!Array.isArray(params)) {
-            params = [params];
-          }
-          
-          let tooltipContent = params[0].name + '<br/>';
-          
-          params.sort((a: any, b: any) => a.seriesType === 'line' ? -1 : 1);
-          
-          params.forEach((param: any) => {
-            if (param && param.marker && param.seriesName) {
-              const marker = param.marker;
-              const seriesName = param.seriesName;
-              const value = param.value;
-              
-              if (param.seriesType === 'line') {
-                tooltipContent += marker + seriesName + ': ' + parseFloat(value).toLocaleString('es-ES') + ' €<br/>';
-              } else {
-                tooltipContent += marker + seriesName + ': ' + parseFloat(value).toLocaleString('es-ES') + '<br/>';
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 30,
+              bottom: 20
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            title: {
+              display: false
+            },
+            legend: {
+              display: false
+            },
+            tooltip: {
+              enabled: true,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleFont: {
+                size: 12
+              },
+              bodyFont: {
+                size: 12
+              },
+              callbacks: {
+                label: function(context: any) {
+                  const value = context.parsed.y;
+                  if (context.datasetIndex === 0) {
+                    return `Total Facturas: ${value.toLocaleString('es-ES')} €`;
+                  } else {
+                    return `Número de Ventas: ${value.toLocaleString('es-ES')}`;
+                  }
+                }
               }
             }
-          });
-          
-          return tooltipContent;        
-        },
-        confine: true
-      },
-      legend: {
-        show: false 
-      },
-      grid: {
-        left: '5%',
-        right: '5%',
-        bottom: '10%',
-        top: '10%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],        axisLine: {
-          lineStyle: {
-            color: 'rgba(0, 0, 0, 0.32)'
-          }
-        },
-        axisLabel: {
-          fontSize: 12,
-          margin: 16,
-          color: '#000000'
-        }
-      },
-      yAxis: [
-        {
-          type: 'value',
-          name: 'Total Facturas (€)',
-          nameLocation: 'end',
-          nameTextStyle: {
-            fontSize: 14,
-            color: '#000000'
           },
-          position: 'left',
-          axisLabel: {
-            formatter: (value: number): string => value.toLocaleString('es-ES') + ' €',
-            fontSize: 12,
-            color: '#000000'
-          },
-          splitLine: {
-            lineStyle: {
-              color: 'rgba(0, 0, 0, 0.19)'
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Total Facturas (€)',
+                font: {
+                  weight: 'bold',
+                  size: 14
+                }
+              },
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+              },
+              ticks: {
+                callback: function(value: any) {
+                  return value.toLocaleString('es-ES') + ' €';
+                },
+                font: {
+                  weight: '600'
+                }
+              },
+              suggestedMax: function(context: any) {
+                const maxValue = Math.max(...context.chart.data.datasets[0].data);
+                return maxValue + 50;
+              }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: {
+                display: true,
+                text: 'Número de Ventas',
+                font: {
+                  weight: 'bold',
+                  size: 14
+                }
+              },
+              grid: {
+                display: false
+              },
+              ticks: {
+                stepSize: 1,
+                callback: function(value: any) {
+                  return Math.round(value);
+                },
+                font: {
+                  weight: '600'
+                }
+              },
+              suggestedMax: function(context: any) {
+                const maxValue = Math.max(...context.chart.data.datasets[1].data);
+                return maxValue + 1;
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
             }
           }
-        },
-        {
-          type: 'value',
-          name: 'Nº de Ventas',
-          nameLocation: 'end',
-          nameTextStyle: {
-            fontSize: 14,
-            color: '#000000'
-          },
-          position: 'right',
-          axisLabel: {
-            formatter: (value: number): string => Math.round(value).toString(),
-            fontSize: 12,
-            color: '#000000'
-          },
-          splitLine: {
-            show: false
-          }
         }
-      ],
-      series: [
-        {
-          name: 'Total Facturas',
-          type: 'line',
-          yAxisIndex: 0,
-          smooth: false,
-          lineStyle: {
-            width: 3,
-            color: '#FE2800'
-          },
-          symbol: 'circle',
-          symbolSize: 8,
-          itemStyle: {
-            color: '#FE2800'
-          },
-          emphasis: {
-            itemStyle: {
-              borderWidth: 3,
-              borderColor: '#FE2800',
-              color: '#FE2800'
-            }
-          },
-          z: 10,
-          data: []
-        },
-        {
-          name: 'Número de Ventas',
-          type: 'bar',
-          yAxisIndex: 1,
-          barWidth: '60%',
-          itemStyle: {
-            color: 'rgba(0, 0, 0, 0.2)'
-          },
-          emphasis: {
-            itemStyle: {
-              color: 'rgba(0, 0, 0, 0.25)'
-            }
-          },
-          z: 5,
-          data: []
-        }
-      ]
-    };
-    
-    this.chart.setOption(option);
-    
-    if (this.isBrowser && typeof window !== 'undefined') {
-      window.addEventListener('resize', this.resizeChart.bind(this));
+      });
+      
+      if (this.chart) {
+        this.updateChart(data);
+      }
     }
   }
 
-  private updateChartData(data: MonthlySalesModel[]): void {
-    if (!this.chart) {
-      if (this.chartContainer && this.chartContainer.nativeElement) {
-        this.initChart();
-      } else {
-        return;
-      }
-    }
-    
+  private updateChart(data: MonthlySalesModel[]): void {
     if (!this.isBrowser || !this.chart) return;
 
     const invoiceValues = Array(12).fill(0);
@@ -277,47 +248,20 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
 
     data.forEach(item => {
       const month = parseInt(item.date.split('-')[1]) - 1;
-      if (!isNaN(month) && month >= 0 && month < 12) {
-        invoiceValues[month] = parseFloat(item.totalSales || '0');
-        salesNumberValues[month] = parseInt(item.totalSalesNumber || '0');
-      }
+      invoiceValues[month] = parseFloat(item.totalSales);
+      salesNumberValues[month] = parseInt(item.totalSalesNumber);
     });
 
-    this.chart.setOption({
-      series: [
-        {
-          data: invoiceValues
-        },
-        {
-          data: salesNumberValues
-        }
-      ]
-    });
-    
-    setTimeout(() => {
-      if (this.chart) {
-        this.chart.resize();
-      }
-    }, 0);
-  }
-
-  private resizeChart(): void {
-    if (this.chart) {
-      this.chart.resize();
-    }
+    this.chart.data.datasets[0].data = invoiceValues;
+    this.chart.data.datasets[1].data = salesNumberValues;
+    this.chart.update();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    
-    if (this.isBrowser && typeof window !== 'undefined') {
-      window.removeEventListener('resize', this.resizeChart.bind(this));
-    }
-    
     if (this.chart) {
-      this.chart.dispose();
-      this.chart = null;
+      this.chart.destroy();
     }
   }
 }

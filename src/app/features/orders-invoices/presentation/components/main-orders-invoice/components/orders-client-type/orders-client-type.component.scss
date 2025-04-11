@@ -27,6 +27,11 @@
   color: #333;
 }
 
+.year-selector {
+  width: 100px;
+  margin-bottom: -1.25em;
+}
+
 .chart-content {
   position: relative;
   flex: 1;
@@ -77,9 +82,10 @@
   max-width: 80%;
 }
 
-.echarts-container {
+canvas {
   width: 100% !important;
-  height: 280px !important;
+  height: 100% !important;
+  max-height: 250px !important; 
   display: block !important;
   margin: auto;
 }
