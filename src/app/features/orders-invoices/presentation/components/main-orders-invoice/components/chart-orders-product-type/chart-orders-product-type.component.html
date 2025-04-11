@@ -4,6 +4,6 @@
     
   </div>
   <div class="chart-wrapper">
-    <canvas #chartCanvas></canvas>
+    <div *ngIf="isBrowser" echarts [options]="chartOption" class="echarts-container"></div>
   </div>
 </div>

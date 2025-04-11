@@ -1,36 +1,30 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { NgxEchartsModule } from 'ngx-echarts';
+import { EChartsOption } from 'echarts';
+import type { BarSeriesOption } from 'echarts';
 import { LtvViewModelService } from '../../../../view-model/ltv-viewmodel.service';
 import { LtvModel } from '../../../../../domain/models/ltv.model';
 
-interface ChartConfiguration {
-  type: string;
-  data: any;
-  options: any;
-}
-
-declare const Chart: {
-  new (ctx: CanvasRenderingContext2D, config: ChartConfiguration): any;
-};
+type EchartsSeries = BarSeriesOption;
 
 @Component({
   selector: 'app-chart-monthly-ltv',
   standalone: true,
-  imports: [CommonModule, MatSelectModule, FormsModule],
+  imports: [CommonModule, MatSelectModule, FormsModule, NgxEchartsModule],
   templateUrl: './chart-monthly-ltv.component.html',
   styleUrl: './chart-monthly-ltv.component.scss'
 })
 export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
-  private chart: any;
   private destroy$ = new Subject<void>();
   selectedYear: number = new Date().getFullYear();
   years: number[] = [];
   private currentData: LtvModel[] = [];
-  private isBrowser: boolean;
+  public isBrowser: boolean;
+  chartOption: EChartsOption = {};
   
   private chartColors = [
     'rgba(33, 150, 243, 0.3)',  
@@ -47,20 +41,8 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
     'rgba(96, 125, 139, 0.3)'    
   ];
 
-  private chartBorderColors = [
-    '#2196F3',  
-    '#9C27B0',   
-    '#E91E63',   
-    '#F44336',   
-    '#FF9800',   
-    '#FFEB3B',   
-    '#4CAF50',   
-    '#009688',   
-    '#3F51B5',   
-    '#795548',   
-    '#9E9E9E',   
-    '#607D8B'    
-  ];
+  // Color gris claro para el borde
+  private borderColor = 'rgba(200, 200, 200, 0.5)';
 
   constructor(
     public ltvViewModel: LtvViewModelService,
@@ -68,33 +50,40 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
-    effect(() => {
-      const ltvData = this.ltvViewModel.ltv$();
-      if (ltvData && ltvData.length > 0) {
-        this.currentData = ltvData;
-        this.extractAvailableYears(ltvData);
-        this.destroyAndRecreateChart(this.filterDataByYear(ltvData));
-      }
-    });
-
-    effect(() => {
-      const year = this.ltvViewModel.selectedYear$();
-      if (year !== this.selectedYear) {
-        this.selectedYear = year;
-        if (this.currentData.length > 0) {
-          this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
+    if (this.isBrowser) {
+      effect(() => {
+        const ltvData = this.ltvViewModel.ltv$();
+        if (ltvData && ltvData.length > 0) {
+          this.currentData = ltvData;
+          this.extractAvailableYears(ltvData);
+          this.updateChartWithData(this.filterDataByYear(ltvData));
         }
-      }
-    });
+      });
+
+      effect(() => {
+        const year = this.ltvViewModel.selectedYear$();
+        if (year !== this.selectedYear) {
+          this.selectedYear = year;
+          if (this.currentData.length > 0) {
+            this.updateChartWithData(this.filterDataByYear(this.currentData));
+          }
+        }
+      });
+    }
   }
 
   ngOnInit(): void {
     this.ltvViewModel.loadLtv();
+    if (this.isBrowser) {
+      this.initChart();
+    }
   }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
-      this.initChart();
+      setTimeout(() => {
+        this.initChart();
+      }, 100);
     }
   }
 
@@ -102,7 +91,7 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
     if (this.selectedYear) {
       this.ltvViewModel.setSelectedYear(this.selectedYear);
       if (this.currentData.length > 0) {
-        this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
+        this.updateChartWithData(this.filterDataByYear(this.currentData));
       }
     }
   }
@@ -130,121 +119,94 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   private initChart(): void {
-    if (!this.isBrowser || !this.chartCanvas) return;
+    if (!this.isBrowser) return;
 
-    const ctx = this.chartCanvas.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    this.chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        datasets: [{
-          label: 'LTV Mensual',
-          data: [],
-          borderColor: this.chartBorderColors,
-          backgroundColor: this.chartColors,
-          borderWidth: 1,
-          tension: 0.4,
-          fill: true,
-          pointRadius: 5,
-          pointBackgroundColor: this.chartBorderColors
-        }]
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    this.chartOption = {
+      tooltip: {
+        trigger: 'axis',
+        formatter: (params: any) => {
+          const value = params[0].value;
+          return `${params[0].name}: ${value.toLocaleString('es-ES')} €`;
+        },
+        axisPointer: {
+          type: 'shadow'
+        },
+        confine: true
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-          padding: {
-            top: 10,
-            right: 10,
-            bottom: 10,
-            left: 10
-          }
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: months,
+        axisLabel: {
+          fontSize: 11
         },
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            enabled: true,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleFont: {
-              size: 12
-            },
-            bodyFont: {
-              size: 12
-            },
-            padding: 10,
-            callbacks: {
-              label: function(context: any) {
-                const value = context.parsed.y;
-                return `LTV: ${value.toLocaleString('es-ES')} €`;
-              }
-            }
-          }
+        axisTick: {
+          alignWithLabel: true
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: {
-              display: true,
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            ticks: {
-              callback: function(value: any) {
-                return value.toLocaleString('es-ES') + ' €';
-              },
-              font: {
-                size: 11
-              }
-            },
-            title: {
-              display: true,
-              text: 'LTV (€)',
-              font: {
-                weight: 'bold',
-                size: 14
-              },
-              autoSkip: false,
-              maxRotation: 45,
-              minRotation: 45
-            }
-          },
-          x: {
-            grid: {
-              display: false
-            },
-            ticks: {
-              font: {
-                size: 11
-              }
-            }
+        axisLine: {
+          lineStyle: {
+            color: '#999'
           }
         }
-      }
-    });
+      },
+      yAxis: {
+        type: 'value',
+        nameTextStyle: {
+          fontWeight: 'bold',
+          fontSize: 14
+        },
+        axisLabel: {
+          formatter: (value: any) => {
+            return value.toLocaleString('es-ES') + ' €';
+          },
+          fontSize: 11
+        },
+        splitLine: {
+          lineStyle: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          }
+        }
+      },
+      series: [
+        {
+          name: 'LTV Mensual',
+          type: 'bar',
+          barWidth: '60%',
+          data: [] as number[],
+          itemStyle: {
+            color: (params: any) => {
+              return this.chartColors[params.dataIndex % this.chartColors.length];
+            },
+            // Usar el color gris claro para el borde en lugar del color específico de la barra
+            borderColor: this.borderColor,
+            borderWidth: 1
+          },
+          emphasis: {
+            // Simplificar la animación para solo oscurecer la barra al pasar el mouse
+            itemStyle: {
+              // Sin sombras o efectos adicionales
+              shadowBlur: 0,
+              shadowOffsetX: 0,
+              // Oscurecer la barra aumentando la opacidad
+              opacity: 0.8
+            }
+          }
+        } as BarSeriesOption
+      ]
+    };
   }
 
-  private destroyAndRecreateChart(data: LtvModel[]): void {
+  private updateChartWithData(data: LtvModel[]): void {
     if (!this.isBrowser) return;
-    
-    if (this.chart) {
-      this.chart.destroy();
-    }
-    
-    if (this.chartCanvas && this.chartCanvas.nativeElement) {
-      const ctx = this.chartCanvas.nativeElement.getContext('2d');
-      if (!ctx) return;
-      
-      this.initChart();
-      this.updateChart(data);
-    }
-  }
 
-  private updateChart(data: LtvModel[]): void {
-    if (!this.isBrowser || !this.chart) return;
-
+    this.initChart();
     const values = Array(12).fill(0);
     data.forEach(item => {
       const month = parseInt(item.date.split('-')[1]) - 1;
@@ -253,15 +215,13 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
       }
     });
 
-    this.chart.data.datasets[0].data = values;
-    this.chart.update();
+    if (this.chartOption.series && Array.isArray(this.chartOption.series) && this.chartOption.series.length > 0) {
+      (this.chartOption.series[0] as BarSeriesOption).data = values;
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    if (this.chart) {
-      this.chart.destroy();
-    }
   }
 }

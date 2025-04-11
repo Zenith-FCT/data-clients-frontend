@@ -52,10 +52,6 @@ import { LtvViewModelService } from '../../view-model/ltv-viewmodel.service';
 export class MainOrdersInvoiceComponent implements OnInit {
   selectedMonth: number = new Date().getMonth() + 1;
   selectedYear: number = new Date().getFullYear();
-  selectedTmYear: number = new Date().getFullYear();
-  selectedClientYear: number = new Date().getFullYear();
-  selectedProductYear: number = new Date().getFullYear();
-  selectedLtvYear: number = new Date().getFullYear();
   years: number[] = [];
   months: number[] = Array.from({length: 12}, (_, i) => i + 1);
 
@@ -96,32 +92,20 @@ export class MainOrdersInvoiceComponent implements OnInit {
   onDateChange(): void {
     this.ordersInvoiceViewModel.setSelectedMonth(this.selectedMonth);
     this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
+    this.ordersInvoiceViewModel.setSelectedTmYear(this.selectedYear);
+    
     this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
     this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
     this.ordersInvoiceViewModel.loadMonthlyTm(this.selectedYear, this.selectedMonth);
-  }
-
-  onTmYearChange(): void {
-    this.ordersInvoiceViewModel.setSelectedTmYear(this.selectedTmYear);
-    this.ordersInvoiceViewModel.loadYearTmList(this.selectedTmYear);
-  }
-
-  onClientYearChange(): void {
-    this.invoiceClientsViewModel.setSelectedYear(this.selectedClientYear);
-    
+    this.ordersInvoiceViewModel.loadYearTmList(this.selectedYear);
+    this.invoiceClientsViewModel.setSelectedYear(this.selectedYear);
     this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();
     this.orderInvoiceProductViewModel.loadInvoiceProductType();
-  }
-  
-  onLtvYearChange(): void {
-    this.ltvViewModel.setSelectedYear(this.selectedLtvYear);
+    this.ltvViewModel.setSelectedYear(this.selectedYear);
     this.ltvViewModel.loadLtv();
-  }
-
-  onProductYearChange(): void {
-    this.orderInvoiceProductViewModel.setSelectedYear(this.selectedProductYear);
+    this.orderInvoiceProductViewModel.setSelectedYear(this.selectedYear);
     this.orderInvoiceProductViewModel.loadInvoiceProductType();
   }
 
@@ -136,6 +120,7 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.ordersInvoiceViewModel.loadMonthlyTm(currentYear, currentMonth);
     this.ordersInvoiceViewModel.loadMonthlyOrders(currentYear, currentMonth);
     this.ordersInvoiceViewModel.loadMonthlyTmList();
+    this.ordersInvoiceViewModel.loadYearTmList(currentYear);
     
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();
