@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, signal, computed, effect, Injector, runInInjectionContext } from '@angular/core';
+import { Injectable, OnDestroy, signal, computed } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { GetTotalLostCarsUseCase } from '../../domain/use-case/get-total-lost-cars.use-case';
 import { GetRateLostCarsUseCase } from '../../domain/use-case/get-rate-lost-cars.use-case';
@@ -65,10 +65,7 @@ export class CartsViewModelService implements OnDestroy {
     private getCartsListUseCase: GetCartsListUseCase;
     private getRateAbandonedCartsListUseCase: GetRateAbandonedCartsListUseCase;
 
-    constructor(
-        private cartsDataRepository: CartsDataRepository,
-        private injector: Injector
-    ) {
+    constructor(private cartsDataRepository: CartsDataRepository) {
         this.getTotalLostCarsUseCase = new GetTotalLostCarsUseCase(this.cartsDataRepository);
         this.getRateLostCarsUseCase = new GetRateLostCarsUseCase(this.cartsDataRepository);
         this.getAvailableYearsUseCase = new GetAvailableYearsUseCase(this.cartsDataRepository);
@@ -77,22 +74,7 @@ export class CartsViewModelService implements OnDestroy {
         this.getCartsListUseCase = new GetCartsListUseCase(this.cartsDataRepository);
         this.getRateAbandonedCartsListUseCase = new GetRateAbandonedCartsListUseCase(this.cartsDataRepository);
         
-        // Usar runInInjectionContext para cualquier efecto que se esté creando en el constructor
-        runInInjectionContext(this.injector, () => {
-            // Iniciar la carga de datos
-            this.loadAvailableYears();
-            
-            // Crear efectos si es necesario
-            effect(() => {
-                // Ejemplo de efecto que podría ser necesario
-                const selectedYear = this.selectedYear$();
-                const selectedMonth = this.selectedMonth$();
-                if (selectedYear && selectedMonth) {
-                    // Solo para debugging - eliminar si no es necesario
-                    console.log(`Year/Month changed: ${selectedYear}/${selectedMonth}`);
-                }
-            });
-        });
+        this.loadAvailableYears();
     }    async loadAvailableYears(): Promise<void> {
         try {
             const years = await firstValueFrom(this.getAvailableYearsUseCase.execute());

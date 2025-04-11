@@ -5,7 +5,16 @@ import { Subject } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { TmModel } from '../../../../../domain/use-cases/get-all-monthly-tm.use-case';
-import * as echarts from 'echarts';
+
+interface ChartConfiguration {
+  type: string;
+  data: any;
+  options: any;
+}
+
+declare const Chart: {
+  new (ctx: CanvasRenderingContext2D, config: ChartConfiguration): any;
+};
 
 @Component({
   selector: 'app-chart-tm',
@@ -15,8 +24,8 @@ import * as echarts from 'echarts';
   styleUrl: './chart-tm.component.scss'
 })
 export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('chartContainer') chartContainer!: ElementRef<HTMLDivElement>;
-  private chart: echarts.ECharts | null = null;
+  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
+  private chart: any;
   private destroy$ = new Subject<void>();
   private currentData: TmModel[] = [];
   private isBrowser: boolean;
@@ -121,113 +130,90 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   private initChart(): void {
     if (!this.isBrowser) return;
     
-    if (!this.chartContainer || !this.chartContainer.nativeElement) return;
-    
-    this.chart = echarts.init(this.chartContainer.nativeElement);
-    
-    const colors = [...this.chartColors];
-    const borderColors = [...this.chartBorderColors];
-    
-    const option: echarts.EChartsOption = {
-      tooltip: {
-        trigger: 'item',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        padding: 10,
-        formatter: function(params: any) {
-          return `Ticket Medio: ${parseFloat(params.value).toLocaleString('es-ES')} €`;
-        },
-        textStyle: {
-          color: '#000000',
-          fontSize: 14
-        },
-        confine: true,
-      },
-      grid: {
-        left: '5%',
-        right: '8%',
-        bottom: '3%', 
-        top: '10%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        axisLine: {
-          lineStyle: {
-            color: 'rgba(0, 0, 0, 0.3)'
-          }
-        },
-        axisLabel: {
-          fontSize: 14,
-          margin: 12,
-          color: '#000000'
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Valor Medio (€)',
-        nameLocation: 'end',
-        nameTextStyle: {
-          fontWeight: 'bold',
-          fontSize: 14,
-          color: '#000000'
-        },
-        axisLine: {
-          show: false        },
-        axisLabel: {
-          formatter: (value: number): string => value.toLocaleString('es-ES') + ' €',
-          fontSize: 12,
-          color: '#000000'
-        },
-        splitLine: {
-          lineStyle: {
-            color: 'rgba(0, 0, 0, 0.1)'
-          }
-        }
-      },      series: [
-        {
-          name: 'Ticket Medio Mensual',
-          type: 'bar',
-          barWidth: '70%',
+    const ctx = this.chartCanvas.nativeElement.getContext('2d');
+    if (!ctx) return;
+
+    const config: ChartConfiguration = {
+      type: 'bar',
+      data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        datasets: [{
+          label: 'Ticket Medio Mensual',
           data: [],
-          markLine: {
-            silent: true,
-            data: []
+          backgroundColor: this.chartColors,
+          borderColor: this.chartBorderColors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
           },
-          itemStyle: {
-            color: function(params: echarts.DefaultLabelFormatterCallbackParams) {
-              return colors[params.dataIndex % colors.length];
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: {
+              size: 12
+            },
+            bodyFont: {
+              size: 12
+            },
+            padding: 10,
+            callbacks: {
+              label: (context: any) => {
+                return `Ticket Medio: ${context.parsed.y.toLocaleString('es-ES')} €`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: true,
+              color: 'rgba(0, 0, 0, 0.1)'
+            },
+            ticks: {
+              callback: (value: number) => {
+                return value.toLocaleString('es-ES') + ' €';
+              },
+              font: {
+                size: 11
+              }
+            },
+            title: {
+              display: true,
+              text: 'Valor Medio (€)',
+              font: {
+                weight: 'bold',
+                size: 14
+              }
             }
           },
-          emphasis: {
-            itemStyle: {
-              color: function(params: echarts.DefaultLabelFormatterCallbackParams) {
-                const index = params.dataIndex % colors.length;
-                const baseColor = colors[index];
-                return baseColor.replace('0.2', '0.5');
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              font: {
+                size: 11
               }
             }
           }
         }
-      ]
+      }
     };
-    
-    this.chart.setOption(option);
-    if (this.isBrowser && typeof window !== 'undefined') {
-      window.addEventListener('resize', this.resizeChart.bind(this));
-    }
+
+    this.chart = new Chart(ctx, config);
   }
 
   private updateChart(data: TmModel[]): void {
-    if (!this.chart) {
-      if (this.chartContainer && this.chartContainer.nativeElement) {
-        this.initChart();
-      } else {
-        return;
-      }
+    if (!this.isBrowser || !this.chart) {
+      return;
     }
-    
-    if (!this.isBrowser || !this.chart) return;
 
     const values = Array(12).fill(0);
     
@@ -238,36 +224,15 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.chart.setOption({
-      series: [{
-        data: values
-      }]
-    });
-    
-    setTimeout(() => {
-      if (this.chart) {
-        this.chart.resize();
-      }
-    }, 0);
-  }
-
-  private resizeChart(): void {
-    if (this.chart) {
-      this.chart.resize();
-    }
+    this.chart.data.datasets[0].data = values;
+    this.chart.update();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    
-    if (this.isBrowser && typeof window !== 'undefined') {
-      window.removeEventListener('resize', this.resizeChart.bind(this));
-    }
-    
     if (this.chart) {
-      this.chart.dispose();
-      this.chart = null;
+      this.chart.destroy();
     }
   }
 }

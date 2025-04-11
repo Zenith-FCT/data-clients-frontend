@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { MonthlySalesModel } from '../../../../../domain/models/monthly-sales.model';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
-import * as echarts from 'echarts';
+declare const Chart: any;
 
 @Component({
   selector: 'app-chart-total-invoice',
@@ -15,8 +15,8 @@ import * as echarts from 'echarts';
   styleUrl: './chart-total-invoice.component.scss'
 })
 export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('chartContainer') chartContainer!: ElementRef<HTMLDivElement>;
-  private chart: echarts.ECharts | null = null;
+  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
+  private chart: any;
   private destroy$ = new Subject<void>();
   selectedYear: number = new Date().getFullYear();
   years: number[] = [];
@@ -33,7 +33,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
       const year = this.monthlySalesViewModel.selectedYear$();
       this.selectedYear = year;
       if (this.currentData.length > 0) {
-        this.updateChartData(this.filterDataByYear(this.currentData));
+        this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
       }
     });
 
@@ -42,7 +42,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
       if (data && data.length > 0) {
         this.currentData = data;
         this.extractYearsFromData(data);
-        this.updateChartData(this.filterDataByYear(data));
+        this.destroyAndRecreateChart(this.filterDataByYear(data));
       }
     });
   }
@@ -62,7 +62,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
     if (this.selectedYear) {
       this.monthlySalesViewModel.setSelectedYear(this.selectedYear);
       if (this.currentData.length > 0) {
-        this.updateChartData(this.filterDataByYear(this.currentData));
+        this.destroyAndRecreateChart(this.filterDataByYear(this.currentData));
       }
     }
   }
@@ -92,134 +92,234 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
   private initChart(): void {
     if (!this.isBrowser) return;
     
-    if (!this.chartContainer || !this.chartContainer.nativeElement) return;
-    
-    this.chart = echarts.init(this.chartContainer.nativeElement);
-    
-    const option: echarts.EChartsOption = {
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(255, 255, 255, 0.88)',
-        padding: 10,
-        formatter: function(params: any) {
-          const value = params[0].value;
-          return `${params[0].name}: ${parseFloat(value).toLocaleString('es-ES')} €`;
-        },
-        confine: true
+    const ctx = this.chartCanvas.nativeElement.getContext('2d');
+    if (!ctx) return;
+
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        datasets: [{
+          label: 'Ventas Mensuales',
+          data: [],
+          borderColor: '#FE2800',
+          backgroundColor: 'transparent',
+          tension: 0,
+          fill: false,
+          pointRadius: 5,
+          pointBackgroundColor: '#FE2800'
+        }]
       },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '10%',
-        top: '5%',     
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        axisLine: {
-          lineStyle: {
-            color: 'rgba(0, 0, 0, 0.1)'
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: {
+            top: 20,
+            bottom: 20
           }
         },
-        axisLabel: {
-          fontSize: 12,
-          margin: 12,   
-          interval: 0,  
-          color: '#333' 
-        }
-      },
-      yAxis: {
-        type: 'value',
-        axisLine: {
-          show: false
+        interaction: {
+          intersect: false,
+          mode: 'nearest',
+          axis: 'xy'
         },
-        axisLabel: {
-          formatter: (value: number) => value.toLocaleString('es-ES') + '€',
-          fontSize: 12,
-          color: '#000000'
+        plugins: {
+          title: {
+            display: false
+          },
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: {
+              size: 12
+            },
+            bodyFont: {
+              size: 12
+            },
+            padding: 10,
+            callbacks: {
+              label: function(context: any) {
+                let value = context.parsed.y;
+                return value.toLocaleString('es-ES') + ' €';
+              }
+            }
+          }
         },
-        splitLine: {
-          lineStyle: {
-            color: 'rgba(0, 0, 0, 0.1)'
+        elements: {
+          point: {
+            hitRadius: 15,
+            hoverRadius: 7,
+            radius: 5
+          },
+          line: {
+            tension: 0.2
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: true,
+              color: 'rgba(0, 0, 0, 0.1)'
+            },
+            ticks: {
+              callback: function(value: number): string {
+                return  value.toLocaleString('es-ES')+ '€';
+              },
+              font: {
+                size: 11
+              }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              font: {
+                size: 11
+              }
+            }
           }
         }
-      },
-      series: [{
-        name: 'Ventas Mensuales',
+      }
+    });
+  }
+
+  private destroyAndRecreateChart(data: MonthlySalesModel[]): void {
+    if (!this.isBrowser) return;
+    
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    
+    if (this.chartCanvas && this.chartCanvas.nativeElement) {
+      const ctx = this.chartCanvas.nativeElement.getContext('2d');
+      if (!ctx) return;
+      
+      this.chart = new Chart(ctx, {
         type: 'line',
-        smooth: false,
-        lineStyle: {
-          width: 2,
-          color: '#FE2800'
-        },
-        symbol: 'circle',
-        symbolSize: 8,
-        itemStyle: {
-          color: '#FE2800'
-        },
-        emphasis: {
-          itemStyle: {
-            borderWidth: 3,
+        data: {
+          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          datasets: [{
+            label: 'Ventas Mensuales',
+            data: [],
             borderColor: '#FE2800',
-            color: '#FE2800'
-          }
+            backgroundColor: 'transparent',
+            tension: 0,
+            fill: false,
+            pointRadius: 5,
+            pointBackgroundColor: '#FE2800'
+          }]
         },
-        data: []
-      }]
-    };    
-    this.chart.setOption(option);
-    
-   
-    if (this.isBrowser && typeof window !== 'undefined') {
-      window.addEventListener('resize', this.resizeChart.bind(this));
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 20,
+              bottom: 20
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'nearest',
+            axis: 'xy'
+          },
+          plugins: {
+            title: {
+              display: false
+            },
+            legend: {
+              display: false
+            },
+            tooltip: {
+              enabled: true,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleFont: {
+                size: 12
+              },
+              bodyFont: {
+                size: 12
+              },
+              padding: 10,
+              callbacks: {
+                label: function(context: any) {
+                  let value = context.parsed.y;
+                  return value.toLocaleString('es-ES') + ' €';
+                }
+              }
+            }
+          },
+          elements: {
+            point: {
+              hitRadius: 15,
+              hoverRadius: 7,
+              radius: 5
+            },
+            line: {
+              tension: 0.2
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+              },
+              ticks: {
+                callback: function(value: number): string {
+                  return value.toLocaleString('es-ES') + '€';
+                },
+                font: {
+                  size: 11
+                }
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                font: {
+                  size: 11
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      if (this.chart) {
+        this.updateChart(data);
+      }
     }
   }
 
-  private updateChartData(data: MonthlySalesModel[]): void {
-    if (!this.chart) {
-      if (this.chartContainer && this.chartContainer.nativeElement) {
-        this.initChart();
-      } else {
-        return;
-      }
-    }
-    
+  private updateChart(data: MonthlySalesModel[]): void {
     if (!this.isBrowser || !this.chart) return;
 
     const values = Array(12).fill(0);
     data.forEach(item => {
       const month = parseInt(item.date.split('-')[1]) - 1;
-      if (!isNaN(month) && month >= 0 && month < 12) {
-        values[month] = parseFloat(item.totalSales || '0');
-      }
+      values[month] = parseFloat(item.totalSales);
     });
 
-    this.chart.setOption({
-      series: [{
-        data: values
-      }]
-    });
-  }
-
-  private resizeChart(): void {
-    if (this.chart) {
-      this.chart.resize();
-    }
+    this.chart.data.datasets[0].data = values;
+    this.chart.update();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    
-    if (this.isBrowser && typeof window !== 'undefined') {
-      window.removeEventListener('resize', this.resizeChart.bind(this));
-    }
-    
     if (this.chart) {
-      this.chart.dispose();
-      this.chart = null;
+      this.chart.destroy();
     }
   }
 }
