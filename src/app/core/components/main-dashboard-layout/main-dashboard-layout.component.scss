@@ -14,7 +14,7 @@
   padding: 0 !important;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
-  position: relative; /* Añadido para crear un contexto de apilamiento */
+  position: relative;
 }
 
 .dashboard-container .top-toolbar {
@@ -24,13 +24,13 @@
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
   position: sticky;
   top: 0;
-  z-index: 1100; /* Aumentado para asegurar que esté sobre todos los elementos */
+  z-index: 1100;
   height: 80px;
   display: flex;
   align-items: center;
   padding: 0 !important;
   margin: 0 !important;
-  flex-shrink: 0; /* Evita que la toolbar se comprima */
+  flex-shrink: 0;
 }
 
 .toolbar-logo {
@@ -55,7 +55,7 @@
   flex: 1;
   height: calc(100vh - 80px);
   overflow: hidden;
-  position: relative; /* Añadido para crear un nuevo contexto de apilamiento */
+  position: relative;
 }
 
 .sidenav {
@@ -67,8 +67,8 @@
   height: 100%;
   overflow-y: auto;
   position: relative;
-  z-index: 1050; /* Añadido para asegurar que esté sobre el contenido pero debajo de la toolbar */
-  flex-shrink: 0; /* Evita que la barra lateral se comprima */
+  z-index: 1050;
+  flex-shrink: 0;
 }
 
 .sidenav.expanded {
@@ -140,8 +140,8 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100vh - 80px);
-  position: relative; /* Añadido para crear un nuevo contexto de apilamiento */
-  z-index: 1000; /* Añadido para controlar su posición en el contexto de apilamiento */
+  position: relative;
+  z-index: 1000;
 }
 
 .nav-item .nav-icon,
