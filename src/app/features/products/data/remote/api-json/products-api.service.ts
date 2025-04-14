@@ -5,6 +5,7 @@ import { Observable, forkJoin, map, catchError, of, tap } from 'rxjs';
 import { TotalBillingPerProductModel } from '../../../domain/total-billing-per-product.model';
 import { TotalSalesPerProductModel } from '../../../domain/total-sales-per-product.model';
 import { TopProductModel } from '../../../domain/top-products.model';
+import { TopProductsByMonthModel } from '../../../domain/top-products-by-month.model';
 
 // Interfaces para representar los datos crudos de la API
 interface ProductApi {
@@ -246,6 +247,74 @@ export class ProductsApiService {
       }),
       catchError(error => {
         console.error('Error al obtener o procesar datos de productos y pedidos:', error);
+        return of([]);
+      })
+    );  }
+
+  /**
+   * Obtiene los 10 productos más vendidos por mes
+   */
+  getTopProductsByMonth(): Observable<TopProductsByMonthModel[]> {
+    console.log('Obteniendo datos de productos y pedidos para los más vendidos por mes');
+    
+    return this.http.get<OrderApi[]>(this.ordersUrl).pipe(
+      tap(orders => {
+        console.log(`Recibidos ${orders.length} pedidos para top products por mes`);
+      }),
+      map(orders => {
+        // Crear un mapa para acumular las ventas por producto por mes
+        const salesByMonthAndProduct = new Map<string, Map<string, number>>();
+        
+        // Procesar los pedidos para calcular las ventas por mes y producto
+        orders.forEach(order => {
+          // Extraer el mes del pedido (formato: YYYY-MM)
+          const orderDate = new Date(order.fecha_pedido);
+          const month = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+          
+          // Inicializar el mapa para el mes si no existe
+          if (!salesByMonthAndProduct.has(month)) {
+            salesByMonthAndProduct.set(month, new Map<string, number>());
+          }
+          
+          const monthSales = salesByMonthAndProduct.get(month)!;
+          
+          // Contar las ventas de cada producto en el pedido
+          const orderProducts = order.productos || [];
+          orderProducts.forEach(orderProduct => {
+            const currentSales = monthSales.get(orderProduct.nombre_producto) || 0;
+            monthSales.set(orderProduct.nombre_producto, currentSales + (orderProduct.cantidad || 1));
+          });
+        });
+        
+        // Convertir el mapa a un array de TopProductsByMonthModel
+        const result: TopProductsByMonthModel[] = [];
+        
+        // Para cada mes, obtener los 10 productos más vendidos
+        salesByMonthAndProduct.forEach((productSales, month) => {
+          // Convertir el mapa de productos a un array y ordenar por ventas
+          const topProducts = Array.from(productSales.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10) // Tomar solo los 10 más vendidos
+            .map(([productName, salesCount]) => ({
+              month,
+              productName,
+              salesCount
+            }));
+          
+          // Añadir los productos al resultado
+          result.push(...topProducts);
+        });
+        
+        return result;
+      }),
+      tap(result => {
+        console.log(`Obtenidos ${result.length} productos más vendidos por mes`);
+        if (result.length > 0) {
+          console.log('Muestra del primer producto más vendido por mes:', result[0]);
+        }
+      }),
+      catchError(error => {
+        console.error('Error al obtener o procesar datos para productos más vendidos por mes:', error);
         return of([]);
       })
     );

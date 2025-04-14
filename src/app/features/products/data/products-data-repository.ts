@@ -4,6 +4,7 @@ import { IProductsRepository } from '../domain/iproducts-repository.interface';
 import { TopProductModel } from '../domain/top-products.model';
 import { TotalBillingPerProductModel } from '../domain/total-billing-per-product.model';
 import { TotalSalesPerProductModel } from '../domain/total-sales-per-product.model';
+import { TopProductsByMonthModel } from '../domain/top-products-by-month.model';
 import { ProductsApiService } from './remote/api-json/products-api.service';
 
 @Injectable()
@@ -29,12 +30,21 @@ export class ProductsDataRepository implements IProductsRepository {
       })
     );
   }
-
   getTotalSalesPerProduct(): Observable<TotalSalesPerProductModel[]> {
     return this.productsApiService.getTotalSalesPerProduct().pipe(
       tap(products => console.log('ProductsDataRepository: Total sales per product loaded:', products.length)),
       catchError(error => {
         console.error('ProductsDataRepository: Error getting total sales per product:', error);
+        throw error;
+      })
+    );
+  }
+
+  getTopProductsByMonth(): Observable<TopProductsByMonthModel[]> {
+    return this.productsApiService.getTopProductsByMonth().pipe(
+      tap(products => console.log('ProductsDataRepository: Top products by month loaded:', products.length)),
+      catchError(error => {
+        console.error('ProductsDataRepository: Error getting top products by month:', error);
         throw error;
       })
     );

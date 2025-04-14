@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { productsProviders } from '../products.providers';
 import { ProductBillingViewModel } from './product-billing.view-model';
 import { ProductSalesViewModel } from './product-sales.view-model';
+import { TopProductsByMonthViewModel } from './top-products-by-month.view-model';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 import { GetTotalBillingPerProductUseCase } from '../domain/get-total-billing-per-product-use-case';
 import { GetTotalSalesPerProductUseCase } from '../domain/get-total-sales-per-product-use-case';
@@ -12,6 +13,7 @@ import { Subject } from 'rxjs';
 import { ProductSalesChartComponent } from './components/product-sales-chart/product-sales-chart.component';
 import { ProductBillingChartComponent } from './components/product-billing-chart/product-billing-chart.component';
 import { TopProductsTableComponent } from './components/top-products-table/top-products-table.component';
+import { TopProductsByMonthChartComponent } from './components/top-products-by-month-chart/top-products-by-month-chart.component';
 
 export enum ChartViewMode {
   ByProduct = 'byProduct',
@@ -20,15 +22,15 @@ export enum ChartViewMode {
 
 @Component({
   selector: 'app-main-products',
-  standalone: true,
-  imports: [
+  standalone: true,  imports: [
     CommonModule, 
     RouterModule,
     NgxEchartsModule,
     FormsModule,
     ProductSalesChartComponent,
     ProductBillingChartComponent,
-    TopProductsTableComponent
+    TopProductsTableComponent,
+    TopProductsByMonthChartComponent
   ],
   providers: [
     GetTotalBillingPerProductUseCase,
@@ -47,21 +49,21 @@ export enum ChartViewMode {
 })
 export class MainProductsComponent implements OnInit, OnDestroy {  
   isBrowser: boolean;
-  private destroy$ = new Subject<void>();
-  constructor(
+  private destroy$ = new Subject<void>();  constructor(
     public billingViewModel: ProductBillingViewModel,
     public salesViewModel: ProductSalesViewModel,
+    public topProductsByMonthViewModel: TopProductsByMonthViewModel,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
-
   ngOnInit(): void {
     // Inicializar datos solo si estamos en un navegador y no en un entorno de prueba
     if (this.isBrowser && !this.isTestEnvironment()) {
       // Aseguramos que los datos se carguen cuando se navega a esta vista
       this.billingViewModel.ensureDataLoaded();
       this.salesViewModel.ensureDataLoaded();
+      this.topProductsByMonthViewModel.loadTopProductsByMonth();
     }
   }
   

@@ -1,0 +1,41 @@
+<div class="chart-container" *ngIf="isBrowser">
+  <div class="chart-header">
+    <h3>Top 10 Productos Más Vendidos por Mes</h3>
+    <div class="filter-controls">
+      <div class="selectors-container">
+        <mat-form-field appearance="outline" class="month-selector">
+          <mat-select [(value)]="selectedMonth" (selectionChange)="onDateChange()">
+            <mat-option *ngFor="let month of getAvailableMonths()" [value]="month">
+              {{monthNames[month-1]}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="year-selector">
+          <mat-select [(value)]="selectedYear" (selectionChange)="onDateChange()">
+            <mat-option *ngFor="let year of availableYears" [value]="year">
+              {{year}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-content">
+    <div *ngIf="viewModel.loading$()" class="loading-indicator">
+      <p>Cargando datos...</p>
+    </div>
+    
+    <div *ngIf="viewModel.error$()" class="error-message">
+      <p>{{ viewModel.error$() }}</p>
+    </div>
+    
+    <div *ngIf="!viewModel.loading$() && !viewModel.error$() && dataLoaded" class="echarts-container">
+      <div echarts [options]="chartOption" class="chart"></div>
+    </div>
+    
+    <div *ngIf="!viewModel.loading$() && !viewModel.error$() && !dataLoaded" class="no-data-message">
+      <p>No hay datos disponibles para mostrar.</p>
+    </div>
+  </div>
+</div>

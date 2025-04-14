@@ -8,12 +8,24 @@
         <!-- Product Earnings Chart (Mitad izquierda) -->
         <div class="chart-wrapper left">
           <app-product-billing-chart></app-product-billing-chart>
-          <app-top-products-table></app-top-products-table>
         </div>
         
         <!-- Total Sales Per Product Chart (Mitad derecha) -->
         <div class="chart-wrapper right">
           <app-product-sales-chart></app-product-sales-chart>
+        </div>
+      </div>
+      
+      <!-- Top Products row (tabla y gráfico por mes) -->
+      <div class="top-products-row">
+        <!-- Tabla de productos más vendidos (Mitad izquierda) -->
+        <div class="top-products-left">
+          <app-top-products-table></app-top-products-table>
+        </div>
+        
+        <!-- Gráfico de productos más vendidos por mes (Mitad derecha) -->
+        <div class="top-products-right">
+          <app-top-products-by-month-chart></app-top-products-by-month-chart>
         </div>
       </div>
     }
