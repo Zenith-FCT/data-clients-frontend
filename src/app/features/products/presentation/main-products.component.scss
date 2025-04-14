@@ -50,6 +50,13 @@
   flex-direction: column;
 }
 
+/* Layout para el gráfico de evolución de ventas */
+.sales-evolution-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
 // Estilos para los indicadores de carga y error
 .loading-indicator {
   display: flex;

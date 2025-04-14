@@ -3,9 +3,9 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { productsProviders } from '../products.providers';
-import { ProductBillingViewModel } from './product-billing.view-model';
-import { ProductSalesViewModel } from './product-sales.view-model';
-import { TopProductsByMonthViewModel } from './top-products-by-month.view-model';
+import { ProductBillingViewModel } from './components/product-billing-chart/product-billing.view-model';
+import { ProductSalesViewModel } from './components/product-sales-chart/product-sales.view-model';
+import { TopProductsByMonthViewModel } from './components/top-products-by-month-chart/top-products-by-month.view-model';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 import { GetTotalBillingPerProductUseCase } from '../domain/get-total-billing-per-product-use-case';
 import { GetTotalSalesPerProductUseCase } from '../domain/get-total-sales-per-product-use-case';
@@ -14,6 +14,7 @@ import { ProductSalesChartComponent } from './components/product-sales-chart/pro
 import { ProductBillingChartComponent } from './components/product-billing-chart/product-billing-chart.component';
 import { TopProductsTableComponent } from './components/top-products-table/top-products-table.component';
 import { TopProductsByMonthChartComponent } from './components/top-products-by-month-chart/top-products-by-month-chart.component';
+import { ProductSalesEvolutionChartComponent } from './components/product-sales-evolution-chart/product-sales-evolution-chart.component';
 
 export enum ChartViewMode {
   ByProduct = 'byProduct',
@@ -30,7 +31,8 @@ export enum ChartViewMode {
     ProductSalesChartComponent,
     ProductBillingChartComponent,
     TopProductsTableComponent,
-    TopProductsByMonthChartComponent
+    TopProductsByMonthChartComponent,
+    ProductSalesEvolutionChartComponent
   ],
   providers: [
     GetTotalBillingPerProductUseCase,

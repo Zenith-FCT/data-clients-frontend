@@ -1,0 +1,32 @@
+<div class="chart-container" *ngIf="isBrowser">
+  <div class="chart-header">
+    <h3>Evolución de Ventas Mensuales por Producto</h3>
+    <div class="filter-controls">
+      <mat-form-field appearance="outline" class="product-selector">
+        <mat-select [(value)]="selectedProductIds" [multiple]="true" (selectionChange)="onProductSelectionChange()">
+          <mat-option *ngFor="let product of viewModel.availableProducts$()" [value]="product.id">
+            {{product.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="chart-content">
+    <div *ngIf="viewModel.loading$()" class="loading-indicator">
+      <p>Cargando datos...</p>
+    </div>
+    
+    <div *ngIf="viewModel.error$()" class="error-message">
+      <p>{{ viewModel.error$() }}</p>
+    </div>
+    
+    <div *ngIf="!viewModel.loading$() && !viewModel.error$() && dataLoaded" class="echarts-container">
+      <div echarts [options]="chartOption" class="chart"></div>
+    </div>
+    
+    <div *ngIf="!viewModel.loading$() && !viewModel.error$() && !dataLoaded" class="no-data-message">
+      <p>No hay datos disponibles para mostrar.</p>
+    </div>
+  </div>
+</div>

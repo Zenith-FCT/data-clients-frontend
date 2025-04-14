@@ -3,6 +3,7 @@ import { Observable, tap, catchError } from 'rxjs';
 import { IProductsRepository } from '../domain/iproducts-repository.interface';
 import { TopProductModel } from '../domain/top-products.model';
 import { TotalBillingPerProductModel } from '../domain/total-billing-per-product.model';
+import { ProductSalesEvolutionModel } from '../domain/product-sales-evolution.model';
 import { TotalSalesPerProductModel } from '../domain/total-sales-per-product.model';
 import { TopProductsByMonthModel } from '../domain/top-products-by-month.model';
 import { ProductsApiService } from './remote/api-json/products-api.service';
@@ -39,12 +40,20 @@ export class ProductsDataRepository implements IProductsRepository {
       })
     );
   }
-
   getTopProductsByMonth(): Observable<TopProductsByMonthModel[]> {
     return this.productsApiService.getTopProductsByMonth().pipe(
       tap(products => console.log('ProductsDataRepository: Top products by month loaded:', products.length)),
       catchError(error => {
         console.error('ProductsDataRepository: Error getting top products by month:', error);
+        throw error;
+      })
+    );
+  }
+  getProductSalesEvolution(): Observable<ProductSalesEvolutionModel[]> {
+    return this.productsApiService.getProductSalesEvolution().pipe(
+      tap((evolution: ProductSalesEvolutionModel[]) => console.log('ProductsDataRepository: Product sales evolution loaded:', evolution.length)),
+      catchError(error => {
+        console.error('ProductsDataRepository: Error getting product sales evolution:', error);
         throw error;
       })
     );

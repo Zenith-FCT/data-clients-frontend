@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
-import { ProductSalesViewModel } from '../../product-sales.view-model';
+import { ProductSalesViewModel } from './product-sales.view-model'; // Ensure this file exists at the specified path
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TotalSalesPerProductModel } from '../../../domain/total-sales-per-product.model';
 import { FormsModule } from '@angular/forms';
