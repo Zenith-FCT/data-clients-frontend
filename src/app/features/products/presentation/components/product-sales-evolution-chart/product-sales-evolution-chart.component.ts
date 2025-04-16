@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProductSalesEvolutionViewModel } from './product-sales-evolution.view-model';
 import { ProductSalesEvolutionModel } from '../../../domain/product-sales-evolution.model';
 
@@ -19,7 +20,8 @@ import { ProductSalesEvolutionModel } from '../../../domain/product-sales-evolut
     ReactiveFormsModule,
     MatSelectModule, 
     MatFormFieldModule, 
-    MatIconModule
+    MatIconModule,
+    MatCheckboxModule
   ],
   templateUrl: './product-sales-evolution-chart.component.html',
   styleUrl: './product-sales-evolution-chart.component.scss',
@@ -34,38 +36,46 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
   
   // Productos seleccionados para mostrar en el gráfico
   selectedProductIds: string[] = [];
+    // Año seleccionado para filtrar datos
+  selectedYear: number | null = null;  
   
+  // Referencias a los efectos para su posterior limpieza
+  private readonly effectRefs: ReturnType<typeof effect>[] = [];
+
   constructor(
     public viewModel: ProductSalesEvolutionViewModel,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
-    console.log('ProductSalesEvolutionChartComponent initialized');
 
-    // Efecto para procesar datos cuando se carguen
-    effect(() => {
+    // Efecto para procesar datos cuando se carguen - con referencia para limpieza
+    this.effectRefs.push(effect(() => {
       const productEvolution = this.viewModel.selectedProductsEvolution$();
       if (productEvolution && productEvolution.length > 0) {
-        console.log(`ProductSalesEvolutionChartComponent: Datos recibidos, ${productEvolution.length} productos seleccionados`);
         this.dataLoaded = true;
         this.selectedProductIds = this.viewModel.selectedProductIds$();
+        this.selectedYear = this.viewModel.selectedYear$();
         this.updateChartOption(productEvolution);
       }
-    });
+    }));
 
-    // Efecto para monitorear el estado de carga
-    effect(() => {
-      const loading = this.viewModel.loading$();
-      console.log(`ProductSalesEvolutionChartComponent: Estado de carga: ${loading ? 'cargando' : 'completo'}`);
-    });
+    // Efecto para monitorear el estado de carga - con referencia para limpieza
+    this.effectRefs.push(effect(() => {
+      // Solo accedemos al valor para que se registre la dependencia
+      this.viewModel.loading$();
+      // Log eliminado para optimización
+    }));
 
-    // Efecto para manejar errores
-    effect(() => {
+    // Efecto para manejar errores - con referencia para limpieza
+    this.effectRefs.push(effect(() => {
       const error = this.viewModel.error$();
       if (error) {
-        console.error(`ProductSalesEvolutionChartComponent: Error cargando datos: ${error}`);
+        // Registramos el error solo en entorno no de pruebas
+        if (!this.isTestEnvironment()) {
+          console.error(`Error cargando datos: ${error}`);
+        }
       }
-    });
+    }));
   }
   
   ngOnInit(): void {
@@ -87,20 +97,52 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
         (process.env && (process.env['CI'] === 'true' || 
          process.env['NODE_ENV'] === 'test'))))
     );
-  }
-
+  }  /**
+   * Limpia todos los recursos cuando el componente es destruido
+   */
   ngOnDestroy(): void {
-    console.log('ProductSalesEvolutionChartComponent: Componente destruido');
+    // Liberamos las suscripciones
     this.destroy$.next();
     this.destroy$.complete();
+    
+    // Limpiamos todos los efectos - EffectRef no es callable
+    this.effectRefs.forEach(effectRef => {
+      // El objeto EffectRef tiene un método destroy() que usamos para limpiarlo
+      effectRef.destroy();
+    });
+  }
+  /**
+   * Maneja el cambio en la selección de productos
+   * Actualiza el modelo de vista con los nuevos productos seleccionados
+   */
+  onProductSelectionChange(): void {
+    this.viewModel.setSelectedProductIds(this.selectedProductIds);
   }
 
   /**
-   * Maneja el cambio en la selección de productos
+   * Maneja el cambio en la selección de año
+   * Actualiza el modelo de vista con el nuevo año seleccionado
    */
-  onProductSelectionChange(): void {
-    console.log('ProductSalesEvolutionChartComponent: Selección de productos actualizada:', this.selectedProductIds);
-    this.viewModel.setSelectedProductIds(this.selectedProductIds);
+  onYearSelectionChange(): void {
+    if (this.selectedYear) {
+      this.viewModel.setSelectedYear(this.selectedYear);
+    }
+  }
+
+  /**
+   * Maneja la selección o deselección de productos mediante checkbox
+   * @param productId ID del producto seleccionado o deseleccionado
+   */
+  toggleProductSelection(productId: string): void {
+    // Si ya está seleccionado, lo quitamos; si no, lo añadimos
+    if (this.selectedProductIds.includes(productId)) {
+      this.selectedProductIds = this.selectedProductIds.filter(id => id !== productId);
+    } else {
+      this.selectedProductIds = [...this.selectedProductIds, productId];
+    }
+    
+    // Notificamos el cambio
+    this.onProductSelectionChange();
   }
 
   /**
@@ -130,6 +172,20 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
 
     // Convertir a array y ordenar cronológicamente
     const monthsArray = Array.from(allMonths).sort();
+      // Filtrar solo los meses del año seleccionado si hay un año seleccionado
+    // O crear un array con todos los meses del año si no hay datos para algún mes
+    let filteredMonthsArray = [];
+    
+    if (this.selectedYear) {
+      // Si hay un año seleccionado, aseguramos que estén todos los meses del año
+      for (let i = 1; i <= 12; i++) {
+        const monthStr = i < 10 ? `0${i}` : `${i}`;
+        const monthKey = `${this.selectedYear}-${monthStr}`;
+        filteredMonthsArray.push(monthKey);
+      }
+    } else {
+      filteredMonthsArray = monthsArray;
+    }
     
     // Crear series para cada producto
     const series = productEvolution.map(product => {
@@ -140,7 +196,7 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
       });
       
       // Crear array de datos para todos los meses (usando 0 si no hay ventas)
-      const data = monthsArray.map(month => salesByMonth.get(month) || 0);
+      const data = filteredMonthsArray.map(month => salesByMonth.get(month) || 0);
       
       return {
         name: product.productName,
@@ -154,16 +210,18 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
     });
     
     // Formatear etiquetas de meses para mejor visualización
-    const formattedMonths = monthsArray.map(month => {
+    const formattedMonths = filteredMonthsArray.map(month => {
       const [year, monthNum] = month.split('-');
       const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-      return `${monthNames[parseInt(monthNum) - 1]} ${year}`;
+      return `${monthNames[parseInt(monthNum) - 1]}`;
     });
+      // Año seleccionado para mostrar en el título
+    const yearText = this.selectedYear ? ` ${this.selectedYear}` : '';
     
     // Crear opciones del gráfico
     this.chartOption = {
       title: {
-        text: 'Evolución de Ventas Mensuales por Producto',
+        text: `Evolución de Ventas Mensuales por Producto${yearText}`,
         left: 'center',
         textStyle: { color: '#333' },
       },
@@ -175,16 +233,29 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
             backgroundColor: '#6a7985'
           }
         }
-      },
-      legend: {
+      },      legend: {
         data: productEvolution.map(p => p.productName),
-        top: '40px'
+        orient: 'horizontal',
+        bottom: '0',
+        type: 'scroll', // Permite desplazamiento si hay muchos productos
+        width: '90%',
+        textStyle: {
+          fontSize: 12,
+          overflow: 'truncate',
+          width: 120
+        },
+        pageIconSize: 12,
+        pageIconColor: '#666',
+        pageIconInactiveColor: '#aaa',
+        pageTextStyle: {
+          color: '#666'
+        }
       },
       grid: {
-        left: '8%',
+        left: '5%',
         right: '5%',
-        bottom: '10%',
-        top: '80px',
+        bottom: '12%', // Aumentado para dejar espacio a la leyenda en la parte inferior
+        top: '50px', // Reducido ya que la leyenda ya no está arriba
         containLabel: true
       },
       xAxis: [
@@ -193,10 +264,15 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
           boundaryGap: false,
           data: formattedMonths,
           axisLabel: {
-            rotate: 45,
+            interval: 0, // Asegura que todos los meses se muestren
             textStyle: {
               fontSize: 10
-            }
+            },
+            rotate: 0, // Sin rotación para mejorar la legibilidad
+            margin: 8
+          },
+          axisTick: {
+            alignWithLabel: true
           }
         }
       ],

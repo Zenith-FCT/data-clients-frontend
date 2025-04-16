@@ -1,21 +1,25 @@
 .chart-container {
-  width: 100%;
-  height: 470px; /* Altura fija coherente con los otros gráficos */
+  position: relative;
+  width: 100%; /* Cambiado para que se adapte al contenedor padre */
+  margin: 20px auto 0;
+  height: 470px;
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  margin-top: 20px; /* Espacio entre este gráfico y el componente superior */
+  border-radius: 16px; /* Bordes redondeados */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); /* Sombra */
+  box-sizing: border-box;
+  overflow: hidden; /* Mantiene los bordes redondeados */
+  padding: 15px; /* Padding aumentado para que el contenido no toque los bordes */
 }
 
 .chart-header {
-  padding: 12px 16px;
+  padding: 5px 15px 10px 15px; /* Padding ajustado */
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #eaeaea;
+  margin-bottom: 10px; /* Margen aumentado para separar del contenido */
 }
 
 .chart-header h3 {
@@ -23,11 +27,90 @@
   font-size: 16px;
   font-weight: 500;
   color: #333;
+  white-space: nowrap; /* Evita que el título se rompa */
+  overflow: hidden; /* Oculta el desbordamiento */
+  text-overflow: ellipsis; /* Muestra puntos suspensivos si se corta */
+  padding-right: 10px; /* Espacio reducido para dar más espacio al selector */
+  max-width: 65%; /* Ancho máximo ajustado */
 }
 
-.filter-controls {
+/* Layout horizontal para el gráfico y la selección de productos */
+.chart-layout {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 50px); /* Altura ajustada para el header */
+  box-sizing: border-box;
+  padding: 0; /* Quitamos el padding que puede estar causando problemas */
+  border-radius: 0 0 16px 16px; /* Bordes redondeados en la parte inferior */
+}
+
+.year-control {
   display: flex;
   align-items: center;
+  padding-left: 8px; /* Añadimos espacio a la izquierda */
+  margin: 0; /* Eliminamos márgenes */
+  flex-shrink: 0; /* Evitamos que se encoja */
+}
+
+/* Estilos para el selector de año */
+.year-selector {
+  width: 110px; /* Ancho optimizado */
+  
+  ::ng-deep .mat-mdc-form-field-infix {
+    width: auto;
+    padding: 2px 0; /* Altura más reducida */
+    display: flex;
+    align-items: center;
+  }
+  
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    height: 36px; /* Altura reducida para el wrapper */
+    padding: 0 10px;
+    display: flex;
+    align-items: center; /* Centrado vertical */
+  }
+  
+  ::ng-deep .mdc-notched-outline__leading,
+  ::ng-deep .mdc-notched-outline__notch,
+  ::ng-deep .mdc-notched-outline__trailing {
+    border-width: 1px !important;
+  }
+  
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+/* Panel de selección de productos */
+.product-selection-panel {
+  width: 200px; /* Ancho fijo */
+  padding: 10px; /* Padding ajustado */
+  border-right: 1px solid #eaeaea;
+  overflow-y: auto; /* Permite scroll vertical si hay muchos productos */
+  flex-shrink: 0; /* Evita que se reduzca */
+  height: 100%; /* Altura completa */
+  box-sizing: border-box; /* Garantiza que el padding se incluya en el ancho */
+  border-bottom-left-radius: 16px; /* Esquina inferior izquierda redondeada */
+  
+  h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #f5f5f5;
+  }
+}
+
+.product-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-checkbox {
+  font-size: 13px;
 }
 
 /* Estilos para el selector de productos */
@@ -64,7 +147,12 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 10px 15px 10px 10px; /* Padding ajustado */
+  width: calc(100% - 200px); /* Ajustado al ancho del panel de selección */
+  min-width: 0; /* Para que flex funcione correctamente */
+  box-sizing: border-box;
+  height: 100%; /* Altura completa */
+  border-bottom-right-radius: 16px; /* Esquina inferior derecha redondeada */
 }
 
 .loading-indicator, 
@@ -85,9 +173,15 @@
 .echarts-container {
   width: 100%;
   height: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  overflow: visible; /* Permite que el gráfico sea visible aunque sobresalga */
+  padding-right: 5px; /* Pequeño padding para no tocar el borde derecho */
 }
 
 .chart {
   width: 100%;
   height: 100%;
+  margin-right: 5px; /* Margen adicional por si las etiquetas sobresalen */
 }

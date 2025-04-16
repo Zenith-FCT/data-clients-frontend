@@ -57,6 +57,14 @@
   margin-bottom: 2rem;
 }
 
+.sales-evolution-wrapper {
+  width: 100%;
+  margin: 0.25rem 0;
+  height: auto;
+  box-sizing: border-box;
+  overflow: visible; /* Cambiado a visible para evitar recortes */
+}
+
 // Estilos para los indicadores de carga y error
 .loading-indicator {
   display: flex;
