@@ -15,8 +15,7 @@
           <app-product-sales-chart></app-product-sales-chart>
         </div>
       </div>
-      
-      <!-- Top Products row (tabla y gráfico por mes) -->
+        <!-- Top Products row (tabla y gráfico por mes) -->
       <div class="top-products-row">
         <!-- Tabla de productos más vendidos (Mitad izquierda) -->
         <div class="top-products-left">
@@ -26,6 +25,11 @@
         <!-- Gráfico de productos más vendidos por mes (Mitad derecha) -->
         <div class="top-products-right">
           <app-top-products-by-month-chart></app-top-products-by-month-chart>
+        </div>
+      </div>      <!-- Gráfico de evolución de ventas mensuales por producto (Ancho completo) -->
+      <div class="sales-evolution-row">
+        <div class="sales-evolution-wrapper">
+          <app-product-sales-evolution-chart></app-product-sales-evolution-chart>
         </div>
       </div>
     }

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
-import { ProductBillingViewModel } from '../../product-billing.view-model';
+import { ProductBillingViewModel } from './product-billing.view-model';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TotalBillingPerProductModel } from '../../../domain/total-billing-per-product.model';
 import { FormsModule } from '@angular/forms';

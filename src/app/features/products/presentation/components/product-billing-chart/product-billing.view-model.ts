@@ -2,8 +2,8 @@ import { Injectable, OnDestroy, signal, computed, inject, DestroyRef, PLATFORM_I
 import { Subject, firstValueFrom, catchError, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser } from '@angular/common';
-import { TotalBillingPerProductModel } from '../domain/total-billing-per-product.model';
-import { GetTotalBillingPerProductUseCase } from '../domain/get-total-billing-per-product-use-case';
+import { TotalBillingPerProductModel } from '../../../domain/total-billing-per-product.model';
+import { GetTotalBillingPerProductUseCase } from '../../../domain/get-total-billing-per-product-use-case';
 
 interface ProductsUiState {
   productBilling: TotalBillingPerProductModel[];

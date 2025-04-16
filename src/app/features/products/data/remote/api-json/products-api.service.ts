@@ -6,6 +6,7 @@ import { TotalBillingPerProductModel } from '../../../domain/total-billing-per-p
 import { TotalSalesPerProductModel } from '../../../domain/total-sales-per-product.model';
 import { TopProductModel } from '../../../domain/top-products.model';
 import { TopProductsByMonthModel } from '../../../domain/top-products-by-month.model';
+import { ProductSalesEvolutionModel } from '../../../domain/product-sales-evolution.model';
 
 // Interfaces para representar los datos crudos de la API
 interface ProductApi {
@@ -253,8 +254,7 @@ export class ProductsApiService {
 
   /**
    * Obtiene los 10 productos más vendidos por mes
-   */
-  getTopProductsByMonth(): Observable<TopProductsByMonthModel[]> {
+   */  getTopProductsByMonth(): Observable<TopProductsByMonthModel[]> {
     console.log('Obteniendo datos de productos y pedidos para los más vendidos por mes');
     
     return this.http.get<OrderApi[]>(this.ordersUrl).pipe(
@@ -315,6 +315,88 @@ export class ProductsApiService {
       }),
       catchError(error => {
         console.error('Error al obtener o procesar datos para productos más vendidos por mes:', error);
+        return of([]);
+      })    );
+  }
+    
+  /**
+   * Obtiene la evolución de ventas mensuales de cada producto
+   */
+  getProductSalesEvolution(): Observable<ProductSalesEvolutionModel[]> {
+    console.log('Obteniendo datos de productos y pedidos para la evolución de ventas mensuales');
+    
+    // Utilizamos forkJoin para obtener productos y pedidos en paralelo
+    return forkJoin({
+      products: this.http.get<ProductApi[]>(this.productsUrl),
+      orders: this.http.get<OrderApi[]>(this.ordersUrl)
+    }).pipe(
+      tap(data => {
+        console.log(`Recibidos ${data.products.length} productos y ${data.orders.length} pedidos`);
+      }),
+      map(({ products, orders }) => {
+        // Mapa para agrupar las ventas por productID y por mes
+        const salesEvolutionMap = new Map<string, {
+          productId: string;
+          productName: string;
+          salesByMonth: Map<string, number>;
+        }>();
+        
+        // Inicializar el mapa con todos los productos
+        products.forEach(product => {
+          salesEvolutionMap.set(product.SKU, {
+            productId: product.SKU,
+            productName: product.Nombre_producto,
+            salesByMonth: new Map<string, number>()
+          });
+        });
+        
+        // Procesar los pedidos para acumular las ventas mensuales por producto
+        orders.forEach(order => {
+          // Extraer el mes del pedido (formato: YYYY-MM)
+          const orderDate = new Date(order.fecha_pedido);
+          const month = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+          
+          // Sumar las ventas de cada producto en el pedido
+          const orderProducts = order.productos || [];
+          orderProducts.forEach(orderProduct => {
+            const productInfo = salesEvolutionMap.get(orderProduct.sku);
+            if (productInfo) {
+              const currentSales = productInfo.salesByMonth.get(month) || 0;
+              productInfo.salesByMonth.set(month, currentSales + (orderProduct.cantidad || 1));
+            }
+          });
+        });
+        
+        // Convertir el mapa a un array de ProductSalesEvolutionModel
+        const result: ProductSalesEvolutionModel[] = Array.from(salesEvolutionMap.values())
+          .filter(product => Array.from(product.salesByMonth.values()).some(count => count > 0)) // Solo incluir productos con ventas
+          .map(product => {
+            // Convertir el mapa de ventas por mes a un array
+            const monthlySales = Array.from(product.salesByMonth.entries())
+              .map(([month, salesCount]) => ({
+                month,
+                salesCount
+              }))
+              .sort((a, b) => a.month.localeCompare(b.month)); // Ordenar cronológicamente
+            
+            return {
+              productId: product.productId,
+              productName: product.productName,
+              monthlySales
+            };
+          });
+        
+        return result;
+      }),
+      tap(result => {
+        console.log(`Obtenida evolución de ventas para ${result.length} productos`);
+        if (result.length > 0) {
+          console.log('Muestra del primer producto:', result[0].productName, 
+                     `con datos de ${result[0].monthlySales.length} meses`);
+        }
+      }),
+      catchError(error => {
+        console.error('Error al obtener o procesar datos para la evolución de ventas:', error);
         return of([]);
       })
     );

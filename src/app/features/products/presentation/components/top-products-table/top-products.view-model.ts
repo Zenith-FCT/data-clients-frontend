@@ -1,41 +1,41 @@
 import { Injectable, computed, signal, inject, DestroyRef, PLATFORM_ID, Inject } from '@angular/core';
-import { TopProductsByMonthModel } from '../domain/top-products-by-month.model';
-import { GetTopProductsByMonthUseCase } from '../domain/get-top-products-by-month-use-case';
+import { TopProductModel } from '../../../domain/top-products.model';
+import { GetTopProductsUseCase } from '../../../domain/get-top-products-use-case';
 import { Subject, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser } from '@angular/common';
 
-interface TopProductsByMonthState {
-  topProductsByMonth: TopProductsByMonthModel[];
+interface TopProductsState {
+  topProducts: TopProductModel[];
   loading: boolean;
   error: string | null;
   initialized: boolean;
 }
 
 @Injectable()
-export class TopProductsByMonthViewModel {
+export class TopProductsViewModel {
   private destroy$ = new Subject<void>();
   private destroyRef = inject(DestroyRef);
   
-  private readonly uiState = signal<TopProductsByMonthState>({
-    topProductsByMonth: [],
+  private readonly uiState = signal<TopProductsState>({
+    topProducts: [],
     loading: false,
     error: null,
     initialized: false
   });
 
   // Señales computadas
-  public readonly topProductsByMonth$ = computed(() => this.uiState().topProductsByMonth);
+  public readonly topProducts$ = computed(() => this.uiState().topProducts);
   public readonly loading$ = computed(() => this.uiState().loading);
   public readonly error$ = computed(() => this.uiState().error);
   public readonly initialized = computed(() => this.uiState().initialized);
 
   constructor(
-    private getTopProductsByMonthUseCase: GetTopProductsByMonthUseCase,
+    private getTopProductsUseCase: GetTopProductsUseCase,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    console.log('TopProductsByMonthViewModel initialized');
+    console.log('TopProductsViewModel initialized');
   }
 
   private isTestEnvironment(): boolean {
@@ -52,8 +52,8 @@ export class TopProductsByMonthViewModel {
     return isPlatformBrowser(this.platformId) && !this.isTestEnvironment();
   }
 
-  loadTopProductsByMonth(): void {
-    console.log('TopProductsByMonthViewModel: Iniciando carga de los 10 productos más vendidos por mes');
+  loadTopProducts(): void {
+    console.log('TopProductsViewModel: Iniciando carga de los 10 productos más vendidos');
     
     if (!this.canMakeNetworkRequests()) {
       console.log('Saltando peticiones HTTP en entorno SSR o pruebas');
@@ -65,28 +65,27 @@ export class TopProductsByMonthViewModel {
       error: null 
     });
 
-    this.getTopProductsByMonthUseCase.execute()
+    this.getTopProductsUseCase.execute()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(error => {
-          console.error('Error loading top products by month:', error);
+          console.error('Error loading top products:', error);
           this.updateState({
-            error: 'Error al cargar los productos más vendidos por mes. Intente nuevamente.',
+            error: 'Error al cargar los productos más vendidos. Intente nuevamente.',
             loading: false,
             initialized: true
           });
           return of([]);
         })
-      )
-      .subscribe({
-        next: (topProductsByMonth: TopProductsByMonthModel[]) => {
-          console.log(`TopProductsByMonthViewModel: Datos recibidos, ${topProductsByMonth.length} productos por mes`);
+      )      .subscribe({
+        next: (topProducts: TopProductModel[]) => {
+          console.log(`TopProductsViewModel: Datos recibidos, ${topProducts.length} productos`);
           
-          if (topProductsByMonth.length === 0) {
-            console.warn('TopProductsByMonthViewModel: No se recibieron datos de productos por mes');
+          if (topProducts.length === 0) {
+            console.warn('TopProductsViewModel: No se recibieron datos de productos');
             this.updateState({
-              error: 'No se encontraron datos de los productos más vendidos por mes.',
-              topProductsByMonth: [],
+              error: 'No se encontraron datos de los productos más vendidos.',
+              topProducts: [],
               loading: false,
               initialized: true
             });
@@ -94,7 +93,7 @@ export class TopProductsByMonthViewModel {
           }
           
           this.updateState({ 
-            topProductsByMonth,
+            topProducts,
             loading: false,
             error: null,
             initialized: true
@@ -103,10 +102,23 @@ export class TopProductsByMonthViewModel {
       });
   }
 
-  private updateState(stateChanges: Partial<TopProductsByMonthState>): void {
-    this.uiState.update(state => ({
+  private updateState(partialState: Partial<TopProductsState>): void {
+    this.uiState.update((state) => ({
       ...state,
-      ...stateChanges
+      ...partialState
     }));
+  }
+
+  public ensureDataLoaded(): void {
+    if (!this.initialized() || this.topProducts$().length === 0) {
+      this.loadTopProducts();
+    } else {
+      console.log('TopProductsViewModel: Los datos ya están cargados, no es necesario recargar');
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

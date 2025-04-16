@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { TopProductsByMonthViewModel } from '../../top-products-by-month.view-model';
+import { TopProductsByMonthViewModel } from './top-products-by-month.view-model';
 import { TopProductsByMonthModel } from '../../../domain/top-products-by-month.model';
 
 /**
