@@ -153,8 +153,7 @@ export class ProductSalesEvolutionViewModel {
     
     // Ordenar por ventas totales y tomar los primeros 'limit'
     return productsWithTotalSales
-      .sort((a, b) => (b as any).totalSales - (a as any).totalSales)
-      .slice(0, limit);
+      .sort((a, b) => b.totalSales - a.totalSales)
   }
   
   // Método privado para actualizar el estado
