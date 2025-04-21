@@ -21,7 +21,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { ClientsList } from '../domain/clients-list.model';
 import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { clientsProviders } from '../clients.providers';
-import { ClientsViewModel } from './clients.view-model';
+import { ClientsViewModel } from './main-clients.view-model';
 import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
 import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders-use-case';
 import { GetAverageTicketUseCase } from '../domain/get-average-ticket-use-case';
