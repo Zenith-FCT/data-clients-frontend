@@ -32,9 +32,11 @@
 .products-table {
   width: 100%;
   border-collapse: collapse;
-  
-  thead {
+    thead {
     background-color: #f5f5f5;
+    position: sticky;
+    top: 0;
+    z-index: 3;
     
     th {
       padding: 12px 16px;

@@ -4,7 +4,6 @@
   --text-color: #333;
   --border-color: #e0e0e0;
   display: block;
-  height: 100%;
   padding: 10px;
   box-sizing: border-box;
   font-family: var(--main-font);
@@ -28,47 +27,45 @@
   tbody, td, tfoot, th, thead, tr {
     border-color: var(--border-color) !important;
   }
+}
+
+.page-header {
+  padding: 0.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   
-  // Button toggle styles
-  .mat-button-toggle-group {
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    overflow: hidden;
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
   }
-  
-  .mat-button-toggle {
-    background-color: white;
-    color: var(--color-corporate);
-  }
-  
-  .mat-button-toggle-checked {
-    background-color: var(--color-corporate);
-    color: white;
-  }
-  
-  // Select styles
-  .mat-option, .mat-select-panel, .mat-mdc-select-panel, .mat-mdc-option {
-    font-family: var(--main-font);
+
+  .global-filters {
+    display: flex;
+    gap: 1rem;
+    
+    .mat-form-field {
+      width: 120px;
+      margin-bottom: -1.25em;
+    }
   }
 }
 
-// Main layout
 .main-container {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
   padding: 10px;
+  padding-bottom: 25px;
   background-color: transparent;
-  height: 100%;
 }
 
 .top-row {
-  display: flex;
-  gap: 20px;
   width: 100%;
 }
 
-// Clients container
 .clients-container {
   width: calc(50% - 7.5px);
   background-color: white;
@@ -76,7 +73,7 @@
   color: var(--text-color);
   display: flex;
   flex-direction: column;
-  max-height: 504px;
+  height: 504px;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -84,59 +81,71 @@
   margin: 0;
   padding: 10px 20px;
   text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
   background-color: white;
   border-radius: 8px 8px 0 0;
   border-bottom: 1px solid var(--border-color);
 }
 
-// Table styles
 .table-container {
   overflow: auto;
   background-color: white;
   border-radius: 0 0 8px 8px;
-  padding: 10px;
+  padding: 0 0 10px 0;
   height: calc(100% - 41px);
   min-height: 0;
   width: 100%;
   margin: 0;
   box-sizing: border-box;
+
+  .mat-mdc-table {
+    width: 100%;
+    background: white;
+    min-width: 600px;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }    .mat-mdc-header-row {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #f5f5f5;
+  }
+
+  th.mat-mdc-header-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    background-color: #f5f5f5;
+    padding: 12px 8px;
+    font-weight: 500;
+    color: var(--text-color);
+    border-bottom: 2px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+  }
+
+  td.mat-mdc-cell {
+    padding: 12px 8px;
+    font-size: 14px;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  tr.mat-mdc-row {
+    height: 48px;
+  }
+
+  tr.mat-mdc-row:hover {
+    background-color: #f9f9f9;
+  }
 }
 
-table {
-  width: 100%;
-  border: 1px solid var(--border-color);
-  margin: 0;
-  border-collapse: collapse;
-  table-layout: fixed;
-  min-width: 600px;
-}
-
-th.mat-header-cell, td.mat-cell {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
-}
-
-th.mat-header-cell {
-  background-color: #f5f5f5;
-  color: var(--text-color) !important;
-  font-weight: bold;
-  padding: 12px 8px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-td.mat-cell {
-  padding: 8px;
-  color: var(--text-color) !important;
-  border-bottom: 1px solid var(--border-color);
-}
-
-tr.mat-row:hover {
-  background-color: #f9f9f9;
-}
-
-// Info panels
 .info-panel {
   width: calc(50% - 7.5px);
   display: flex;
@@ -163,7 +172,7 @@ tr.mat-row:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 0; 
+  min-width: 0;
   height: 100%;
   box-sizing: border-box;
   transition: transform 0.2s;
@@ -229,13 +238,11 @@ tr.mat-row:hover {
   }
 }
 
-// Selectors
 .selectors-container {
   display: flex;
   gap: 5px;
 }
 
-// Material select styles
 .year-selector, .month-selector {
   width: 90px;
   height: 32px;
@@ -315,7 +322,6 @@ tr.mat-row:hover {
   }
 }
 
-// Charts
 .chart-wrapper {
   width: calc(50% - 7.5px);
   margin-top: 15px;
@@ -362,32 +368,32 @@ tr.mat-row:hover {
   align-items: center;
 }
 
-// Responsive styles
 @media (max-width: 1200px) {
   .main-container {
     flex-direction: column;
   }
-  
+
   .clients-container, .info-panel, .chart-wrapper {
     width: 100%;
     flex: 0 0 100%;
     max-width: 100%;
+    max-height: none;
   }
-  
+
   .info-panel {
     margin-top: 15px;
     height: auto;
   }
-  
+
   .info-row {
     flex-direction: column;
     height: auto;
   }
-  
+
   .info-box {
-    height: 150px;
+    min-height: 150px;
   }
-  
+
   .chart-wrapper {
     margin: 15px 0;
   }
@@ -399,7 +405,6 @@ tr.mat-row:hover {
   }
 }
 
-// Miscellaneous
 .loading-text, .error-text {
   color: var(--text-color);
   padding: 20px;

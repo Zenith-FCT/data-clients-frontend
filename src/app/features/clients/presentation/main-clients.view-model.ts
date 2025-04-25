@@ -243,507 +243,138 @@ export class ClientsViewModel implements OnDestroy {
   }
 
   updateDataByYearFilter(type: string, year: string): void {
-    if (!this.canMakeNetworkRequests()) {
-      return;
+    if (!this.canMakeNetworkRequests()) return;
+
+    this._state.update(state => ({
+      ...state,
+      loading: true,
+      error: null
+    }));
+
+    let observable;
+    switch (type) {
+      case 'clients':
+        observable = year === 'all' 
+          ? this.getTotalClientsUseCase.execute()
+          : this.getTotalClientsByYearUseCase.execute(year);
+        break;
+      case 'orders':
+        observable = year === 'all'
+          ? this.getTotalAverageOrdersUseCase.execute()
+          : this.getAverageOrdersByYearUseCase.execute(year);
+        break;
+      case 'ticket':
+        observable = year === 'all'
+          ? this.getAverageTicketUseCase.execute()
+          : this.getAverageTicketByYearUseCase.execute(year);
+        break;
+      default:
+        console.error(`Tipo de filtro no soportado: ${type}`);
+        return;
     }
 
-    console.log(`Aplicando filtro por año ${year} para ${type}`);
-
-    if (year === 'all') {
-      if (type === 'clients') this.loadTotalClients();
-      else if (type === 'orders') this.loadTotalAverageOrders();
-      else if (type === 'ticket') this.loadAverageTicket();
-
-      this.calculateDerivedMetrics();
-      return;
-    }
-
-    if (this._clientsCache.length === 0) {
-      this._state.update(state => ({
-        ...state,
-        loading: true
-      }));
-
-      this.getClientsListUseCase.execute().subscribe({
-        next: (clients) => {
-          this._clientsCache = clients;
-          this.applyYearFilter(type, year);
-        },
-        error: (err) => {
-          console.error('Error al cargar datos para filtrado:', err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: 'Error al aplicar filtros'
-          }));
-        }
-      });
-    } else {
-      this.applyYearFilter(type, year);
-    }
+    observable.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => {
+        this._state.update(state => ({
+          ...state,
+          loading: false
+        }));
+      })
+    ).subscribe({
+      next: (result) => {
+        this._state.update(state => {
+          const updatedState = { ...state, loading: false };
+          switch (type) {
+            case 'clients':
+              updatedState.totalClients = result;
+              break;
+            case 'orders':
+              updatedState.totalAverageOrders = result;
+              break;
+            case 'ticket':
+              updatedState.averageTicket = result;
+              break;
+          }
+          return updatedState;
+        });
+      },
+      error: (err) => {
+        console.error(`Error loading ${type} data:`, err);
+        this._state.update(state => ({
+          ...state,
+          loading: false,
+          error: `Error loading ${type} data`
+        }));
+      }
+    });
   }
 
   updateDataByYearAndMonthFilter(type: string, year: string, month: string): void {
-    if (!this.canMakeNetworkRequests()) {
-      return;
-    }
+    if (!this.canMakeNetworkRequests()) return;
 
-    console.log(`Aplicando filtro por año ${year} y mes ${month} para ${type}`);
-
-    if (this._clientsCache.length === 0) {
-      this._state.update(state => ({
-        ...state,
-        loading: true
-      }));
-
-      this.getClientsListUseCase.execute().subscribe({
-        next: (clients) => {
-          this._clientsCache = clients;
-          this.applyYearMonthFilter(type, year, month);
-        },
-        error: (err) => {
-          console.error('Error al cargar datos para filtrado:', err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: 'Error al aplicar filtros'
-          }));
-        }
-      });
-    } else {
-      this.applyYearMonthFilter(type, year, month);
-    }
-  }
-
-  private applyYearFilter(type: string, year: string): void {
     this._state.update(state => ({
       ...state,
       loading: true,
       error: null
     }));
 
-    import('rxjs').then(({ forkJoin, of }) => {
-      if (type === 'clients' || type === 'orders' || type === 'ticket') {
-        let observable;
+    let observable;
+    switch (type) {
+      case 'newClients':
+        observable = this.getNewClientsByYearMonthUseCase.execute(year, month);
+        break;
+      case 'totalOrders':
+        observable = this.getTotalOrdersByYearMonthUseCase.execute(year, month);
+        break;
+      case 'ltv':
+        observable = this.getLTVByYearMonthUseCase.execute(year, month);
+        break;
+      default:
+        console.error(`Tipo de filtro no soportado: ${type}`);
+        return;
+    }
 
-        switch (type) {
-          case 'clients':
-            observable = this.getTotalClientsByYearUseCase.execute(year);
-            break;
-          case 'orders':
-            observable = this.getAverageOrdersByYearUseCase.execute(year);
-            break;
-          case 'ticket':
-            observable = this.getAverageTicketByYearUseCase.execute(year);
-            break;
-        }
-
-        observable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: (result) => {
-            this._state.update(state => {
-              const updatedState = { ...state, loading: false };
-
-              switch (type) {
-                case 'clients':
-                  updatedState.totalClients = result;
-                  break;
-                case 'orders':
-                  updatedState.totalAverageOrders = result;
-                  break;
-                case 'ticket':
-                  updatedState.averageTicket = result;
-                  break;
-              }
-
-              return updatedState;
-            });
-
-            this.calculateDerivedMetrics();
-          },
-          error: (err) => {
-            console.error(`Error loading ${type} data for year ${year}:`, err);
-            this._state.update(state => ({
-              ...state,
-              loading: false,
-              error: `Error loading ${type} data for year ${year}`
-            }));
+    observable.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => {
+        this._state.update(state => ({
+          ...state,
+          loading: false
+        }));
+      })
+    ).subscribe({
+      next: (result) => {
+        this._state.update(state => {
+          const updatedState = { ...state, loading: false };
+          switch (type) {
+            case 'newClients':
+              updatedState.newClients = result;
+              break;
+            case 'totalOrders':
+              updatedState.totalOrders = result;
+              break;
+            case 'ltv':
+              updatedState.ltv = result;
+              break;
           }
+          return updatedState;
         });
+      },
+      error: (err) => {
+        console.error(`Error loading ${type} data:`, err);
+        this._state.update(state => ({
+          ...state,
+          loading: false,
+          error: `Error loading ${type} data`
+        }));
       }
     });
   }
 
-  private applyYearMonthFilter(type: string, year: string, month: string): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    import('rxjs').then(({ forkJoin }) => {
-      if (type === 'newClients' || type === 'totalOrders' || type === 'ltv') {
-        let observable;
-
-        switch (type) {
-          case 'newClients':
-            observable = this.getNewClientsByYearMonthUseCase.execute(year, month);
-            break;
-          case 'totalOrders':
-            observable = this.getTotalOrdersByYearMonthUseCase.execute(year, month);
-            break;
-          case 'ltv':
-            observable = this.getLTVByYearMonthUseCase.execute(year, month);
-            break;
-        }
-
-        observable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: (result) => {
-            this._state.update(state => {
-              const updatedState = { ...state, loading: false };
-
-              switch (type) {
-                case 'newClients':
-                  updatedState.newClients = result;
-                  break;
-                case 'totalOrders':
-                  updatedState.totalOrders = result;
-                  break;
-                case 'ltv':
-                  updatedState.ltv = result;
-                  break;
-              }
-
-              return updatedState;
-            });
-          },
-          error: (err) => {
-            console.error(`Error loading ${type} data for ${year}/${month}:`, err);
-            this._state.update(state => ({
-              ...state,
-              loading: false,
-              error: `Error loading ${type} data for ${year}/${month}`
-            }));
-          }
-        });
-      }
-    });
-  }
-
-  loadClients(): void {
-    this._state.update(state => ({
-      ...state,
-      clients: [],
-      loading: true,
-      error: null
-    }));
-
-    this.getClientsListUseCase
-      .execute()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (clients) => {
-          this._state.update(state => ({
-            ...state,
-            clients: clients,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          console.error('Error loading clients:', err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: 'Error loading clients'
-          }));
-        }
-      });
-  }
-
-  private loadTotalClients(): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getTotalClientsUseCase.execute()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (total) => {
-          this._state.update(state => ({
-            ...state,
-            totalClients: total,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: 'Error loading total clients'
-          }));
-        }
-      });
-  }
-
-  private loadTotalAverageOrders(): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getTotalAverageOrdersUseCase.execute()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (average) => {
-          this._state.update(state => ({
-            ...state,
-            totalAverageOrders: average,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: 'Error loading average orders'
-          }));
-        }
-      });
-  }
-
-  private loadAverageTicket(): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getAverageTicketUseCase.execute()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (average) => {
-          this._state.update(state => ({
-            ...state,
-            averageTicket: average,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: 'Error loading average ticket'
-          }));
-        }
-      });
-  }
-
-  private loadClientsPerProduct(): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getClientsPerProductUseCase.execute()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (distribution: ProductClientDistribution[]) => {
-          this._state.update(state => ({
-            ...state,
-            clientsPerProduct: distribution,
-            loading: false
-          }));
-        },
-        error: (err: Error) => {
-          console.error('Error loading clients per product:', err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: 'Error loading clients per product distribution'
-          }));
-        }
-      });
-  }
-
-  private loadTotalClientsByYear(year: string): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getTotalClientsByYearUseCase.execute(year)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (total) => {
-          this._state.update(state => ({
-            ...state,
-            totalClients: total,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          console.error(`Error loading total clients for year ${year}:`, err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: `Error loading total clients for year ${year}`
-          }));
-        }
-      });
-  }
-
-  private loadNewClientsByYearMonth(year: string, month: string): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getNewClientsByYearMonthUseCase.execute(year, month)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (total) => {
-          this._state.update(state => ({
-            ...state,
-            newClients: total,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          console.error(`Error loading new clients for ${year}/${month}:`, err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: `Error loading new clients for ${year}/${month}`
-          }));
-        }
-      });
-  }
-
-  private loadAverageOrdersByYear(year: string): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getAverageOrdersByYearUseCase.execute(year)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (average) => {
-          this._state.update(state => ({
-            ...state,
-            totalAverageOrders: average,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          console.error(`Error loading average orders for year ${year}:`, err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: `Error loading average orders for year ${year}`
-          }));
-        }
-      });
-  }
-
-  private loadTotalOrdersByYearMonth(year: string, month: string): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getTotalOrdersByYearMonthUseCase.execute(year, month)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (total) => {
-          this._state.update(state => ({
-            ...state,
-            totalOrders: total,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          console.error(`Error loading total orders for ${year}/${month}:`, err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: `Error loading total orders for ${year}/${month}`
-          }));
-        }
-      });
-  }
-
-  private loadAverageTicketByYear(year: string): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getAverageTicketByYearUseCase.execute(year)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (average) => {
-          this._state.update(state => ({
-            ...state,
-            averageTicket: average,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          console.error(`Error loading average ticket for year ${year}:`, err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: `Error loading average ticket for year ${year}`
-          }));
-        }
-      });
-  }
-
-  private loadLTVByYearMonth(year: string, month: string): void {
-    this._state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
-    this.getLTVByYearMonthUseCase.execute(year, month)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (ltv) => {
-          this._state.update(state => ({
-            ...state,
-            ltv: ltv,
-            loading: false
-          }));
-        },
-        error: (err) => {
-          console.error(`Error loading LTV for ${year}/${month}:`, err);
-          this._state.update(state => ({
-            ...state,
-            loading: false,
-            error: `Error loading LTV for ${year}/${month}`
-          }));
-        }
-      });
-  }
-
-  changeLocationType(locationType: 'country' | 'city'): void {
-    if (this._state().currentLocationType !== locationType) {
-      this._state.update(state => ({
-        ...state,
-        currentLocationType: locationType
-      }));
-      this.loadTopLocationsByClients();
-    }
+  updateLocationType(type: 'country' | 'city'): void {
+    this._state.update(state => ({ ...state, currentLocationType: type }));
+    this.loadTopLocationsByClients();
   }
 
   private loadTopLocationsByClients(): void {
