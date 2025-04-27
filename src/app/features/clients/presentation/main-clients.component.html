@@ -296,7 +296,7 @@
             </mat-form-field>
           </div>
         </div>
-        <div class="echarts-container" echarts [options]="monthlyClientsChartOption"></div>
+        <div class="echarts-container" echarts [options]="monthlyClientsChartOption" (chartInit)="onMonthlyClientsChartInit($event)"></div>
       </div>
     </div>
 
@@ -315,7 +315,7 @@
             </mat-form-field>
           </div>
         </div>
-        <div class="echarts-container" echarts [options]="monthlyOrdersChartOption"></div>
+        <div class="echarts-container" echarts [options]="monthlyOrdersChartOption" (chartInit)="onMonthlyOrdersChartInit($event)"></div>
       </div>
     </div>
   }

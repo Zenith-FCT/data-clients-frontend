@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy, effect, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, effect, signal, PLATFORM_ID, Inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -52,23 +52,36 @@ interface FilterConfig {
     NgxEchartsModule,
     MatInputModule,
     MatRippleModule
-  ],
-  providers: [...clientsProviders],
+  ],  providers: [...clientsProviders],
   templateUrl: './main-clients.component.html',
   styleUrls: ['./main-clients.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ClientsComponent implements OnInit {
   dataSource = new MatTableDataSource<ClientsList>([]);
   displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];  globalYear = new Date().getFullYear().toString();
-  globalMonth = (new Date().getMonth() + 1).toString();
-
-  onGlobalYearChange(event: MatSelectChange): void {
+  globalMonth = (new Date().getMonth() + 1).toString();  onGlobalYearChange(event: MatSelectChange): void {
     this.globalYear = event.value;
     Object.keys(this.filters).forEach(key => {
       if (this.filters[key as FilterType].year) {
         this.filters[key as FilterType].year = event.value;
-        this.viewModel.updateDataByYearFilter(key as FilterType, event.value);
+          if (key === 'monthlyClients') {          
+          // Cargar nuevos datos para gráfico de clientes
+          this.loadMonthlyClientsData(event.value);
+        } else if (key === 'monthlyOrders') {
+          // Cargar nuevos datos para gráfico de pedidos
+          this.loadMonthlyOrdersData(event.value);
+        } else if (this.filters[key as FilterType].month) {
+          // Si el filtro tiene mes, actualiza con año y mes
+          this.viewModel.updateDataByYearAndMonthFilter(
+            key as FilterType,
+            event.value,
+            this.filters[key as FilterType].month!
+          );
+        } else {
+          // Si el filtro solo tiene año
+          this.viewModel.updateDataByYearFilter(key as FilterType, event.value);
+        }
       }
     });
   }
@@ -87,14 +100,14 @@ export class ClientsComponent implements OnInit {
         }
       }
     });
-  }
-  chartOption: any;
+  }  chartOption: any;
   locationsChartOption: any;
-  monthlyClientsChartOption: any;
-  monthlyOrdersChartOption: any;
-  isBrowser: boolean;
-  monthlyNewClientsData: number[] = [];
-  monthlyOrdersData: number[] = [];
+  monthlyClientsChartOption: any = {};
+  monthlyOrdersChartOption: any = {};
+  monthlyClientsChart: any = null;
+  monthlyOrdersChart: any = null;
+  isBrowser: boolean;monthlyNewClientsData = signal<number[]>(Array(12).fill(0));
+  monthlyOrdersData = signal<number[]>(Array(12).fill(0));
 
   filters: Record<FilterType, FilterConfig> = {
     clients: { year: new Date().getFullYear().toString() },
@@ -119,13 +132,11 @@ export class ClientsComponent implements OnInit {
   private months: string[] = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
-
-  public viewModel = inject(ClientsViewModel);
+  ];  public viewModel = inject(ClientsViewModel);
   public getNewClientsByYearMonthUseCase = inject(GetNewClientsByYearMonthUseCase);
   public getTotalOrdersByYearMonthUseCase = inject(GetTotalOrdersByYearMonthUseCase);
-
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  
+  constructor(@Inject(PLATFORM_ID) platformId: Object, private changeDetector: ChangeDetectorRef) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     effect(() => {
@@ -174,21 +185,21 @@ export class ClientsComponent implements OnInit {
 
   onLocationTypeChange(event: { value: 'country' | 'city' }): void {
     this.viewModel.updateLocationType(event.value);
-  }
-
-  onMonthlyClientsChartYearFilterChange(event: MatSelectChange): void {
+  }  onMonthlyClientsChartYearFilterChange(event: MatSelectChange): void {
     const year = event.value;
     this.filters.monthlyClients.year = year;
+    
+    // Cargar nuevos datos
     this.loadMonthlyClientsData(year);
+  }  onMonthlyClientsChartInit(event: any): void {
+    console.log('Gráfico de clientes mensuales inicializado');
+    this.monthlyClientsChart = event;
   }
-
-  onMonthlyOrdersChartYearFilterChange(event: MatSelectChange): void {
-    const year = event.value;
-    this.filters.monthlyOrders.year = year;
-    this.loadMonthlyOrdersData(year);
-  }
-
-  private loadMonthlyData(): void {
+  
+  onMonthlyOrdersChartInit(event: any): void {
+    console.log('Gráfico de pedidos mensuales inicializado');
+    this.monthlyOrdersChart = event;
+  }  private loadMonthlyData(): void {
     if (this.filters.monthlyClients.year) {
       this.loadMonthlyClientsData(this.filters.monthlyClients.year);
     }
@@ -197,50 +208,92 @@ export class ClientsComponent implements OnInit {
     }
   }
 
-  private loadMonthlyClientsData(year: string): void {
+  onMonthlyOrdersChartYearFilterChange(event: MatSelectChange): void {
+    const year = event.value;
+    this.filters.monthlyOrders.year = year;
+    
+    // Cargar nuevos datos
+    this.loadMonthlyOrdersData(year);
+  }  private loadMonthlyClientsData(year: string): void {
     if (!this.isBrowser) return;
     
-    this.monthlyNewClientsData = Array(12).fill(0);
-    this.updateMonthlyClientsChartOption();
-
     const requests = Array.from({ length: 12 }, (_, i) => {
       const month = (i + 1).toString();
       return this.getNewClientsByYearMonthUseCase.execute(year, month).pipe(
         catchError(() => of(0))
-      );
+      );    
     });
-
+    
     forkJoin(requests).subscribe({
       next: (results) => {
-        this.monthlyNewClientsData = results;
+        console.log('Datos cargados de clientes mensuales:', year, results);
+        
+        // Actualizar los datos
+        this.monthlyNewClientsData.set(results);
+        
+        // Crear las opciones del gráfico
         this.updateMonthlyClientsChartOption();
+        
+        // Si tenemos una referencia al gráfico, actualizarlo directamente
+        if (this.monthlyClientsChart) {
+          console.log('Actualizando gráfico de clientes mensuales directamente');
+          this.monthlyClientsChart.setOption(this.monthlyClientsChartOption, true, true);
+        } else {
+          console.log('No hay referencia al gráfico de clientes mensuales');
+          this.changeDetector.detectChanges();
+        }
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error al cargar datos de clientes mensuales:', err);
+        this.monthlyNewClientsData.set(Array(12).fill(0));
         this.updateMonthlyClientsChartOption();
+        
+        if (this.monthlyClientsChart) {
+          this.monthlyClientsChart.setOption(this.monthlyClientsChartOption, true, true);
+        } else {
+          this.changeDetector.detectChanges();
+        }
       }
     });
-  }
-
-  private loadMonthlyOrdersData(year: string): void {
+  }  private loadMonthlyOrdersData(year: string): void {
     if (!this.isBrowser) return;
     
-    this.monthlyOrdersData = Array(12).fill(0);
-    this.updateMonthlyOrdersChartOption();
-
     const requests = Array.from({ length: 12 }, (_, i) => {
       const month = (i + 1).toString();
       return this.getTotalOrdersByYearMonthUseCase.execute(year, month).pipe(
         catchError(() => of(0))
-      );
+      );    
     });
-
+    
     forkJoin(requests).subscribe({
       next: (results) => {
-        this.monthlyOrdersData = results;
+        console.log('Datos cargados de pedidos mensuales:', year, results);
+        
+        // Actualizar los datos
+        this.monthlyOrdersData.set(results);
+        
+        // Crear las opciones del gráfico
         this.updateMonthlyOrdersChartOption();
+        
+        // Si tenemos una referencia al gráfico, actualizarlo directamente
+        if (this.monthlyOrdersChart) {
+          console.log('Actualizando gráfico de pedidos mensuales directamente');
+          this.monthlyOrdersChart.setOption(this.monthlyOrdersChartOption, true, true);
+        } else {
+          console.log('No hay referencia al gráfico de pedidos mensuales');
+          this.changeDetector.detectChanges();
+        }
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error al cargar datos de pedidos mensuales:', err);
+        this.monthlyOrdersData.set(Array(12).fill(0));
         this.updateMonthlyOrdersChartOption();
+        
+        if (this.monthlyOrdersChart) {
+          this.monthlyOrdersChart.setOption(this.monthlyOrdersChartOption, true, true);
+        } else {
+          this.changeDetector.detectChanges();
+        }
       }
     });
   }
@@ -360,12 +413,11 @@ export class ClientsComponent implements OnInit {
         }
       }]
     };
-  }
-
-  private updateMonthlyClientsChartOption(): void {
+  }  private updateMonthlyClientsChartOption(): void {
     if (!this.isBrowser) return;
 
-    if (!this.monthlyNewClientsData || this.monthlyNewClientsData.length === 0) {
+    const data = this.monthlyNewClientsData();
+    if (!data || data.length === 0) {
       this.monthlyClientsChartOption = {
         title: {
           text: 'No hay datos disponibles',
@@ -375,7 +427,8 @@ export class ClientsComponent implements OnInit {
       return;
     }
 
-    this.monthlyClientsChartOption = {
+    // Crear una copia completamente nueva del objeto de opciones
+    const newOption = {
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' }
@@ -398,7 +451,7 @@ export class ClientsComponent implements OnInit {
       series: [{
         name: 'Nuevos Clientes',
         type: 'bar',
-        data: this.monthlyNewClientsData.map(value => Math.round(value)),
+        data: data.map(value => Math.round(value)),
         itemStyle: {
           color: '#E53935',
           borderRadius: [4, 4, 0, 0]
@@ -409,12 +462,14 @@ export class ClientsComponent implements OnInit {
         }
       }]
     };
-  }
 
-  private updateMonthlyOrdersChartOption(): void {
+    // Asignar las nuevas opciones
+    this.monthlyClientsChartOption = newOption;
+  }  private updateMonthlyOrdersChartOption(): void {
     if (!this.isBrowser) return;
 
-    if (!this.monthlyOrdersData || this.monthlyOrdersData.length === 0) {
+    const data = this.monthlyOrdersData();
+    if (!data || data.length === 0) {
       this.monthlyOrdersChartOption = {
         title: {
           text: 'No hay datos disponibles',
@@ -424,7 +479,8 @@ export class ClientsComponent implements OnInit {
       return;
     }
 
-    this.monthlyOrdersChartOption = {
+    // Crear una copia completamente nueva del objeto de opciones
+    const newOption = {
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' }
@@ -447,7 +503,7 @@ export class ClientsComponent implements OnInit {
       series: [{
         name: 'Pedidos',
         type: 'bar',
-        data: this.monthlyOrdersData.map(value => Math.round(value)),
+        data: data.map(value => Math.round(value)),
         itemStyle: {
           color: '#E53935',
           borderRadius: [4, 4, 0, 0]
@@ -458,5 +514,8 @@ export class ClientsComponent implements OnInit {
         }
       }]
     };
+
+    // Asignar las nuevas opciones
+    this.monthlyOrdersChartOption = newOption;
   }
 }
