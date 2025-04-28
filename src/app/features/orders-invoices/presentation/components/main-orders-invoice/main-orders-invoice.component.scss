@@ -3,6 +3,8 @@ $border-radius: 8px;
 $spacing-unit: 1rem;
 $transition-speed: 0.3s;
 
+$primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
+
 .main-wrapper {
   display: flex;
   flex-direction: column;
@@ -14,45 +16,8 @@ $transition-speed: 0.3s;
   height: 98vh;
   width: 100%;
   overflow: hidden;
-}
-
-.sticky-header {
-  position: sticky;
-  top: 0;
-  z-index: 10000;
-  background-color: #f5f5f5;
-  padding: 6px 16px;
-  width: 100%;
-  box-sizing: border-box;
-  height: auto;
-  min-height: 50px;
-  flex-shrink: 0;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0 4%;
-
-  h3 {
-    margin: 0;
-    font-size: 1.2rem;
-  }
-
-  .date-selectors {
-    display: flex;
-    gap: 16px;
-    padding-right: 8%;
-
-    mat-form-field {
-      width: 120px;
-      margin: 0;
-      transform: scale(0.9);
-      transform-origin: right center;
-    }
-  }
+  background-color: #E5E5E5;
+  font-family: $primary-font;
 }
 
 .orders-container {
@@ -62,7 +27,153 @@ $transition-speed: 0.3s;
   padding-bottom: 5rem;
   box-sizing: border-box;
   width: 100%;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 20px);
+  background-color: #E5E5E5;
+}
+
+.date-selectors-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+  
+  mat-form-field {
+    width: 105px;
+    margin: 0;
+    transform: scale(0.85);
+    transform-origin: left center;
+    
+    ::ng-deep {
+      .mat-mdc-text-field-wrapper {
+        background-color: #FFFFFF !important;
+        overflow: hidden;
+        border-radius: $border-radius;
+        border: none !important;
+        box-shadow: $primary-shadow;
+      }
+      
+      .mat-mdc-form-field-flex {
+        background-color: #FFFFFF !important;
+        height: 48px;
+        overflow: hidden;
+        border-radius: $border-radius;
+      }
+      
+      .mat-mdc-form-field-infix {
+        min-height: 48px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      
+      .mdc-line-ripple {
+        display: none;
+      }
+      
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      
+      .mat-mdc-form-field-bottom-align::before {
+        display: none;
+      }
+      
+      .mat-mdc-select-value {
+        font-family: $primary-font !important;
+        line-height: 24px;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mdc-list-item__primary-text {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-select-arrow-wrapper {
+        background-color: #FFFFFF !important;
+      }
+
+      .mat-mdc-form-field-focus-overlay {
+        opacity: 0 !important;
+      }
+      
+      .mat-mdc-select {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-option {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-option-text {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-form-field-label {
+        font-family: $primary-font !important;
+      }
+      
+      .mdc-menu-surface {
+        border-radius: $border-radius !important;
+        
+        .mat-mdc-option {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+        
+        .mdc-list-item__primary-text {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+      }
+
+      // Forzando la fuente específicamente para estos selectores
+      .mat-mdc-select,
+      .mat-mdc-select *,
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text,
+      .mat-mdc-select-arrow,
+      .mat-mdc-form-field-infix {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .mat-mdc-select-value-text,
+  .mat-mdc-select,
+  .mat-mdc-option,
+  .mat-mdc-option-text,
+  .mdc-list-item__primary-text,
+  .mat-mdc-form-field {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+  
+  .cdk-overlay-pane {
+    .mat-mdc-option {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
+  }
 }
 
 .orders-summary {
@@ -74,6 +185,8 @@ $transition-speed: 0.3s;
   padding: 0 16px;
   box-sizing: border-box;
   transition: all $transition-speed ease;
+  font-family: $primary-font;
+  background-color: #E5E5E5;
 
   .summary-cards {
     display: flex;
@@ -84,6 +197,16 @@ $transition-speed: 0.3s;
       width: 24%;
       margin: 0 0.5%;
       box-sizing: border-box;
+
+      ::ng-deep {
+        * {
+          font-family: $primary-font !important;
+        }
+        
+        .info-box-title, .info-box-value, .info-box-subtitle {
+          font-family: $primary-font !important;
+        }
+      }
     }
 
     @media (max-width: 768px) {
@@ -385,5 +508,49 @@ $transition-speed: 0.3s;
 @media screen and (max-width: 1366px) {
   .orders-client-type-chart {
     height: 420px;
+  }
+}
+
+// Aplicar estilo global a los selectores para asegurar que se usa la fuente correcta
+:host ::ng-deep {
+  // Forzar la fuente para todos los componentes de Material
+  .mat-mdc-select-value-text,
+  .mat-mdc-select-value,
+  .mat-mdc-select-arrow,
+  .mat-mdc-select-min-line,
+  .mat-mdc-option-text,
+  .mat-mdc-select-trigger,
+  .mdc-list-item__primary-text {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+}
+
+// Estilo global para el menú desplegable
+::ng-deep .cdk-overlay-container {
+  .mat-mdc-select-panel, 
+  .mat-mdc-select-panel * {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+  
+  .mat-mdc-option {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+  
+  .mdc-menu-surface {
+    border-radius: $border-radius !important;
+    
+    .mat-mdc-option,
+    .mat-mdc-option *,
+    .mdc-list-item__primary-text {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
   }
 }

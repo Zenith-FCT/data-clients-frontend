@@ -1,12 +1,12 @@
 <div class="main-wrapper">
-  <div class="sticky-header">
-    <div class="chart-header">
-      <h3>Pedidos y Facturación</h3>
-      <div class="date-selectors">
-        <mat-form-field appearance="outline">
+  <div class="orders-container">
+    <div class="orders-summary">
+      <div class="date-selectors-left">
+        <mat-form-field>
           <mat-select
             [(ngModel)]="selectedMonth"
             (selectionChange)="onDateChange()"
+            #monthSelect
           >
             <mat-option
               *ngFor="let month of months; let i = index"
@@ -16,10 +16,11 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field>
           <mat-select
             [(ngModel)]="selectedYear"
             (selectionChange)="onDateChange()"
+            #yearSelect
           >
             <mat-option *ngFor="let year of years" [value]="year">
               {{ year }}
@@ -27,11 +28,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-    </div>
-  </div>
-
-  <div class="orders-container">
-    <div class="orders-summary">
+      
       <div class="summary-cards">
         <app-information-box type="amount"></app-information-box>
         <app-information-box type="monthly"></app-information-box>
