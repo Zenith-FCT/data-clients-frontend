@@ -511,9 +511,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   }
 }
 
-// Aplicar estilo global a los selectores para asegurar que se usa la fuente correcta
 :host ::ng-deep {
-  // Forzar la fuente para todos los componentes de Material
   .mat-mdc-select-value-text,
   .mat-mdc-select-value,
   .mat-mdc-select-arrow,
@@ -527,7 +525,6 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   }
 }
 
-// Estilo global para el menú desplegable
 ::ng-deep .cdk-overlay-container {
   .mat-mdc-select-panel, 
   .mat-mdc-select-panel * {

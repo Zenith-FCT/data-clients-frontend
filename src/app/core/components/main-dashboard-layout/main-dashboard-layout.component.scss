@@ -25,7 +25,7 @@
   position: sticky;
   top: 0;
   z-index: 1100;
-  height: 80px;
+  height: 60px;
   display: flex;
   align-items: center;
   padding: 0 !important;
@@ -38,11 +38,13 @@
   display: flex;
   align-items: center;
   margin-left: 8px;
+  width: auto;
 }
 
 .toolbar-logo-img {
   height: 100%;
-  max-width: 180px;
+  max-width: 200px;
+  width: auto;
   object-fit: contain;
 }
 
@@ -105,14 +107,14 @@
 }
 
 .nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #dfff03;
   color: white;
 }
 
 .nav-item.active {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #dfff03;
   color: white;
-  border-left: 3px solid #ff0000; 
+  border-left: 3px solid #ffffff; 
   padding-left: 13px; 
 }
 
@@ -150,10 +152,13 @@
 }
 
 .nav-item:hover .nav-icon,
-.nav-item:hover .nav-label,
+.nav-item:hover .nav-label {
+  color: black;
+}
+
 .nav-item.active .nav-icon,
 .nav-item.active .nav-label {
-  color: white;
+  color: black;
 }
 
 @media screen and (max-width: 600px) {

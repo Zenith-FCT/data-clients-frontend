@@ -110,7 +110,7 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '10%',
+        bottom: '15%',
         top: '5%',     
         containLabel: true
       },
@@ -120,14 +120,15 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
         data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         axisLine: {
           lineStyle: {
-            color: 'rgba(0, 0, 0, 0.1)'
+            color: 'rgb(255, 255, 255, 0.1)'
           }
         },
         axisLabel: {
           fontSize: 12,
           margin: 12,   
           interval: 0,  
-          color: '#333' 
+          color: '#FFFFFF',
+          padding: [10, 0, 0, 0] 
         }
       },
       yAxis: {
@@ -138,11 +139,11 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
         axisLabel: {
           formatter: (value: number) => value.toLocaleString('es-ES') + '€',
           fontSize: 12,
-          color: '#000000'
+          color: '#ffffff'
         },
         splitLine: {
           lineStyle: {
-            color: 'rgba(0, 0, 0, 0.1)'
+            color: 'rgba(255, 255, 255, 0.3)'
           }
         }
       },
@@ -152,18 +153,18 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
         smooth: false,
         lineStyle: {
           width: 2,
-          color: '#FE2800'
+          color: '#DFFF03'
         },
         symbol: 'circle',
-        symbolSize: 8,
+        symbolSize: 12,
         itemStyle: {
-          color: '#FE2800'
+          color: '#DFFF03'
         },
         emphasis: {
           itemStyle: {
             borderWidth: 3,
-            borderColor: '#FE2800',
-            color: '#FE2800'
+            borderColor: '#DFFF03',
+            color: '#DFFF03'
           }
         },
         data: []
