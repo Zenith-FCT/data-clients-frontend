@@ -26,23 +26,7 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
   public isBrowser: boolean;
   chartOption: EChartsOption = {};
   
-  private chartColors = [
-    'rgba(33, 150, 243, 0.3)',  
-    'rgba(156, 39, 176, 0.3)',  
-    'rgba(233, 30, 99, 0.3)',    
-    'rgba(244, 67, 54, 0.3)',    
-    'rgba(255, 152, 0, 0.3)',   
-    'rgba(255, 235, 59, 0.3)',  
-    'rgba(76, 175, 80, 0.3)',    
-    'rgba(0, 150, 136, 0.3)',    
-    'rgba(63, 81, 181, 0.3)',   
-    'rgba(121, 85, 72, 0.3)',   
-    'rgba(158, 158, 158, 0.3)', 
-    'rgba(96, 125, 139, 0.3)'    
-  ];
-
-  // Color gris claro para el borde
-  private borderColor = 'rgba(200, 200, 200, 0.5)';
+  private barColor = 'rgba(255, 255, 255, 0.48)';
 
   constructor(
     public ltvViewModel: LtvViewModelService,
@@ -124,6 +108,7 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     
     this.chartOption = {
+      backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
         formatter: (params: any) => {
@@ -131,7 +116,14 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
           return `${params[0].name}: ${value.toLocaleString('es-ES')} €`;
         },
         axisPointer: {
-          type: 'shadow'
+          type: 'shadow',
+          shadowStyle: {
+            color: 'rgba(223, 255, 3, 0.3)' 
+          }
+        },
+        backgroundColor: '#ffffff', 
+        textStyle: {
+          color: '#000000'
         },
         confine: true
       },
@@ -145,14 +137,18 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
         type: 'category',
         data: months,
         axisLabel: {
-          fontSize: 11
+          fontSize: 11,
+          color: '#ffffff'
         },
         axisTick: {
-          alignWithLabel: true
+          alignWithLabel: true,
+          lineStyle: {
+            color: '#ffffff'
+          }
         },
         axisLine: {
           lineStyle: {
-            color: '#999'
+            color: '#ffffff'
           }
         }
       },
@@ -160,17 +156,19 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
         type: 'value',
         nameTextStyle: {
           fontWeight: 'bold',
-          fontSize: 14
+          fontSize: 14,
+          color: '#ffffff'
         },
         axisLabel: {
           formatter: (value: any) => {
             return value.toLocaleString('es-ES') + ' €';
           },
-          fontSize: 11
+          fontSize: 11,
+          color: '#ffffff'
         },
         splitLine: {
           lineStyle: {
-            color: 'rgba(0, 0, 0, 0.1)'
+            color: 'rgba(255, 255, 255, 0.5)'
           }
         }
       },
@@ -181,20 +179,11 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
           barWidth: '60%',
           data: [] as number[],
           itemStyle: {
-            color: (params: any) => {
-              return this.chartColors[params.dataIndex % this.chartColors.length];
-            },
-            // Usar el color gris claro para el borde en lugar del color específico de la barra
-            borderColor: this.borderColor,
-            borderWidth: 1
+            color: this.barColor,
+            borderWidth: 0
           },
           emphasis: {
-            // Simplificar la animación para solo oscurecer la barra al pasar el mouse
             itemStyle: {
-              // Sin sombras o efectos adicionales
-              shadowBlur: 0,
-              shadowOffsetX: 0,
-              // Oscurecer la barra aumentando la opacidad
               opacity: 0.8
             }
           }

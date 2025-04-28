@@ -22,7 +22,7 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
   public isBrowser: boolean;
   chartOption: EChartsOption = {};
   
-  private colors = ['#2D2D2D', '#E63946', '#BDBDBD', '#6F1D1B', '#F4A261', '#3D405B', '#8D99AE'];
+  private colors = ['#dfff03', '#eff1ea', '#b9d400', '#c7c9c2', '#373836', '#171c00', '#585956'];
 
   constructor(
     public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService,
@@ -119,7 +119,8 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
         top: 'top',
         padding: 20,
         textStyle: {
-          fontSize: 12
+          fontSize: 12,
+          color: '#ffffff'
         }
       },
       series: [
@@ -129,11 +130,6 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
           radius: ['50%', '80%'],
           center: ['60%', '50%'],
           avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 0,
-            borderColor: '#fff',
-            borderWidth: 1
-          },
           label: {
             show: false
           },

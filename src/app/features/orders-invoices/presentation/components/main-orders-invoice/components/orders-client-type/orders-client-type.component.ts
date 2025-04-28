@@ -126,7 +126,8 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
         left: 'right',
         padding: 20,
         textStyle: {
-          fontSize: 12
+          fontSize: 12,
+          color: '#ffffff'
         }
       },
       grid: {
@@ -139,11 +140,6 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
           radius: '85%',
           center: ['30%', '45%'], 
           avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 0,
-            borderColor: '#fff',
-            borderWidth: 1
-          },
           label: {
             show: false
           },
@@ -151,8 +147,8 @@ export class OrdersClientTypeComponent implements OnInit, AfterViewInit, OnDestr
             show: false
           },
           data: [
-            { value: recurring, name: 'Pedidos de Clientes Recurrentes', itemStyle: { color: '#000000' } },
-            { value: unique, name: 'Pedidos de Clientes Únicos', itemStyle: { color: '#FE2800' } }
+            { value: recurring, name: 'Pedidos de Clientes Recurrentes', itemStyle: { color: 'rgba(255, 255, 255, 0.51)' } },
+            { value: unique, name: 'Pedidos de Clientes Únicos', itemStyle: { color: '#dfff03' } }
           ]
         }
       ]
