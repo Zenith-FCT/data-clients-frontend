@@ -161,13 +161,13 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
         type: 'category',
         data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],        axisLine: {
           lineStyle: {
-            color: 'rgba(0, 0, 0, 0.32)'
+            color: 'rgba(255, 255, 255, 0.13)'
           }
         },
         axisLabel: {
           fontSize: 12,
           margin: 16,
-          color: '#000000'
+          color: '#ffffff'
         }
       },
       yAxis: [
@@ -177,17 +177,18 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
           nameLocation: 'end',
           nameTextStyle: {
             fontSize: 14,
-            color: '#000000'
+            color: '#ffffff',
+            padding: [0, 0, 12, 0]
           },
           position: 'left',
           axisLabel: {
             formatter: (value: number): string => value.toLocaleString('es-ES') + ' €',
             fontSize: 12,
-            color: '#000000'
+            color: '#ffffff'
           },
           splitLine: {
             lineStyle: {
-              color: 'rgba(0, 0, 0, 0.19)'
+              color: 'rgba(255, 255, 255, 0.28)'
             }
           }
         },
@@ -197,13 +198,14 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
           nameLocation: 'end',
           nameTextStyle: {
             fontSize: 14,
-            color: '#000000'
+            color: '#ffffff',
+            padding: [0, 0, 12, 0]
           },
           position: 'right',
           axisLabel: {
             formatter: (value: number): string => Math.round(value).toString(),
             fontSize: 12,
-            color: '#000000'
+            color: '#ffffff'
           },
           splitLine: {
             show: false
@@ -218,18 +220,18 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
           smooth: false,
           lineStyle: {
             width: 3,
-            color: '#FE2800'
+            color: '#DFFF03'
           },
           symbol: 'circle',
-          symbolSize: 8,
+          symbolSize: 12,
           itemStyle: {
-            color: '#FE2800'
+            color: '#DFFF03'
           },
           emphasis: {
             itemStyle: {
               borderWidth: 3,
-              borderColor: '#FE2800',
-              color: '#FE2800'
+              borderColor: '#DFFF03',
+              color: '#DFFF03'
             }
           },
           z: 10,
@@ -241,11 +243,11 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
           yAxisIndex: 1,
           barWidth: '60%',
           itemStyle: {
-            color: 'rgba(0, 0, 0, 0.2)'
+            color: 'rgba(255, 255, 255, 0.52)'
           },
           emphasis: {
             itemStyle: {
-              color: 'rgba(0, 0, 0, 0.25)'
+              color: 'rgba(255, 255, 255, 0.69)'
             }
           },
           z: 5,
