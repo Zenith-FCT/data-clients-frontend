@@ -38,8 +38,8 @@
               "entry": "src/server.ts"
             }
           },
-          "configurations": {
-            "production": {              "budgets": [
+          "configurations": {            "production": {
+              "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
@@ -49,12 +49,6 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "4kB",
                   "maximumError": "8kB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "includePattern": "**/main-clients.component.scss",
-                  "maximumWarning": "8kB",
-                  "maximumError": "10kB"
                 }
               ],
               "outputHashing": "all"
