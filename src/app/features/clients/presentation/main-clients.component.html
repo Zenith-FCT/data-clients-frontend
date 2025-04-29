@@ -27,7 +27,16 @@
   </div>
 </div>
 
-<div class="main-container">  <div class="clients-container">
+<!-- Pantalla de carga general -->
+<div *ngIf="loadingView" class="loading-overlay">
+  <div class="loading-content">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p class="loading-text">Cargando datos de clientes...</p>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="clients-container">
     <h2 class="clients-title">Lista de Clientes</h2>
     
     @if (viewModel.loading()) {
@@ -130,7 +139,7 @@
             </div>
           </div>
           <div class="info-box-title">Clientes nuevos:</div>
-          <div class="info-box-value">{{ viewModel.newClients() | number:'1.0-0' }}</div>
+          <div class="info-box-value">{{ viewModel.newClients() }}</div>
         </div>
       </div>
       
@@ -152,14 +161,14 @@
               </mat-form-field>
             </div>
           </div>
-          <div class="info-box-title">Promedio de pedidos anuales:</div>
-          <div class="info-box-value">{{ viewModel.totalAverageOrders() | number:'1.0-0' }}</div>
+          <div class="info-box-title">Promedio pedidos por cliente:</div>
+          <div class="info-box-value">{{ viewModel.totalAverageOrders() | number:'1.2-2' }}</div>
         </div>
         
         <div class="info-box">
           <div class="info-box-header">
             <div class="info-box-icon">
-              <mat-icon>receipt</mat-icon>
+              <mat-icon>receipt_long</mat-icon>
             </div>
             <div class="info-box-selector">
               <div class="selectors-container">
@@ -190,16 +199,16 @@
             </div>
           </div>
           <div class="info-box-title">Pedidos totales:</div>
-          <div class="info-box-value">{{ viewModel.totalOrders() | number:'1.0-0' }}</div>
+          <div class="info-box-value">{{ viewModel.totalOrders() }}</div>
         </div>
       </div>
       
-      <!-- Fila 3: Ticket medio y LTV medio -->
+      <!-- Fila 3: Ticket medio y LTV -->
       <div class="info-row">
         <div class="info-box">
           <div class="info-box-header">
             <div class="info-box-icon">
-              <mat-icon>euro</mat-icon>
+              <mat-icon>euro_symbol</mat-icon>
             </div>
             <div class="info-box-selector">
               <mat-form-field appearance="outline" class="year-selector">
@@ -212,7 +221,7 @@
               </mat-form-field>
             </div>
           </div>
-          <div class="info-box-title">Valor medio tickets:</div>
+          <div class="info-box-title">Ticket medio:</div>
           <div class="info-box-value">{{ viewModel.averageTicket() | number:'1.2-2' }} €</div>
         </div>
         

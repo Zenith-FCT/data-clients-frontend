@@ -9,6 +9,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatInputModule } from '@angular/material/input';
 import { MatRippleModule } from '@angular/material/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { catchError, forkJoin, of } from 'rxjs';
 import { NgxEchartsModule } from 'ngx-echarts';
 
@@ -46,13 +47,13 @@ interface FilterConfig {
     MatTableModule,
     MatIconModule,
     MatFormFieldModule,
-    MatSelectModule,
-    MatOptionModule,
+    MatSelectModule,    MatOptionModule,
     MatButtonToggleModule,
     NgxEchartsModule,
     MatInputModule,
-    MatRippleModule
-  ],  providers: [...clientsProviders],
+    MatRippleModule,
+    MatProgressSpinnerModule
+  ],providers: [...clientsProviders],
   templateUrl: './main-clients.component.html',
   styleUrls: ['./main-clients.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
@@ -106,21 +107,21 @@ export class ClientsComponent implements OnInit {
   monthlyOrdersChartOption: any = {};
   monthlyClientsChart: any = null;
   monthlyOrdersChart: any = null;
+  loadingView = true;
   isBrowser: boolean;monthlyNewClientsData = signal<number[]>(Array(12).fill(0));
   monthlyOrdersData = signal<number[]>(Array(12).fill(0));
-
   filters: Record<FilterType, FilterConfig> = {
-    clients: { year: new Date().getFullYear().toString() },
+    clients: { year: "all" },
     newClients: { 
       year: new Date().getFullYear().toString(), 
       month: (new Date().getMonth() + 1).toString() 
     },
-    orders: { year: new Date().getFullYear().toString() },
+    orders: { year: "all" },
     totalOrders: { 
       year: new Date().getFullYear().toString(),
       month: (new Date().getMonth() + 1).toString()
     },
-    ticket: { year: new Date().getFullYear().toString() },
+    ticket: { year: "all" },
     ltv: { 
       year: new Date().getFullYear().toString(),
       month: (new Date().getMonth() + 1).toString()
@@ -151,10 +152,17 @@ export class ClientsComponent implements OnInit {
         this.updateMonthlyOrdersChartOption();
       }
     });
-  }
-
-  ngOnInit(): void {
+  }  ngOnInit(): void {
     if (this.isBrowser) {
+      // Activar pantalla de carga
+      this.loadingView = true;
+      
+      // Asegurarse de que los filtros con opción "all" usen esa opción por defecto
+      this.filters.clients.year = "all";
+      this.filters.orders.year = "all";
+      this.filters.ticket.year = "all";
+      
+      // Cargar datos
       this.viewModel.loadData();
       this.loadMonthlyData();
     }
@@ -240,8 +248,11 @@ export class ClientsComponent implements OnInit {
           this.monthlyClientsChart.setOption(this.monthlyClientsChartOption, true, true);
         } else {
           console.log('No hay referencia al gráfico de clientes mensuales');
-          this.changeDetector.detectChanges();
         }
+        
+        // Desactivar pantalla de carga
+        this.loadingView = false;
+        this.changeDetector.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar datos de clientes mensuales:', err);
@@ -250,9 +261,11 @@ export class ClientsComponent implements OnInit {
         
         if (this.monthlyClientsChart) {
           this.monthlyClientsChart.setOption(this.monthlyClientsChartOption, true, true);
-        } else {
-          this.changeDetector.detectChanges();
         }
+        
+        // Desactivar pantalla de carga incluso en caso de error
+        this.loadingView = false;
+        this.changeDetector.detectChanges();
       }
     });
   }  private loadMonthlyOrdersData(year: string): void {
@@ -281,8 +294,11 @@ export class ClientsComponent implements OnInit {
           this.monthlyOrdersChart.setOption(this.monthlyOrdersChartOption, true, true);
         } else {
           console.log('No hay referencia al gráfico de pedidos mensuales');
-          this.changeDetector.detectChanges();
         }
+        
+        // Desactivar pantalla de carga
+        this.loadingView = false;
+        this.changeDetector.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar datos de pedidos mensuales:', err);
@@ -291,9 +307,11 @@ export class ClientsComponent implements OnInit {
         
         if (this.monthlyOrdersChart) {
           this.monthlyOrdersChart.setOption(this.monthlyOrdersChartOption, true, true);
-        } else {
-          this.changeDetector.detectChanges();
         }
+        
+        // Desactivar pantalla de carga incluso en caso de error
+        this.loadingView = false;
+        this.changeDetector.detectChanges();
       }
     });
   }
@@ -425,16 +443,14 @@ export class ClientsComponent implements OnInit {
         }
       };
       return;
-    }
-
-    // Crear una copia completamente nueva del objeto de opciones
+    }    // Crear una copia completamente nueva del objeto de opciones
     const newOption = {
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' }
       },
       grid: {
-        left: '3%',
+        left: '10%',  // Aumentar el margen izquierdo para que quepa la etiqueta
         right: '4%',
         bottom: '3%',
         containLabel: true
@@ -446,6 +462,8 @@ export class ClientsComponent implements OnInit {
       yAxis: {
         type: 'value',
         name: 'Nuevos Clientes',
+        nameLocation: 'middle',
+        nameGap: 40,  // Espacio entre el nombre y el eje
         minInterval: 1
       },
       series: [{
@@ -477,16 +495,14 @@ export class ClientsComponent implements OnInit {
         }
       };
       return;
-    }
-
-    // Crear una copia completamente nueva del objeto de opciones
+    }    // Crear una copia completamente nueva del objeto de opciones
     const newOption = {
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' }
       },
       grid: {
-        left: '3%',
+        left: '10%',  // Aumentar el margen izquierdo para que quepa la etiqueta
         right: '4%',
         bottom: '3%',
         containLabel: true
@@ -498,6 +514,8 @@ export class ClientsComponent implements OnInit {
       yAxis: {
         type: 'value',
         name: 'Pedidos',
+        nameLocation: 'middle',
+        nameGap: 40,  // Espacio entre el nombre y el eje
         minInterval: 1
       },
       series: [{

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, combineLatest } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { ClientsListApi } from './clients-list-api.model';
@@ -259,50 +259,25 @@ export class ClientsApiService {
       tap(average => console.log(`ClientsApiService: Average ticket for year ${year}:`, average)),
       catchError(this.handleError)
     );
-  }  getLTVByYearMonth(year: string, month: string): Observable<number> {
-    // Vamos a usar tanto datos de clientes como de pedidos para un cálculo más preciso
-    return combineLatest([
-      this.getFullClientData(),
-      this.getFullOrdersData()
-    ]).pipe(
-      map(([clients, orders]) => {        // Definir interfaz para el pedido
-        interface Order {
-          fecha_pedido: string;
-          id_cliente: string;
-          total_pedido: string | number;
-        }
+  }
 
-        // Filtrar pedidos del mes/año específico
-        const ordersForMonth = orders.filter((order: Order) => {
-          const orderDate = new Date(order.fecha_pedido);
-          const orderYear = orderDate.getFullYear().toString();
-          const orderMonth = (orderDate.getMonth() + 1).toString();
+  getLTVByYearMonth(year: string, month: string): Observable<number> {
+    // Para LTV vamos a usar datos de clientes y pedidos
+    return this.getFullClientData().pipe(
+      map(clients => {
+        // Filtramos clientes que tuvieron su primer pedido en el año/mes indicado
+        const filteredClients = clients.filter(client => {
+          const firstOrderDate = new Date(client.fecha_1er_pedido);
+          const orderYear = firstOrderDate.getFullYear().toString();
+          const orderMonth = (firstOrderDate.getMonth() + 1).toString();
           return orderYear === year && orderMonth === month;
         });
-
-        if (ordersForMonth.length === 0) return 0;
-
-        // Agrupar pedidos por cliente y calcular el valor total por cliente
-        const clientOrderValues = new Map<string, number>();
         
-        ordersForMonth.forEach((order: Order) => {
-          const clientId = order.id_cliente;
-          const orderValue = Number(order.total_pedido) || 0;
-          console.log(`Procesando pedido - Cliente: ${clientId}, Valor: ${orderValue}`); // Debug log
-          const currentTotal = clientOrderValues.get(clientId) || 0;
-          clientOrderValues.set(clientId, currentTotal + orderValue);
-        });        // Calcular el LTV promedio considerando el valor de todos los clientes activos en el mes
-        const totalValue = Array.from(clientOrderValues.values()).reduce((sum, value) => sum + value, 0);
-        const activeClients = clientOrderValues.size;
-
-        console.log(`Resumen del cálculo LTV para ${year}/${month}:`, {
-          'Total pedidos encontrados': ordersForMonth.length,
-          'Clientes únicos': activeClients,
-          'Valor total': totalValue,
-          'Desglose por cliente': Object.fromEntries(clientOrderValues)
-        });
-
-        return activeClients > 0 ? totalValue / activeClients : 0;
+        if (filteredClients.length === 0) return 0;
+        
+        // Calculamos el LTV promedio de estos clientes
+        const sum = filteredClients.reduce((acc, client) => acc + Number(client.ltv), 0);
+        return sum / filteredClients.length;
       }),
       tap(ltv => console.log(`ClientsApiService: LTV for ${year}/${month}:`, ltv)),
       catchError(this.handleError)
