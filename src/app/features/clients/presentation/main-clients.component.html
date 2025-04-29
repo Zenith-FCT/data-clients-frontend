@@ -1,3 +1,40 @@
+<div class="page-header">
+  <h1>Clientes</h1>
+  <div class="global-filters">
+    <mat-form-field appearance="outline" class="month-selector">
+      <mat-select [(value)]="globalMonth" (selectionChange)="onGlobalMonthChange($event)">
+        <mat-option value="1">Enero</mat-option>
+        <mat-option value="2">Febrero</mat-option>
+        <mat-option value="3">Marzo</mat-option>
+        <mat-option value="4">Abril</mat-option>
+        <mat-option value="5">Mayo</mat-option>
+        <mat-option value="6">Junio</mat-option>
+        <mat-option value="7">Julio</mat-option>
+        <mat-option value="8">Agosto</mat-option>
+        <mat-option value="9">Septiembre</mat-option>
+        <mat-option value="10">Octubre</mat-option>
+        <mat-option value="11">Noviembre</mat-option>
+        <mat-option value="12">Diciembre</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="year-selector">
+      <mat-select [(value)]="globalYear" (selectionChange)="onGlobalYearChange($event)">
+        <mat-option value="2023">2023</mat-option>
+        <mat-option value="2024">2024</mat-option>
+        <mat-option value="2025">2025</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+
+<!-- Pantalla de carga general -->
+<div *ngIf="loadingView" class="loading-overlay">
+  <div class="loading-content">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p class="loading-text">Cargando datos de clientes...</p>
+  </div>
+</div>
+
 <div class="main-container">
   <div class="clients-container">
     <h2 class="clients-title">Lista de Clientes</h2>
@@ -57,9 +94,9 @@
               <mat-form-field appearance="outline" class="year-selector">
                 <mat-select [value]="filters.clients.year" (selectionChange)="onYearFilterChange($event, 'clients')">
                   <mat-option value="all">Todos</mat-option>
-                  <mat-option value="2025">2025</mat-option>
-                  <mat-option value="2024">2024</mat-option>
                   <mat-option value="2023">2023</mat-option>
+                  <mat-option value="2024">2024</mat-option>
+                  <mat-option value="2025">2025</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
@@ -93,16 +130,16 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" class="year-selector">
                   <mat-select [value]="filters.newClients.year" (selectionChange)="onYearMonthFilterChange($event, 'newClients', 'year')">
-                    <mat-option value="2025">2025</mat-option>
-                    <mat-option value="2024">2024</mat-option>
                     <mat-option value="2023">2023</mat-option>
+                    <mat-option value="2024">2024</mat-option>
+                    <mat-option value="2025">2025</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
             </div>
           </div>
           <div class="info-box-title">Clientes nuevos:</div>
-          <div class="info-box-value">{{ viewModel.getNewClients() | number:'1.0-0' }}</div>
+          <div class="info-box-value">{{ viewModel.newClients() }}</div>
         </div>
       </div>
       
@@ -117,21 +154,21 @@
               <mat-form-field appearance="outline" class="year-selector">
                 <mat-select [value]="filters.orders.year" (selectionChange)="onYearFilterChange($event, 'orders')">
                   <mat-option value="all">Todos</mat-option>
-                  <mat-option value="2025">2025</mat-option>
-                  <mat-option value="2024">2024</mat-option>
                   <mat-option value="2023">2023</mat-option>
+                  <mat-option value="2024">2024</mat-option>
+                  <mat-option value="2025">2025</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
           </div>
-          <div class="info-box-title">Promedio de pedidos anuales:</div>
-          <div class="info-box-value">{{ viewModel.totalAverageOrders() | number:'1.0-0' }}</div>
+          <div class="info-box-title">Promedio pedidos por cliente:</div>
+          <div class="info-box-value">{{ viewModel.totalAverageOrders() | number:'1.2-2' }}</div>
         </div>
         
         <div class="info-box">
           <div class="info-box-header">
             <div class="info-box-icon">
-              <mat-icon>receipt</mat-icon>
+              <mat-icon>receipt_long</mat-icon>
             </div>
             <div class="info-box-selector">
               <div class="selectors-container">
@@ -153,39 +190,39 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" class="year-selector">
                   <mat-select [value]="filters.totalOrders.year" (selectionChange)="onYearMonthFilterChange($event, 'totalOrders', 'year')">
-                    <mat-option value="2025">2025</mat-option>
-                    <mat-option value="2024">2024</mat-option>
                     <mat-option value="2023">2023</mat-option>
+                    <mat-option value="2024">2024</mat-option>
+                    <mat-option value="2025">2025</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
             </div>
           </div>
           <div class="info-box-title">Pedidos totales:</div>
-          <div class="info-box-value">{{ viewModel.getTotalOrders() | number:'1.0-0' }}</div>
+          <div class="info-box-value">{{ viewModel.totalOrders() }}</div>
         </div>
       </div>
       
-      <!-- Fila 3: Ticket medio y LTV medio -->
+      <!-- Fila 3: Ticket medio y LTV -->
       <div class="info-row">
         <div class="info-box">
           <div class="info-box-header">
             <div class="info-box-icon">
-              <mat-icon>euro</mat-icon>
+              <mat-icon>euro_symbol</mat-icon>
             </div>
             <div class="info-box-selector">
               <mat-form-field appearance="outline" class="year-selector">
                 <mat-select [value]="filters.ticket.year" (selectionChange)="onYearFilterChange($event, 'ticket')">
                   <mat-option value="all">Todos</mat-option>
-                  <mat-option value="2025">2025</mat-option>
-                  <mat-option value="2024">2024</mat-option>
                   <mat-option value="2023">2023</mat-option>
+                  <mat-option value="2024">2024</mat-option>
+                  <mat-option value="2025">2025</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
           </div>
-          <div class="info-box-title">Valor medio tickets:</div>
-          <div class="info-box-value">{{ viewModel.getAverageTicket() | number:'1.2-2' }} €</div>
+          <div class="info-box-title">Ticket medio:</div>
+          <div class="info-box-value">{{ viewModel.averageTicket() | number:'1.2-2' }} €</div>
         </div>
         
         <div class="info-box">
@@ -213,16 +250,16 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" class="year-selector">
                   <mat-select [value]="filters.ltv.year" (selectionChange)="onYearMonthFilterChange($event, 'ltv', 'year')">
-                    <mat-option value="2025">2025</mat-option>
-                    <mat-option value="2024">2024</mat-option>
                     <mat-option value="2023">2023</mat-option>
+                    <mat-option value="2024">2024</mat-option>
+                    <mat-option value="2025">2025</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
             </div>
           </div>
           <div class="info-box-title">LTV medio:</div>
-          <div class="info-box-value">{{ viewModel.getLTV() | number:'1.2-2' }} €</div>
+          <div class="info-box-value">{{ viewModel.ltv() | number:'1.2-2' }} €</div>
         </div>
       </div>
     </div>
@@ -260,15 +297,15 @@
           <h2 class="chart-title">Nuevos Clientes por Mes</h2>
           <div class="chart-controls">
             <mat-form-field appearance="outline" class="year-selector">
-              <mat-select [value]="filters.monthlyClients.year" (selectionChange)="onMonthlyChartYearFilterChange($event)">
-                <mat-option value="2025">2025</mat-option>
-                <mat-option value="2024">2024</mat-option>
+              <mat-select [value]="filters.monthlyClients.year" (selectionChange)="onMonthlyClientsChartYearFilterChange($event)">
                 <mat-option value="2023">2023</mat-option>
+                <mat-option value="2024">2024</mat-option>
+                <mat-option value="2025">2025</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
         </div>
-        <div class="echarts-container" echarts [options]="monthlyClientsChartOption"></div>
+        <div class="echarts-container" echarts [options]="monthlyClientsChartOption" (chartInit)="onMonthlyClientsChartInit($event)"></div>
       </div>
     </div>
 
@@ -280,14 +317,14 @@
           <div class="chart-controls">
             <mat-form-field appearance="outline" class="year-selector">
               <mat-select [value]="filters.monthlyOrders.year" (selectionChange)="onMonthlyOrdersChartYearFilterChange($event)">
-                <mat-option value="2025">2025</mat-option>
-                <mat-option value="2024">2024</mat-option>
                 <mat-option value="2023">2023</mat-option>
+                <mat-option value="2024">2024</mat-option>
+                <mat-option value="2025">2025</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
         </div>
-        <div class="echarts-container" echarts [options]="monthlyOrdersChartOption"></div>
+        <div class="echarts-container" echarts [options]="monthlyOrdersChartOption" (chartInit)="onMonthlyOrdersChartInit($event)"></div>
       </div>
     </div>
   }

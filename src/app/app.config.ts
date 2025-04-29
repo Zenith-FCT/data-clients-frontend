@@ -8,6 +8,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { NgxEchartsModule } from 'ngx-echarts';
 // Importar los proveedores de productos para que estén disponibles a nivel global
 import { productsProviders } from './features/products/products.providers';
+import { clientsProviders } from './features/clients/clients.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
         echarts: () => import('echarts')
       })
     ),
-    ...productsProviders
+    ...productsProviders,
+    ...clientsProviders
   ]
 };
