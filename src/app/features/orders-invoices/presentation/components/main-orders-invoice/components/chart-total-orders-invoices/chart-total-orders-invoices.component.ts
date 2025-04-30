@@ -112,20 +112,19 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
     
     this.chart = echarts.init(this.chartContainer.nativeElement);
     
-    const option: echarts.EChartsOption = {
-      tooltip: {
+    const option: echarts.EChartsOption = {      tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'cross'
         },
-        backgroundColor: 'rgba(255, 255, 255, 0.88)',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
         padding: 10,
         formatter: function(params: any) {
           if (!Array.isArray(params)) {
             params = [params];
           }
           
-          let tooltipContent = params[0].name + '<br/>';
+          let tooltipContent = '<div style="font-weight: bold; margin-bottom: 5px;">' + params[0].name + '</div>';
           
           params.sort((a: any, b: any) => a.seriesType === 'line' ? -1 : 1);
           
@@ -136,16 +135,22 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
               const value = param.value;
               
               if (param.seriesType === 'line') {
-                tooltipContent += marker + seriesName + ': ' + parseFloat(value).toLocaleString('es-ES') + ' €<br/>';
+                tooltipContent += '<div style="border: 1px solid #000; margin: 3px 0; padding: 4px; border-radius: 3px; background-color: rgba(255, 255, 255, 0.7); ">' + 
+                  marker + ' ' + seriesName + ': <span style="font-weight: bold;">' + parseFloat(value).toLocaleString('es-ES') + ' €</span></div>';
               } else {
-                tooltipContent += marker + seriesName + ': ' + parseFloat(value).toLocaleString('es-ES') + '<br/>';
+                tooltipContent += '<div style="border: 1px solid #000; margin: 3px 0; padding: 4px; border-radius: 3px; background-color: rgba(255, 255, 255, 0.7);">' + 
+                  marker + ' ' + seriesName + ': <span style="font-weight: bold;">' + parseFloat(value).toLocaleString('es-ES') + '</span></div>';
               }
             }
           });
           
           return tooltipContent;        
         },
-        confine: true
+        confine: true,
+        textStyle: {
+          color: '#333',
+          fontSize: 12
+        }
       },
       legend: {
         show: false 
