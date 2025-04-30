@@ -10,7 +10,8 @@ $spacing-unit: 1rem;
   bottom: 0;
   height: 98vh;
   width: 100%;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sticky-header {
@@ -24,6 +25,7 @@ $spacing-unit: 1rem;
   height: auto;
   min-height: 50px;
   flex-shrink: 0;
+  margin-bottom: 0;
 }
 
 .chart-header {
@@ -74,12 +76,11 @@ $spacing-unit: 1rem;
 
 .orders-container {
   flex: 1;
-  overflow-y: auto;
   padding: $spacing-unit;
   padding-bottom: 12rem;
   box-sizing: border-box;
-  width: 100%;
-  height: calc(100vh - 50px);
+  width: 94%;
+  margin: 0 3%;
   background-color: var(--md-source-surface-variant);
 }
 
@@ -141,8 +142,8 @@ $spacing-unit: 1rem;
 .charts-row {
   display: flex;
   justify-content: space-between;
-  width: 97%;
-  margin: 0 ;
+  width: 100%;
+  margin: 0;
   height: 480px;
   margin-bottom: 24px;
   flex-wrap: nowrap;
