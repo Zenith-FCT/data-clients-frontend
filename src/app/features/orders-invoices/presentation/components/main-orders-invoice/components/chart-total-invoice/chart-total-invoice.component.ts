@@ -110,8 +110,8 @@ export class ChartTotalInvoiceComponent implements OnInit, AfterViewInit, OnDest
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '15%',
-        top: '5%',     
+        bottom: '12%',
+        top: '3%',     
         containLabel: true
       },
       xAxis: {

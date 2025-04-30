@@ -291,9 +291,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       width: 100%;
       height: 450px;
     }
-    
-    @media (max-width: 576px) {
-      height: 400px;
+      @media (max-width: 576px) {
+      height: 380px;
+      margin-bottom: 12px;
     }
 
     canvas {
@@ -307,7 +307,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       }
       
       @media (max-width: 576px) {
-        height: 390px;
+        height: 370px;
       }
     }
   }
@@ -326,8 +326,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   flex-direction: row;
   overflow: hidden;
   box-sizing: border-box;
-  transition: all $transition-speed ease;
-  margin-bottom: 16px;
+  transition: all $transition-speed ease;  margin-bottom: 0;
   margin-top: 0.5rem;
   gap: $spacing-unit;
 
@@ -335,15 +334,28 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     flex-direction: column;
     min-height: auto;
     gap: 1.5rem;
+    height: auto;
   }
-
-  app-chart-tm {
+  
+  @media (max-width: 576px) {
+    gap: 1rem;
+  }  app-chart-tm {
     width: 75%;
     height: 100%;
+    margin-bottom: 16px;
+    flex: 1;
     
     @media (max-width: 992px) {
       width: 100%;
-      height: 500px;
+      flex: 1;
+      height: 520px;
+      margin-bottom: 16px;
+    }
+    
+    @media (max-width: 576px) {
+      width: 100%;
+      height: 450px;
+      margin-bottom: 16px;
     }
   }
 
@@ -435,6 +447,11 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     flex-direction: row;
     height: auto;
     min-height: 250px;
+  }
+  
+  &.tm-info-container {
+    align-self: flex-start;
+    margin-top: -10px;
   }
   
   @media (max-width: 576px) {
@@ -592,12 +609,20 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 .full-width-chart-container {
   width: 100%;
   margin: 0.25rem 0;
-  height: 600px;
+  height: 650px;
   background: white;
   border-radius: $border-radius;
   box-shadow: $primary-shadow;
   box-sizing: border-box;
   overflow: hidden;
+  
+  @media (max-width: 992px) {
+    height: 600px;
+  }
+  
+  @media (max-width: 576px) {
+    height: 500px;
+  }
 
   .full-width-chart {
     width: 100%;

@@ -152,7 +152,7 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
       grid: {
         left: '2%',
         right: '2%',
-        bottom: '8%',
+        bottom: '10%',
         top: '7%',
         containLabel: true
       },

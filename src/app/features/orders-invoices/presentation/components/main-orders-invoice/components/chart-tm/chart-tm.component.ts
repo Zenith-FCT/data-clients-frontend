@@ -116,9 +116,9 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         confine: true,
       },
       grid: {
-        left: '5%',
-        right: '8%',
-        bottom: '3%', 
+        left: '2%',
+        right: '25%',
+        bottom: '0%', 
         top: '10%',
         containLabel: true
       },
