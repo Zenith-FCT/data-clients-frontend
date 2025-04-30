@@ -584,22 +584,20 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   width: 100%;
   display: flex;
   gap: 2rem;
-  min-height: 550px;
-  height: 550px;
+  min-height: 650px;
+  height: 650px;
   margin-bottom: 2rem;
   overflow: visible;
   padding-top: 10px;
-
   .chart-container {
     width: 100%;
     background-color: #a5a5a5;
     border-radius: $border-radius;
-    border: 1px solid #dfff03;
     padding: 1rem;
     padding-top: 0.5rem;
     box-shadow: $primary-shadow;
-    min-height: 550px;
-    height: 550px;
+    min-height: 650px;
+    height: 650px;
     display: flex;
     flex-direction: column;
     overflow: visible;

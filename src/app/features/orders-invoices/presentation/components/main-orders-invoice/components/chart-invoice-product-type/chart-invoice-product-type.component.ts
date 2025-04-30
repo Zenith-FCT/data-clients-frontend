@@ -81,7 +81,6 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
       this.updateChart();
     }
   }
-
   private updateChart(): void {
     if (!this.isBrowser) return;
 
@@ -111,30 +110,58 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
           const percentage = Math.round((value / total) * 100);
           return `${params.name}: ${value.toLocaleString('es-ES')} € (${percentage}%)`;
         },
-        confine: true  
-      },
-      legend: {
-        orient: 'vertical',
-        right: '2%',
-        top: 'top',
-        padding: 20,
+        backgroundColor: 'rgba(33, 33, 33, 0.9)',
+        borderColor: '#444',
         textStyle: {
-          fontSize: 12,
-          color: '#ffffff'
+          color: '#fff',
         }
       },
       series: [
         {
           name: 'Facturación por tipo de producto',
           type: 'pie',
-          radius: ['50%', '80%'],
-          center: ['40%', '50%'],
+          radius: ['40%', '70%'],
+          center: ['50%', '45%'],
           avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 8,
+            borderWidth: 2,
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold',
+              color: '#000',
+            },
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
           label: {
-            show: false
+            show: true,
+            position: 'outside',
+            formatter: (params: any) => {
+              let formattedValue = params.value;
+              if (params.value >= 1000000) {
+                formattedValue = (params.value / 1000000).toFixed(1) + 'M €';
+              } else if (params.value >= 1000) {
+                formattedValue = (params.value / 1000).toFixed(1) + 'k €';
+              } else {
+                formattedValue = params.value + ' €';
+              }
+              return `${params.name}: ${formattedValue}`;
+            },
+            color: '#000',
+            fontSize: 14,
           },
           labelLine: {
-            show: false
+            show: true,
+            lineStyle: {
+              color: '#000',
+            },
           },
           data: chartData
         }

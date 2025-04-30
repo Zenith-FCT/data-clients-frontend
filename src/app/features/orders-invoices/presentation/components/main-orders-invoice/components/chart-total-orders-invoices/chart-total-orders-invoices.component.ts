@@ -135,10 +135,10 @@ export class ChartTotalOrdersInvoicesComponent implements OnInit, AfterViewInit,
               const value = param.value;
               
               if (param.seriesType === 'line') {
-                tooltipContent += '<div style="border: 1px solid #000; margin: 3px 0; padding: 4px; border-radius: 3px; background-color: rgba(255, 255, 255, 0.7); ">' + 
+                tooltipContent += '<div>' + 
                   marker + ' ' + seriesName + ': <span style="font-weight: bold;">' + parseFloat(value).toLocaleString('es-ES') + ' €</span></div>';
               } else {
-                tooltipContent += '<div style="border: 1px solid #000; margin: 3px 0; padding: 4px; border-radius: 3px; background-color: rgba(255, 255, 255, 0.7);">' + 
+                tooltipContent += '<div >' + 
                   marker + ' ' + seriesName + ': <span style="font-weight: bold;">' + parseFloat(value).toLocaleString('es-ES') + '</span></div>';
               }
             }

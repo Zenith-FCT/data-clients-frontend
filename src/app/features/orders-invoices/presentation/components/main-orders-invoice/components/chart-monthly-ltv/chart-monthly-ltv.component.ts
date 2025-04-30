@@ -128,7 +128,7 @@ export class ChartMonthlyLTVComponent implements OnInit, AfterViewInit, OnDestro
         confine: true
       },
       grid: {
-        left: '3%',
+        left: '1%',
         right: '4%',
         bottom: '3%',
         containLabel: true
