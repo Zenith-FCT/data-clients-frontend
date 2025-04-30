@@ -1,32 +1,38 @@
 <div class="main-wrapper">
   <div class="orders-container">
     <div class="orders-summary">
-      <div class="date-selectors-left">
-        <mat-form-field>
-          <mat-select
-            [(ngModel)]="selectedMonth"
-            (selectionChange)="onDateChange()"
-            #monthSelect
-          >
-            <mat-option
-              *ngFor="let month of months; let i = index"
-              [value]="i + 1"
-            >
-              {{ getMonthName(i + 1) }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select
-            [(ngModel)]="selectedYear"
-            (selectionChange)="onDateChange()"
-            #yearSelect
-          >
-            <mat-option *ngFor="let year of years" [value]="year">
-              {{ year }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+      
+      <div class="sticky-header-container">
+        <div class="date-selectors-left">
+          <h2>Pedidos y Facturacion</h2>
+          <div class="selectors-container">
+            <mat-form-field>
+              <mat-select
+                [(ngModel)]="selectedMonth"
+                (selectionChange)="onDateChange()"
+                #monthSelect
+              >
+                <mat-option
+                  *ngFor="let month of months; let i = index"
+                  [value]="i + 1"
+                >
+                  {{ getMonthName(i + 1) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select
+                [(ngModel)]="selectedYear"
+                (selectionChange)="onDateChange()"
+                #yearSelect
+              >
+                <mat-option *ngFor="let year of years" [value]="year">
+                  {{ year }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
       </div>
       
       <div class="summary-cards">
