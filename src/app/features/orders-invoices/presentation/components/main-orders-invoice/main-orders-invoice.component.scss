@@ -189,20 +189,40 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   .summary-cards {
     display: flex;
     width: 100%;
-    justify-content: space-between;
-
-    app-information-box {
+    justify-content: space-between;    app-information-box {
       width: 24%;
       margin: 0 0.5%;
       box-sizing: border-box;
+      display: flex;
+      height: 100%;
 
       ::ng-deep {
         * {
           font-family: $primary-font !important;
         }
         
-        .info-box-title, .info-box-value, .info-box-subtitle {
-          font-family: $primary-font !important;
+        .information-box {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+        }
+
+        .box-content {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          flex: 1;
+          padding: 0;
+        }
+
+        .data-state {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          padding: 0;
         }
       }
     }
@@ -441,6 +461,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   padding: 0;
   align-self: stretch !important;
   margin-top: 0 !important;
+  justify-content: center;
   
   @media (max-width: 992px) {
     width: 100%;
@@ -457,10 +478,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   @media (max-width: 576px) {
     flex-direction: column;
     min-height: auto;
-  }
-
-  > div {
-    flex: 1;
+  }  > div {
     background: white;
     border-radius: $border-radius;
     box-shadow: $primary-shadow;
@@ -468,6 +486,40 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     box-sizing: border-box;
     height: calc(50% - 8px);
     display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    ::ng-deep {
+      .information-box {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .box-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .data-state {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      .amount {
+        margin: 0;
+      }
+
+      .description {
+        margin: 5px 0 0;
+      }
+    }
     
     @media (max-width: 992px) {
       height: 250px;
@@ -495,12 +547,12 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
     &:last-child {
       margin-bottom: 0;
-    }
-
-    > app-information-box {
+    }    > app-information-box {
       width: 100%;
       height: 100%;
       display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
   }
 }

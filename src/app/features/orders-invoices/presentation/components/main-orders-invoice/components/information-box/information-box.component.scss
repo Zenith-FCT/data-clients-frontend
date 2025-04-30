@@ -61,11 +61,12 @@
   gap: 8px;
   flex: 0 0 auto;
   margin-top: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .box-header h3 {
-  margin-top: 16px;
+  margin-top: 8px;
+  margin-bottom: 4px;
   font-size: 24px;
   font-weight: 700;
   color: #333;
@@ -80,9 +81,9 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   min-height: 0;
-  padding-top: 0;
+  padding-top: 5px;
   max-width: 100%;
   overflow: hidden;
   box-sizing: border-box;
@@ -92,7 +93,7 @@
 :host([type="tm-year"]) .box-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   height: 100%;
   padding: 0;
 }
@@ -150,7 +151,7 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 0;
   min-height: 0;
@@ -167,10 +168,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  flex: 1;
   width: 100%;
-  margin: auto 0;
   max-width: 100%;
   padding: 0 4px;
   box-sizing: border-box;
@@ -183,7 +181,7 @@
   color: #ffffff;
   margin-bottom: 0;
   line-height: 1;
-  padding-top: 4px;
+  padding-top: 16px;
   width: 100%;
   text-align: center;
   letter-spacing: -1px;
@@ -240,6 +238,7 @@
   max-width: 100%;
   box-sizing: border-box;
   color: #ffffff;
+  vertical-align: baseline; /* Alineación vertical con la moneda */
 }
 
 :host([type="monthly-tm"]) .currency,
@@ -248,6 +247,7 @@
   font-size: 65px;
   display: inline-block;
   color: #ffffff;
+  margin-top: 0; /* Eliminado el margen superior para alinear con data-state */
 }
 
 @media screen and (max-width: 1366px) {
@@ -296,7 +296,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 100%;
@@ -305,13 +305,14 @@
   box-sizing: border-box;
   padding: 0 4px;
   visibility: visible;
+  margin-top: 20px;
 }
 
 :host([type="monthly-tm"]) .amount-container,
 :host([type="tm-year"]) .amount-container {
   flex-grow: 0;
   margin-bottom: auto;
-  padding-top: 10px;
+  padding-top: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -323,7 +324,6 @@
 
 :host([type="monthly-tm"]) .description,
 :host([type="tm-year"]) .description {
-  margin-top: 15px;
   margin-bottom: 20px;
   color: #000000 !important;
   font-weight: normal;
@@ -337,7 +337,7 @@
   font-weight: normal;
   margin: 0;
   white-space: nowrap;
-  padding-bottom: 4px;
+  padding-bottom: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
@@ -386,4 +386,23 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+:host(:not([type="monthly-tm"]):not([type="tm-year"])) .data-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0;
+}
+
+:host(:not([type="monthly-tm"]):not([type="tm-year"])) .description {
+  margin-top: 10px;
+}
+
+:host(:not([type="monthly-tm"]):not([type="tm-year"])) .amount {
+  margin-bottom: 0;
+  padding-top: 0;
+  line-height: 1.2;
+  margin-top: 0;
 }
