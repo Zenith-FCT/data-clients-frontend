@@ -146,7 +146,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
             {
               label: 'Clientes Únicos',
               data: monthlyData.uniqueOrders,
-              backgroundColor: '#dfff03',
+              backgroundColor: 'rgb(31, 31, 31)',
               borderWidth: 1,
               borderRadius: 4,
               barPercentage: 0.8,
@@ -184,7 +184,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
                 padding: 15,
                 font: {
                   size: 14,
-                  color: '#ffffff'
+                  color: '#000000'
                 },
                 color: '#ffffff'
               }

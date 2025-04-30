@@ -144,7 +144,7 @@ export class InvoiceClientTypeComponent implements OnInit, AfterViewInit, OnDest
           },
           data: [
             { value: recurring, name: 'Clientes Recurrentes', itemStyle: { color: 'rgba(255, 255, 255, 0.51)' } },
-            { value: unique, name: 'Clientes Únicos', itemStyle: { color: '#dfff03' } }
+            { value: unique, name: 'Clientes Únicos', itemStyle: { color: 'rgb(31, 31, 31)' } }
           ]
         }
       ]

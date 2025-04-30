@@ -116,10 +116,10 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         confine: true,
       },
       grid: {
-        left: '2%',
+        left: '3%',
         right: '25%',
-        bottom: '0%', 
-        top: '10%',
+        bottom: '1%', 
+        top: '11%',
         containLabel: true
       },
       xAxis: {
