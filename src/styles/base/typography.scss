@@ -1,0 +1,17 @@
+@import '../abstracts/functions';
+@import '../abstracts/variables';
+
+h1 {
+  font-size: fluid-size(32px, 48px, 320px, 1200px);
+  font-weight: $font-weight-bold;
+}
+
+p {
+  margin-bottom: $spacing-md;
+}
+
+.headline {
+  font-family: $font-secondary;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+}

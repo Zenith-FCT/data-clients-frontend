@@ -1,0 +1,19 @@
+.btn {
+  display: inline-block;
+  font-weight: $font-weight-bold;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  border-radius: $border-radius-sm;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all $transition-default;
+}
+
+.btn-primary {
+  background-color: $color-fluor;
+  color: $color-black;
+
+  &:hover {
+    background-color: darken($color-fluor, 10%);
+  }
+}

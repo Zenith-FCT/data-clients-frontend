@@ -1,0 +1,13 @@
+.logo {
+  display: inline-block;
+
+  &--primary { max-width: 200px; }
+  &--secondary { max-width: 120px; }
+  &--icon { max-width: 60px; }
+
+  @include media-breakpoint-up(md) {
+    &--primary { max-width: 240px; }
+    &--secondary { max-width: 140px; }
+    &--icon { max-width: 80px; }
+  }
+}
