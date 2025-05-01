@@ -66,7 +66,7 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
     ];
 
     this.chartOption = {
-      backgroundColor: '#ffffff',
+      backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
         formatter: (params: any) => {
@@ -87,12 +87,13 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
         boundaryGap: false,
         axisLine: {
           lineStyle: {
-            color: '#666'
+            color: '#fff'
           }
         },
         axisLabel: {
-          color: '#666',
-          fontSize: 12
+          color: '#fff',
+          fontSize: 12,
+          margin: 18
         }
       },
       yAxis: {
@@ -102,19 +103,20 @@ export class MonthlyAbandonedCartsComponent implements OnInit, OnDestroy {
         axisLine: {
           show: true,
           lineStyle: {
-            color: '#666'
+            color: '#fff',
+            
           }
         },
         axisLabel: {
-          color: '#666',
-          fontSize: 12,
+          color: '#fff',
+          fontSize: 14,
           formatter: (value: number) => {
             return Math.round(value).toString();
           }
         },
         splitLine: {
           lineStyle: {
-            color: 'rgba(0,0,0,0.1)'
+            color: 'rgba(255, 255, 255, 0.33)'
           }
         }
       },

@@ -6,16 +6,15 @@
     padding: 16px; 
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
-    background-color: white;
-
-    .box-header {
+    background-color: #a5a5a5;    .box-header {
         margin-bottom: 16px;
+        text-align: center;
 
         h3 {
             margin: 0;
             color: var(--md-source-on-surface);
-            font-size: 0.95rem;
-            font-weight: 500;
+            font-size: 1rem;
+            font-weight: bold;
             font-family: 'Poppins', sans-serif;
         }
     }
@@ -68,25 +67,20 @@
             text-align: center;
 
             .amount {
-                margin-bottom: 12px;
+                margin-bottom: 8px;
 
                 .value {
-                    font-size: 1.75rem;
+                    font-size: 2rem;
                     font-weight: 600;
-                    color: var(--md-source-on-surface);
+                    color: #ffffff;
                     font-family: 'Poppins', sans-serif;
                 }
 
-                .currency {
-                    margin-left: 4px;
-                    color: var(--md-source-on-surface-variant);
-                    font-family: 'Poppins', sans-serif;
-                }
 
                 .unit {
                     margin-left: 4px;
-                    color: var(--md-source-on-surface-variant);
-                    font-size: 1.25rem;
+                    color: #ffffff;
+                    font-size: 2rem;
                     font-family: 'Poppins', sans-serif;
                 }
             }

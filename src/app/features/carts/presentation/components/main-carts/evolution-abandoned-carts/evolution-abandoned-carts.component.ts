@@ -66,7 +66,7 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
     ];
 
     this.chartOption = {
-      backgroundColor: '#ffffff',
+      backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
         formatter: (params: any) => {
@@ -87,12 +87,13 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
         boundaryGap: false,
         axisLine: {
           lineStyle: {
-            color: '#ff0c00'
+            color: '#fff'
           }
         },
         axisLabel: {
-          color: '#666',
-          fontSize: 12
+          color: '#fff',
+          fontSize: 12,
+          margin: 18,
         }
       },
       yAxis: {
@@ -102,11 +103,11 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
         axisLine: {
           show: true,
           lineStyle: {
-            color: '#666'
+            color: '#fff'
           }
         },
         axisLabel: {
-          color: '#666',
+          color: '#fff',
           fontSize: 12,
           formatter: (value: number) => {
             return Math.round(value).toString();
@@ -114,7 +115,7 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
         },
         splitLine: {
           lineStyle: {
-            color: 'rgba(0,0,0,0.1)'
+            color: 'rgba(255, 255, 255, 0.38)'
           }
         }
       },
