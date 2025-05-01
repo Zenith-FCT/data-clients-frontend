@@ -238,7 +238,7 @@
   max-width: 100%;
   box-sizing: border-box;
   color: #ffffff;
-  vertical-align: baseline; /* Alineación vertical con la moneda */
+  vertical-align: baseline;
 }
 
 :host([type="monthly-tm"]) .currency,
@@ -247,7 +247,7 @@
   font-size: 65px;
   display: inline-block;
   color: #ffffff;
-  margin-top: 0; /* Eliminado el margen superior para alinear con data-state */
+  margin-top: 0;
 }
 
 @media screen and (max-width: 1366px) {
