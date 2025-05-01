@@ -1,15 +1,47 @@
-@import './abstracts/variables';
-@import './abstracts/functions';
-@import './abstracts/mixins';
+﻿// Sistema de módulos moderno basado en @use
 
-@import './base/reset';
-@import './base/base';
-@import './base/typography';
+// Importamos los módulos con namespaces
+@use 'sass:math';
+@use 'sass:color';
 
-@import './layout/grid';
-@import './layout/visibility';
+// Abstracts (variables, mixins, funciones)
+@use './abstracts/_variables' as vars;
+@use './abstracts/_functions' as funcs;
+@use './abstracts/_mixins' as mix;
 
-@import './components/buttons';
-@import './components/logo';
+// Base
+@use './base/_reset';
+@use './base/_base';
+@use './base/typography';
 
-@import './utilities/utilities';
+// Componentes
+@use './components/_buttons';
+@use './components/_logo';
+
+// Layout
+@use './layout/_grid';
+@use './layout/_visibility';
+
+// Utilidades
+@use './utilities/utilities';
+
+// Variables globales (esto es necesario para que otros componentes puedan acceder a estas variables)
+:root {
+  --color-fluor: #{vars.$color-fluor};
+  --color-black: #{vars.$color-black};
+  --color-gray-35: #{vars.$color-gray-35};
+  --color-gray-65: #{vars.$color-gray-65};
+  --color-gray-90: #{vars.$color-gray-90};
+  --color-white: #{vars.$color-white};
+  
+  --font-primary: #{vars.$font-primary};
+  --font-secondary: #{vars.$font-secondary};
+  
+  --spacing-xs: #{vars.$spacing-xs};
+  --spacing-sm: #{vars.$spacing-sm};
+  --spacing-md: #{vars.$spacing-md};
+  --spacing-lg: #{vars.$spacing-lg};
+  --spacing-xl: #{vars.$spacing-xl};
+}
+
+// No necesitamos @forward porque Angular carga este archivo directamente

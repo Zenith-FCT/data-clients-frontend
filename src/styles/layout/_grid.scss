@@ -1,13 +1,13 @@
-@import '../abstracts/variables';
-@import '../abstracts/mixins';
+@use '../abstracts/variables' as vars;
+@use '../abstracts/mixins' as mix;
 
 .container {
   margin: 0 auto;
-  padding: 0 $spacing-md;
+  padding: 0 vars.$spacing-md;
 
-  @include media-breakpoint-up(sm) { max-width: 540px; }
-  @include media-breakpoint-up(md) { max-width: 720px; }
-  @include media-breakpoint-up(lg) { max-width: 960px; }
-  @include media-breakpoint-up(xl) { max-width: 1140px; }
-  @include media-breakpoint-up(xxl) { max-width: 1320px; }
+  @include mix.media-breakpoint-up(sm) { max-width: 540px; }
+  @include mix.media-breakpoint-up(md) { max-width: 720px; }
+  @include mix.media-breakpoint-up(lg) { max-width: 960px; }
+  @include mix.media-breakpoint-up(xl) { max-width: 1140px; }
+  @include mix.media-breakpoint-up(xxl) { max-width: 1320px; }
 }

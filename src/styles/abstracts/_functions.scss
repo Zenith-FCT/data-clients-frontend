@@ -1,6 +1,7 @@
-@function fluid-size($min-size, $max-size, $min-width, $max-width) {
-  $m: ($max-size - $min-size) / ($max-width - $min-width);
-  $b: $min-size - $m * $min-width;
+@use "sass:math";
 
+@function fluid-size($min-size, $max-size, $min-width, $max-width) {
+  $m: math.div(($max-size - $min-size), ($max-width - $min-width));
+  $b: $min-size - ($m * $min-width);
   @return calc(#{$m * 100}vw + #{$b}px);
 }

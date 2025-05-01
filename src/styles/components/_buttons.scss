@@ -1,19 +1,23 @@
+@use "sass:color";
+@use "../abstracts/variables" as vars;
+
 .btn {
   display: inline-block;
-  font-weight: $font-weight-bold;
-  padding: $spacing-sm $spacing-lg;
-  font-size: $font-size-base;
-  border-radius: $border-radius-sm;
+  font-weight: vars.$font-weight-bold;
+  padding: vars.$spacing-sm vars.$spacing-lg;
+  font-size: vars.$font-size-base;
+  border-radius: vars.$border-radius-sm;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all $transition-default;
+  transition: all vars.$transition-default;
 }
 
 .btn-primary {
-  background-color: $color-fluor;
-  color: $color-black;
+  background-color: vars.$color-fluor;
+  color: vars.$color-black;
 
   &:hover {
-    background-color: darken($color-fluor, 10%);
+    background-color: color.adjust(vars.$color-fluor, $lightness: -10%);
   }
 }
+
