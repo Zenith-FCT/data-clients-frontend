@@ -11,19 +11,26 @@ $spacing-unit: 1rem;
   height: 98vh;
   width: 100%;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .sticky-header {
   position: sticky;
   top: 0;
   z-index: 10000;
-  background-color: var(--md-source-surface-variant);
-  padding: 6px 16px;
-  width: 100%;
+  background-color: white;
+  padding: 4px 10px;
+  margin: 0 auto;
+  width: 94%;
+  max-width: 94%;
   box-sizing: border-box;
   height: auto;
-  min-height: 50px;
+  min-height: 36px;
   flex-shrink: 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .chart-header {
@@ -75,7 +82,8 @@ $spacing-unit: 1rem;
 .orders-container {
   flex: 1;
   overflow-y: auto;
-  padding: $spacing-unit;
+  overflow-x: hidden;
+  padding: $spacing-unit 1.5%;
   padding-bottom: 12rem;
   box-sizing: border-box;
   width: 100%;
@@ -83,12 +91,18 @@ $spacing-unit: 1rem;
   background-color: var(--md-source-surface-variant);
 }
 
+.charts-wrapper {
+  width: 97%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
 .carts-summary {
   display: flex;
   gap: 24px;
   width: 100%;
-  box-sizing: border-box;
   margin-bottom: 30px;
+  box-sizing: border-box;
 
   .info-container {
     flex: 1;
@@ -141,12 +155,13 @@ $spacing-unit: 1rem;
 .charts-row {
   display: flex;
   justify-content: space-between;
-  width: 97%;
-  margin: 0 ;
+  width: 100%;
   height: 480px;
   margin-bottom: 24px;
   flex-wrap: nowrap;
   flex-direction: row;
+  box-sizing: border-box;
+  overflow: hidden;
 
   .chart-section-evolution, .chart-section-rate {
     background-color: #FFFFFF;
@@ -154,11 +169,13 @@ $spacing-unit: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 16px;
-    width: 48%;
-    flex: 0 0 48%;
+    width: 49%;
+    flex: 0 0 49%;
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
     
     h3 {
       font-size: 1.1rem;
@@ -176,6 +193,12 @@ $spacing-unit: 1rem;
       flex-direction: column;
       height: calc(100% - 40px);
       overflow: hidden;
+      width: 100%;
+      
+      ::ng-deep .echarts {
+        overflow: hidden !important;
+        width: 100% !important;
+      }
     }
   }
   

@@ -9,6 +9,7 @@
     padding: 16px 16px 16px 0px; 
     box-sizing: border-box;
     margin-left: 0;
+    overflow: hidden;
 
     > div {
         height: 100%;
@@ -16,11 +17,15 @@
         display: flex;
         flex-direction: column;
         flex: 1;
-    }    .chart {
+        overflow: hidden;
+    }
+    
+    .chart {
         width: 100%;
         height: 100%;
         min-height: 500px;
         margin-left: 0px;
+        overflow: hidden;
     }
 }
 
@@ -70,4 +75,15 @@
         color: #666;
         font-size: 16px;
     }
+}
+
+.echarts-container {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+::ng-deep .echarts {
+    width: 100% !important;
+    overflow: hidden !important;
 }
