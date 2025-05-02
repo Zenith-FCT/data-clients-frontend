@@ -12,6 +12,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     box-sizing: border-box;
     margin-left: 0;
     overflow: hidden;
+    user-select: none;
 
     > div {
         height: 100%;
@@ -20,9 +21,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
         flex-direction: column;
         flex: 1;
     }    
-    
-    .chart {
+      .chart {
         width: 100%;
+        pointer-events: auto;
+        cursor: default;
         height: 100%;
         min-height: 0;
         margin-left: 0px;

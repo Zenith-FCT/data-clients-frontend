@@ -85,11 +85,15 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
       const months = [
         'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
         'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
-      ];
-
-
-      this.chartOption = {
-        backgroundColor: 'transparent',          tooltip: {
+      ];      this.chartOption = {
+        backgroundColor: 'transparent',
+        silent: false, 
+        animation: true,
+        textStyle: {
+          fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',
+          fontSize: 12,
+        },
+        tooltip: {
           trigger: 'axis',
           formatter: (params: any) => {
             const data = params[0];

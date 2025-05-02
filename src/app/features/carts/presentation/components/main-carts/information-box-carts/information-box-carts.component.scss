@@ -8,6 +8,7 @@
   box-sizing: border-box;
   width: 100%;
   font-family: 'Swiss 721 BT', 'Swiss721BT-ExRoman', 'Swiss721BT-Roman', sans-serif !important;
+  user-select: none; 
 }
 
 .info-container .information-box {
@@ -50,6 +51,7 @@
   flex: 0 0 auto;
   margin-top: 0;
   margin-bottom: 0;
+  user-select: none;
 }
 
 .box-header h3 {
@@ -64,6 +66,8 @@
   text-align: center;
   width: 100%;
   font-family: 'Swiss 721 BT', 'Swiss721BT-ExRoman', 'Swiss721BT-Roman', sans-serif !important;
+  user-select: none;
+  cursor: default;
 }
 
 .box-content {
@@ -77,6 +81,7 @@
   max-width: 100%;
   overflow: hidden;
   box-sizing: border-box;
+  user-select: none;
 }
 
 .data-state {
@@ -95,6 +100,7 @@
   box-sizing: border-box;
   padding-top: 0;
   margin-top: -5px;
+  user-select: none;
 }
 
 .amount-container {
@@ -105,6 +111,7 @@
   width: 100%;
   max-width: 100%;
   padding: 0 4px;
+  margin-bottom: 4px;
   box-sizing: border-box;
 }
 
@@ -124,7 +131,9 @@
   font-family: 'Swiss 721 BT', 'Swiss721BT-ExRoman', 'Swiss721BT-Roman', sans-serif !important;
   padding-top: 0;
   margin-top: 0;
-  padding-bottom: 2px;
+  padding-bottom: 4px;
+  user-select: none;
+  cursor: default;
 }
 
 .amount .value {
@@ -148,7 +157,7 @@
   font-size: 15px;
   font-weight: normal;
   margin: 0;
-  margin-top: -2px;
+  margin-top: 6px;
   padding-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -156,6 +165,8 @@
   width: 100%;
   text-align: center;
   font-family: 'Swiss 721 BT', 'Swiss721BT-ExRoman', 'Swiss721BT-Roman', sans-serif !important;
+  user-select: none;
+  cursor: default;
 }
 
 .loading-state {
@@ -195,6 +206,15 @@
   font-family: 'Swiss 721 BT', 'Swiss721BT-ExRoman', 'Swiss721BT-Roman', sans-serif !important;
 }
 
+/* Estilos para los porcentajes */
+.percentage-indicator {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+  user-select: none;
+  cursor: default;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -219,6 +239,7 @@
   
   .description {
     font-size: 14px;
+    margin-top: 5px;
   }
   
   .box-header h3 {
@@ -250,39 +271,75 @@
   .description {
     font-size: 12px;
     line-height: 1.2;
+    margin-top: 4px;
   }
 }
 
 @media screen and (max-width: 576px) {
   .information-box {
-    padding: 6px 4px 4px 4px;
+    padding: 8px 6px 8px 6px;
+    height: auto;
+    max-height: none;
+    min-height: 120px; 
+  }
+  
+  .info-container .information-box {
+    min-height: 120px;
+    height: auto;
   }
   
   .box-header h3 {
-    font-size: 14px;
-    margin-bottom: 0;
+    font-size: 16px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+  }
+  .box-content {
+    padding-top: 4px;
+    margin-top: 0;
+    min-height: 80px;
+    justify-content: center;
+    gap: 6px;
   }
   
-  .box-content {
-    padding-top: 0;
-    margin-top: -4px;
+  .amount-container {
+    margin-bottom: 4px;
+    padding: 0 4px;
   }
   
   .amount,
   .amount .value,
   .currency,
   .unit {
-    font-size: 16px;
+    font-size: 24px;
     padding: 0 2px;
     white-space: nowrap;
   }
-  
-  .description {
-    font-size: 10px;
-    padding: 0 2px;
+    
+  .amount {
+    padding-bottom: 3px;
+    margin-bottom: 2px;
+    line-height: 1.1;
+  }
+    .description {
+    font-size: 14px;
+    padding: 0 4px;
+    margin-top: 4px;
+    padding-bottom: 2px;
+    line-height: 1.2;
+  }
+    
+  .data-state {
+    margin-top: 2px;
+    min-height: 30px;
+    flex: 0 0 auto;
+    padding-bottom: 4px;
   }
   
-  .data-state {
-    margin-top: -2px;
+  .percentage-indicator {
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    line-height: 1.2;
+    font-weight: 600;
   }
 }

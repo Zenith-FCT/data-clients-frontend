@@ -63,9 +63,7 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
     const months = [
       'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
       'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
-    ];
-
-    this.chartOption = {
+    ];    this.chartOption = {
       backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
@@ -74,6 +72,12 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
           return `${data.name}: ${data.value} carritos`;
         }
       },
+      textStyle: {
+        fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',
+        fontSize: 12,
+      },
+      silent: false, 
+      animation: true,
       grid: {
         top: 30,
         right: '2%',
@@ -125,11 +129,11 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
         smooth: true,
         name: 'Carritos abandonados',
         itemStyle: {
-          color: '#ff0c00'
+          color: '#dff03c'
         },
         areaStyle: {
           opacity: 0.3,
-          color: '#ff0c00'
+          color: '#dff03c',
         }
       }]
     };
