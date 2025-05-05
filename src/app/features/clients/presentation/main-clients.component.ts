@@ -63,10 +63,14 @@ export class ClientsComponent implements OnInit {
   displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];  globalYear = new Date().getFullYear().toString();
   globalMonth = (new Date().getMonth() + 1).toString();  onGlobalYearChange(event: MatSelectChange): void {
     this.globalYear = event.value;
+    
+    // Solo actualizar los filtros que no tienen selectores específicos
     Object.keys(this.filters).forEach(key => {
-      if (this.filters[key as FilterType].year) {
+      // Excluir filtros que tienen sus propios selectores
+      if (key !== 'clients' && key !== 'orders' && key !== 'ticket' && this.filters[key as FilterType].year) {
         this.filters[key as FilterType].year = event.value;
-          if (key === 'monthlyClients') {          
+        
+        if (key === 'monthlyClients') {          
           // Cargar nuevos datos para gráfico de clientes
           this.loadMonthlyClientsData(event.value);
         } else if (key === 'monthlyOrders') {
@@ -157,10 +161,26 @@ export class ClientsComponent implements OnInit {
       // Activar pantalla de carga
       this.loadingView = true;
       
-      // Asegurarse de que los filtros con opción "all" usen esa opción por defecto
+      // Inicializar valores para filtros
+      this.globalYear = new Date().getFullYear().toString(); // Por defecto, mostrar año actual
+      this.globalMonth = (new Date().getMonth() + 1).toString(); // Mes actual
+      
+      // Asegurarse de que los filtros con opción "all" mantengan esa opción
       this.filters.clients.year = "all";
       this.filters.orders.year = "all";
       this.filters.ticket.year = "all";
+      
+      // Para filtros basados solo en mes y año, usar los valores globales
+      Object.keys(this.filters).forEach(key => {
+        if (key !== 'clients' && key !== 'orders' && key !== 'ticket') {
+          if (this.filters[key as FilterType].year) {
+            this.filters[key as FilterType].year = this.globalYear;
+          }
+          if (this.filters[key as FilterType].month) {
+            this.filters[key as FilterType].month = this.globalMonth;
+          }
+        }
+      });
       
       // Cargar datos
       this.viewModel.loadData();
@@ -535,5 +555,28 @@ export class ClientsComponent implements OnInit {
 
     // Asignar las nuevas opciones
     this.monthlyOrdersChartOption = newOption;
+  }
+  /**
+   * Convierte el número del mes a su nombre en español
+   * @param monthNumber Número del mes (1-12) o undefined
+   * @returns Nombre del mes en español o "Todos" si es undefined
+   */
+  getMonthNameFromNumber(monthNumber: string | undefined): string {
+    if (!monthNumber) {
+      return 'Todos';
+    }
+    
+    const monthNames = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    
+    const monthIndex = parseInt(monthNumber, 10) - 1;
+    
+    if (monthIndex >= 0 && monthIndex < 12) {
+      return monthNames[monthIndex];
+    }
+    
+    return 'Mes desconocido';
   }
 }

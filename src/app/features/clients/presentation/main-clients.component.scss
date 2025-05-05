@@ -1,20 +1,25 @@
-@use "../../../../styles/abstracts/variables" as *;
+$primary-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+$border-radius: 16px;
+$spacing-unit: 1rem;
+$transition-speed: 0.3s;
+
+$primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 :host {
-  --color-corporate: #{$color-fluor};
-  --main-font: #{$font-primary};
-  --text-color: #{$color-black};
-  --border-color: #{$color-gray-90};
+  --color-corporate: #0FF959;
+  --main-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
+  --text-color: #333333;
+  --border-color: #EEEEEE;
   display: block;
-  padding: $spacing-sm;
+  padding: 0;
   box-sizing: border-box;
   font-family: var(--main-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: $color-white; /* Asegurando que el fondo del host también es blanco */
+  background-color: #E5E5E5; /* Fondo gris claro como en los otros componentes */
 }:host ::ng-deep {
   .mat-mdc-table, .mdc-data-table__row {
-    background-color: $color-gray-90 !important;
+    background-color: #a5a5a5 !important;
   }
   
   .mdc-data-table__content,
@@ -23,72 +28,114 @@
   .mat-mdc-cell,
   .mat-mdc-header-cell,
   .mat-mdc-table .mat-mdc-cell {
-    color: var(--text-color) !important;
+    color: #333333 !important;
   }
   
   tbody, td, tfoot, th, thead, tr {
-    border-color: var(--border-color) !important;
+    border-color: #EEEEEE !important;
   }
 }.page-header {
-  padding: $spacing-sm $spacing-lg;
+  padding: 12px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-    h1 {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    font-family: $font-secondary; /* Utilizando la fuente secundaria para el título principal */
-    color: $color-black;
-    margin: 0;
-  }
+  margin-bottom: 16px;
+  background-color: #a5a5a5;
+  border-radius: $border-radius;
+  box-shadow: $primary-shadow;
 
-  .global-filters {
+  h1 {
+    font-size: 22px;
+    font-weight: bold;
+    font-family: $primary-font;
+    color: #333333;
+    margin: 6px 0 0 0;
+  }  .global-filters {
     display: flex;
-    gap: $spacing-md;
+    gap: 16px;
+    background-color: #ffffff;
+    padding: 8px 16px;
+    border-radius: $border-radius;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filter-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 2px;
+      margin-left: 4px;
+    }
     
     .mat-form-field {
       width: 120px;
       margin-bottom: -1.25em;
+      
+      &.month-selector {
+        width: 130px;
+      }
+      
+      &.year-selector {
+        width: 100px;
+      }
+      
+      ::ng-deep {
+        .mat-mdc-text-field-wrapper {
+          background-color: #f8f8f8;
+          border-radius: 8px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .mat-mdc-form-field-label {
+          font-weight: 500;
+        }
+      }
     }
   }
-}.main-container {
+}
+
+.main-container {
   display: flex;
   flex-wrap: wrap;
-  gap: $spacing-md;
-  padding: $spacing-sm $spacing-sm $spacing-lg;
-  background: $color-white; /* Fondo blanco para el contenedor principal */
-  justify-content: space-between; /* Distribuye el espacio entre elementos */
+  gap: 16px;
+  padding: 12px 12px 24px;
+  background: #E5E5E5;
+  justify-content: space-between;
 }
 
 .top-row {
   width: 100%;
 }.clients-container {
   width: calc(48% - 4px); /* Ajustado para equilibrar el margen */
-  background: $color-gray-90;
-  border-radius: $border-radius-md;
-  color: var(--text-color);
+  background: #a5a5a5;
+  border-radius: $border-radius;
+  color: #333333;
   display: flex;
   flex-direction: column;
   height: 504px;
-  box-shadow: 0 1px 6px rgba($color-black, 0.1);
+  box-shadow: $primary-shadow;
   margin-left: 4px; /* Ajuste fino para alinearse con el gráfico de abajo */
 }
 
 .clients-title {
   margin: 0;
-  padding: $spacing-sm $spacing-lg;
+  padding: 12px 24px;
   text-align: center;
-  font-size: $font-size-md;
-  font-weight: $font-weight-bold;
-  font-family: $font-secondary; /* Utilizando la fuente secundaria para los títulos */
-  background: $color-gray-90;
-  border-radius: $border-radius-md $border-radius-md 0 0;
-  border-bottom: 1px solid var(--border-color);
+  font-size: 18px;
+  font-weight: bold;
+  font-family: $primary-font;
+  background: #a5a5a5;
+  border-radius: $border-radius $border-radius 0 0;
+  border-bottom: 1px solid #E5E5E5;
 }.table-container {
   overflow: auto;
-  background: $color-gray-90;
-  border-radius: 0 0 $border-radius-md $border-radius-md;
-  padding: 0 0 $spacing-sm 0;
+  background: #a5a5a5;
+  border-radius: 0 0 $border-radius $border-radius;
+  padding: 0 0 12px 0;
   height: calc(100% - 41px);
   min-height: 0;
   width: 100%;
@@ -97,7 +144,7 @@
   
   .mat-mdc-table {
     width: 100%;
-    background: $color-gray-90;
+    background: #a5a5a5;
     min-width: 600px;
   }
   
@@ -109,37 +156,37 @@
     position: sticky;
     top: 0;
     z-index: 3;
-    background: $color-gray-65; /* Un gris más oscuro para el encabezado de la tabla */
+    background: #909090; /* Un gris más oscuro para el encabezado de la tabla */
   }
   th.mat-mdc-header-cell {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 200px;
-    background: $color-gray-65; /* Un gris más oscuro para el encabezado de la tabla */
-    padding: $spacing-sm $spacing-sm;
-    font-weight: $font-weight-bold;
-    font-family: $font-secondary; /* Utilizando la fuente secundaria para los encabezados de tabla */
-    color: var(--text-color);
-    border-bottom: 2px solid $color-gray-35;
+    background: #909090; /* Un gris más oscuro para el encabezado de la tabla */
+    padding: 12px 12px;
+    font-weight: bold;
+    font-family: $primary-font;
+    color: #333333;
+    border-bottom: 2px solid #777777;
     position: sticky;
     top: 0;
     z-index: 3;
     text-align: center; /* Centrar el texto en las cabeceras */
   }
     td.mat-mdc-cell {
-    padding: $spacing-sm $spacing-sm;
-    font-size: $font-size-sm;
-    color: var(--text-color);
-    border-bottom: 1px solid var(--border-color);
+    padding: 12px 12px;
+    font-size: 14px;
+    color: #333333;
+    border-bottom: 1px solid #EEEEEE;
     text-align: center; /* Centrar el texto en las celdas */
   }
     tr.mat-mdc-row {
     height: 48px;
-    transition: background-color $transition-default;
+    transition: background-color $transition-speed;
     
     &:hover {
-      background: rgba($color-fluor, 0.1);
+      background: rgba(15, 249, 89, 0.1);
     }
   }
   
@@ -154,7 +201,7 @@
   width: calc(48% - 4px); /* Ajustado para equilibrar el margen */
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: 12px;
   height: 504px;
   justify-content: space-between;
   margin-right: 4px; /* Mismo ajuste que los otros contenedores para mantener equilibrio */
@@ -162,138 +209,276 @@
 
 .info-row {
   display: flex;
-  gap: $spacing-sm;
+  gap: 12px;
   width: 100%;
   flex-wrap: nowrap;
   height: calc(33.33% - 6.67px);
 }
 
 .info-box {
-  background: $color-gray-90; /* Mantener el fondo gris para los info-boxes */
-  border-radius: $border-radius-sm;
-  padding: $spacing-md $spacing-sm;
-  box-shadow: 0 1px 6px rgba($color-black, 0.1);
+  background: #a5a5a5; /* Cambiado a #a5a5a5 que es el color usado por tus compañeros */
+  border-radius: 16px;
+  padding: 12px 16px 8px 16px;
+  box-shadow: $primary-shadow;
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
   min-width: 0;
   height: 100%;
   box-sizing: border-box;
-  transition: transform $transition-default;
-  justify-content: center; /* Centrar verticalmente el contenido */
+  transition: transform $transition-speed;
+  user-select: none;
+  font-family: $primary-font;
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba($color-black, 0.1);
-  }    .info-box-header {
-    display: flex;
-    justify-content: space-between; /* Espacio entre elementos para colocar el selector a la derecha */
-    width: 100%;
-    margin-bottom: $spacing-sm;
-    align-items: center;
-    padding: 0 $spacing-sm;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
   }
-    .info-box-selector {
-    margin-left: auto; /* Empuja el selector completamente a la derecha */
+    .info-box-header {
+    display: flex;
+    justify-content: space-between; /* Distribuir título y selector */
+    width: 100%;
+    align-items: center;
+    min-height: 24px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    flex: 0 0 auto;
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  
+  .info-box-selector {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    
+    ::ng-deep .mat-mdc-form-field {
+      width: 80px; /* Hacemos el selector más compacto */
+      margin-bottom: -20px;
+    }
+    
+    ::ng-deep .mat-mdc-select-arrow-wrapper {
+      transform: scale(0.8);
+    }
+    
+    ::ng-deep .mat-mdc-form-field-infix {
+      padding: 8px 0;
+      min-height: 20px;
+    }
+  }
+    .info-box-title {
+    margin-top: 4px;
+    margin-bottom: 2px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #333333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left; /* Alineado a la izquierda cuando está en un header */
+    width: auto; /* Para que no ocupe todo el ancho cuando está en un header */
+    font-family: $primary-font;
+    user-select: none;
+    cursor: default;
+    
+    /* Cuando no está dentro de un header, centrarlo */
+    &:not(.info-box-header *) {
+      text-align: center;
+      width: 100%;
+    }
   }
   
-  .info-box-title {
-    color: $color-black;
-    font-size: $font-size-md;
-    font-weight: $font-weight-bold;
-    font-family: $font-secondary; /* Utilizando la fuente secundaria para los títulos de las cajas */
-    margin: $spacing-sm 0 $spacing-xs;
-    white-space: nowrap;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .info-box-subtitle {
-    color: $color-gray-35;
-    font-size: $font-size-xs;
-    font-family: $font-primary;
-    margin-bottom: $spacing-sm;
-    white-space: nowrap;
-    width: 100%;
-    text-align: center;
-  }
-  .info-box-value {
-    color: var(--text-color);
-    font-size: calc($font-size-xl + 4px); /* Aumentado el tamaño para destacar más */
-    font-weight: $font-weight-bold;
-    font-family: $font-primary; /* Utilizando la fuente principal para los valores */
-    text-align: center;
-    width: 100%;
-    margin: $spacing-sm 0;
+  .box-content {
+    flex: 1 1 auto;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    line-height: 1.2;
+    min-height: 0;
+    padding-top: 0;
+    margin-top: -5px;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    user-select: none;
+  }
+  
+  .data-state {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    min-height: 0;
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding-top: 0;
+    margin-top: -5px;
+    user-select: none;
+  }
+  
+  .amount {
+    font-size: 46px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 0;
+    line-height: 1;
+    width: 100%;
+    text-align: center;
+    letter-spacing: -1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    white-space: nowrap;
+    font-family: $primary-font;
+    padding-top: 0;
+    margin-top: 0;
+    padding-bottom: 4px;
+    user-select: none;
+    cursor: default;
+  }
+  
+  .value {
+    font-size: 46px;
+    font-weight: 600;
+    color: #FFFFFF;
+    font-family: $primary-font;
+  }
+  
+  .currency {
+    font-size: 46px;
+    vertical-align: top;
+    margin-left: 2px;
+    color: #FFFFFF;
+    display: inline-flex;
+    font-family: $primary-font;
+  }
+  
+  .description {
+    color: #000000;
+    font-size: 15px;
+    font-weight: normal;
+    margin: 0;
+    margin-top: 6px;
+    padding-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
+    font-family: $primary-font;
+    user-select: none;
+    cursor: default;
   }
   
   .info-box-icon {
     display: none; /* Ocultar el icono completamente */
   }
-}.selectors-container {
+  
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #666;
+    font-size: 14px;
+    height: 100%;
+    
+    span {
+      font-family: $primary-font;
+    }
+  }
+  
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  .error-state {
+    color: #e74c3c;
+    text-align: center;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    
+    span {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    p {
+      margin: 0;
+    }
+  }
+  
+  // Animación para el spinner
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+.selectors-container {
   display: flex;
-  gap: $spacing-xs;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .year-selector, .month-selector {
-  width: 90px;
-  height: 32px;
-  margin-bottom: 0;
+  width: 105px;
+  margin: 0;
+  transform: scale(0.85);
+  transform-origin: right center;
   
   ::ng-deep {
     .mat-mdc-form-field-subscript-wrapper {
       display: none;
     }    .mat-mdc-text-field-wrapper {
-      background: $color-black; /* Fondo negro */
+      background-color: #FFFFFF !important; /* Fondo blanco como usan tus compañeros */
       padding: 0;
       height: 32px;
-      border-radius: $border-radius-lg; /* Esquinas bien redondeadas */
-      box-shadow: 0 4px 10px rgba($color-black, 0.08);
-      transition: all $transition-default;
+      border-radius: 16px; /* Esquinas bien redondeadas */
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
       border: none !important;
       outline: none !important;
-      
-      &::before, &::after {
-        display: none !important;
-        border: none !important;
-      }
+      /* Sin flecha personalizada - usaremos la nativa de Angular Material */
     }
-    
-    .mat-mdc-form-field-infix {
-      padding: 0 0 0 $spacing-xs;
+      .mat-mdc-form-field-infix {
+      padding: 0 0 0 8px;
       min-height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative; /* Para posicionar la flecha */
-      
-      /* Flecha dentro del infix */
-      &::after {
-        content: "▼";
-        position: absolute;
-        right: 12px;
-        color: white;
-        font-size: 9px;
-        pointer-events: none;
-        line-height: 1;
-      }
-    }
-    
-    .mat-mdc-form-field-flex {
+      position: relative;
+    }    .mat-mdc-form-field-flex {
       margin-top: 0;
-      height: 32px;
+      height: 48px; /* Ajustando a la altura que usan tus compañeros */
       display: flex;
       align-items: center;
+      background-color: #FFFFFF !important; /* Fondo blanco */
+      overflow: hidden;
+      border-radius: 16px;
     }
-      .mdc-notched-outline__leading, 
+    
+    .mat-mdc-form-field-infix {
+      min-height: 48px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-family: $primary-font !important;
+    }.mdc-notched-outline__leading, 
     .mdc-notched-outline__notch, 
     .mdc-notched-outline__trailing {
       border-width: 0; /* Sin borde */
@@ -303,9 +488,14 @@
     .mat-mdc-form-field-outline {
       color: transparent !important; /* Borde invisible */
       opacity: 0 !important; /* Asegurar que el outline está oculto */
-    }.mat-select-value, .mat-mdc-select-value {
-      color: $color-white; /* Texto en blanco */
-      font-size: $font-size-sm;
+    }
+    
+    .mdc-line-ripple {
+      display: none;
+    }
+      .mat-select-value, .mat-mdc-select-value {
+      color: #333333; /* Texto oscuro como tus compañeros */
+      font-size: 14px;
       text-align: center;
       width: 100%;
       justify-content: center; /* Centrar contenido */
@@ -319,88 +509,80 @@
       width: 100%;
       justify-content: center; /* Asegurar que el texto está centrado */
       display: flex;
-      color: $color-white; /* Asegurar que el texto sea blanco */
-      margin: 0 auto; /* Centrar el texto */
-    }    /* Selector con flecha personalizada */
+      color: #333333; /* Color de texto como tus compañeros */
+      margin: 0 auto; /* Centrar el texto */    }/* Selector con flecha personalizada */
     .mat-mdc-select {
       position: relative;
       padding-right: 20px; /* Espacio para la flecha */
     }
-    
-    /* Contenedor principal con flecha */
-    .mat-mdc-text-field-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    
-      /* Flecha como elemento independiente */
-      &::before {
-        content: "";
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        margin-top: -2px;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid white;
-        pointer-events: none;
-        z-index: 5;
-      }
-    }.mat-mdc-form-field-icon-prefix > .mat-icon,
+      .mat-mdc-form-field-icon-prefix > .mat-icon,
     .mat-mdc-form-field-icon-suffix > .mat-icon {
       display: none; /* Ocultar los iconos */
-    }/* Efecto de levitación al hover, similar a las tarjetas */
+    }
+    
+    /* Estilo para la flecha nativa */
+    .mat-mdc-select-arrow-wrapper {
+      background-color: #FFFFFF !important;
+    }
+    
+    .mat-mdc-select-arrow {
+      color: #333333;
+    }    /* Efecto de hover sutil como el de tus compañeros */
     &:hover .mat-mdc-text-field-wrapper {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba($color-black, 0.3);
-      background: $color-black; /* Mantener el fondo negro incluso en hover */
-      
-      &::before {
-        /* Mantener la flecha en la misma posición relativa al hacer hover */
-        transform: translateY(0); /* Compensar el transform del contenedor */
-      }
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      background-color: #FFFFFF !important; /* Mantener el fondo blanco en hover */
+    }
+    
+    /* Asegurar que el focus overlay no interfiere */
+    .mat-mdc-form-field-focus-overlay {
+      opacity: 0 !important;
     }
   }
-}.chart-wrapper {
+}
+
+.chart-wrapper {
   width: calc(48% - 4px); /* Ajustado para equilibrar el margen */
-  margin-top: $spacing-md;
+  margin-top: 16px;
   margin-left: 4px; /* Mismo ajuste que el contenedor de la tabla para mantener la alineación */
 }
 
 .chart-container {
-  background: $color-gray-90;
-  border-radius: $border-radius-md;
-  padding: $spacing-md;
+  background: #a5a5a5;
+  border-radius: 16px;
+  padding: 16px;
   width: 100%;
   height: 437px;
-  color: var(--text-color);
-  box-shadow: 0 1px 6px rgba($color-black, 0.1);
+  color: #333333;
+  box-shadow: $primary-shadow;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
 
 .chart-title {
-  margin: 0 0 $spacing-md 0;
+  margin: 0 0 16px 0;
   text-align: center;
-  font-family: $font-secondary; /* Utilizando la fuente secundaria para el título del gráfico */
-  background: $color-gray-90;
-  border-radius: $border-radius-md $border-radius-md 0 0;
-  border-bottom: 1px solid var(--border-color);
+  font-size: 20px;
+  font-weight: bold;
+  font-family: $primary-font;
+  color: #333333;
+  user-select: none;
+  cursor: default;
 }
 
 .echarts-container {
   height: 350px;
   width: 100%;
-  border-radius: $border-radius-md;
-  padding: $spacing-sm 0;
+  border-radius: 16px;
+  padding: 12px 0;
 }
 
 .chart-header-with-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $spacing-md;
+  margin-bottom: 16px;
   padding: 0 5px;
 }
 
@@ -410,22 +592,22 @@
 }
 
 .loading-text, .error-text {
-  color: var(--text-color);
-  padding: $spacing-lg;
-  background: $color-white;
-  border-radius: $border-radius-md;
+  color: #333333;
+  padding: 24px;
+  background: #FFFFFF;
+  border-radius: 16px;
 }
 
 h2 {
-  color: var(--text-color);
-  margin-bottom: $spacing-sm;
+  color: #333333;
+  margin-bottom: 12px;
 }.loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba($color-white, 0.9);
+  background: rgba(255, 255, 255, 0.9);
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -439,20 +621,20 @@ h2 {
   justify-content: center;
   
   mat-spinner {
-    margin-bottom: $spacing-lg;
+    margin-bottom: 24px;
     
     ::ng-deep .mdc-circular-progress__determined-container,
     ::ng-deep .mdc-circular-progress__indeterminate-container {
       circle {
-        stroke: var(--color-corporate) !important;
+        stroke: #0FF959 !important;
       }
     }
   }
   
   .loading-text {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-    color: var(--text-color);
+    font-size: 20px;
+    font-weight: bold;
+    color: #333333;
     margin: 0;
     background: transparent;
     border-radius: 0;
@@ -460,7 +642,7 @@ h2 {
   }
 }
 
-@media (max-width: $breakpoint-xl) {
+@media (max-width: 1200px) {
   .main-container {
     flex-direction: column;
   }
@@ -476,7 +658,7 @@ h2 {
   }
   
   .info-panel {
-    margin-top: $spacing-md;
+    margin-top: 16px;
     height: auto;
   }
   
@@ -490,11 +672,11 @@ h2 {
   }
   
   .chart-wrapper {
-    margin: $spacing-md 0;
+    margin: 16px 0;
   }
 }
 
-@media (min-width: $breakpoint-xl) {
+@media (min-width: 1200px) {
   .chart-wrapper {
     width: 48%; /* Coherente con otros contenedores */
   }
