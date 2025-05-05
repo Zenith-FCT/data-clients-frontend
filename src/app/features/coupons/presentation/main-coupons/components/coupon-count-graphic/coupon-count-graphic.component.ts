@@ -51,8 +51,8 @@ export class CouponCountGraphicComponent implements AfterViewInit {
           {
             label: 'Cupones usados',
             data: this.viewModel.count(),
-            borderColor: 'blue',
-            backgroundColor: 'rgba(0, 0, 255, 1)',
+            borderColor: '#dfff03',
+            backgroundColor: '#dfff03',
             pointRadius: 5,
           }
         ]

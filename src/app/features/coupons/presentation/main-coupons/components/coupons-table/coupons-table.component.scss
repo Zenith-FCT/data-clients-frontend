@@ -24,22 +24,19 @@
 
 h3 {
     display: block;
-    font-size: 1.17em;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
+    font-size: 1.25em;
+    margin: 6px 0 16px 0;
     font-weight: bold;
     unicode-bidi: isolate;
 }
 
 .coupons-table {
   overflow-y: auto;
-  max-height: 675px;
+  max-height: 695px;
 }
 
 .mat-mdc-table {
-  background-color: #fff;
+  background-color: #a5a5a5;
 }
 
 th {

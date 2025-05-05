@@ -1,5 +1,12 @@
+$primary-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+$border-radius: 16px;
+$spacing-unit: 1rem;
+$transition-speed: 0.3s;
+
+$primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
+
 .coupon-container {
-  margin: 0 1%;
+  margin: 0 .7%;
 }
 
 .coupon-header {
@@ -7,11 +14,132 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: -22px;
+  z-index: 100;
+  box-sizing: border-box;
+  margin: auto 0.5%;
+  margin-bottom: 16px;
+  background-color: #a5a5a5;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 12px 20px;
 
   > * {
     margin: 0 0.5%;
+    border: none !important;
   }
+
+  h2 {
+    margin: 6px 0 0 0;
+    font-size: 18px;
+    color: black;
+    font-weight: bold;
+  }
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  h3 {
+    margin: 6px 0 0 0;
+    font-size: 18px;
+    color: black;
+    font-weight: bold;
+    flex: 1;
+    font-family: $primary-font;
+    user-select: none;
+    cursor: default;
+  }
+
+  .coupon-date-selector {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    font-family: $primary-font;
+
+    @media (max-width: 576px) {
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    mat-form-field {
+      width: 105px;
+      margin: 0;
+      transform: scale(0.85);
+      transform-origin: right center;
+
+      ::ng-deep {
+        .mat-mdc-text-field-wrapper {
+          background-color: #FFFFFF !important;
+          border-radius: $border-radius;
+          border: none !important;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+        }
+
+        .mat-mdc-form-field-flex {
+          background-color: #FFFFFF !important;
+          height: 48px;
+          overflow: hidden;
+          border-radius: $border-radius;
+        }
+
+        .mdc-line-ripple {
+          display: none;
+        }
+
+        .mat-mdc-form-field-subscript-wrapper {
+          display: none !important;
+          height: 0 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+
+        .mat-mdc-form-field-bottom-align::before {
+          display: none;
+        }          .mat-mdc-form-field-infix {
+          min-height: 48px;
+          padding-top: 12px;
+          padding-bottom: 12px;
+          font-family: $primary-font !important;
+        }
+
+        .mat-mdc-select {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+
+        .mat-mdc-option-text {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+
+        .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
+          border: none;
+        }
+
+        .mat-mdc-form-field-label {
+          font-family: $primary-font !important;
+        }.mat-mdc-select-value {
+          font-family: $primary-font !important;
+          line-height: 24px;
+          font-size: 15px !important;
+          font-weight: normal !important;
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
+
 }
+
 
 .coupon-date-selector {
   display: flex;
@@ -19,11 +147,15 @@
 }
 
 .coupon-element {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
+  background-color: #a5a5a5;
+  border-radius: 16px;
+  padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+}
+
+* {
+  font-family: "Swiss 721 BT EX Roman", "Swiss721BT-ExRoman", Arial, sans-serif;
 }
 
 .coupon-container {
@@ -46,6 +178,7 @@
   width: 48%;
   margin: 1%;
   height: 125px;
+  padding: 16px 8px 8px 8px;
 }
 
 .coupon-graphic {

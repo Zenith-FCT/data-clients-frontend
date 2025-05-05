@@ -35,7 +35,7 @@
 
     <div *ngIf="!viewModel.isLoadingDiscount() && !viewModel.errorDiscount()" class="coupons-total">
       <p class="coupons-info">
-        {{ viewModel.totalDiscount() }}<span class="currency">€</span>
+        {{ viewModel.totalDiscount() }}€
       </p>
       <p>
         Total descuento realizado
@@ -81,7 +81,7 @@
 
     <div *ngIf="!viewModel.isLoadingDiscountMonth() && !viewModel.errorDiscountMonth()" class="coupons-total">
       <p class="coupons-info">
-        {{ viewModel.totalDiscountMonth() }}<span class="currency">€</span>
+        {{ viewModel.totalDiscountMonth() }}€
       </p>
       <p>
         Total descuento por mes
