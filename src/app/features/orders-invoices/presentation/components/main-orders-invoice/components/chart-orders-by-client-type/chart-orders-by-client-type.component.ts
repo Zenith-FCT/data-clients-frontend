@@ -137,8 +137,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
             {
               label: 'Clientes Recurrentes',
               data: monthlyData.recurrentOrders,
-              backgroundColor: '#b5b5b5',
-              borderColor: '#b5b5b5',
+              backgroundColor: 'rgba(255, 255, 255, 0.47)',
               borderWidth: 1,
               borderRadius: 4,
               barPercentage: 0.8,
@@ -147,8 +146,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
             {
               label: 'Clientes Únicos',
               data: monthlyData.uniqueOrders,
-              backgroundColor: '#FE2800',
-              borderColor: '#FE2800',
+              backgroundColor: 'rgb(31, 31, 31)',
               borderWidth: 1,
               borderRadius: 4,
               barPercentage: 0.8,
@@ -188,7 +186,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
                   size: 14,
                   color: '#000000'
                 },
-                color: '#000000'
+                color: '#ffffff'
               }
             },            
             tooltip: {
@@ -234,10 +232,11 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
               title: {
                 display: true,
                 text: 'Número de Pedidos',
+                color: '#ffffff',
                 font: {
                   weight: 'bold',
                   size: 16,
-                  color: '#000000'
+                  color: '#ffffff'
                 },
                 padding: {
                   bottom: 10
@@ -245,7 +244,7 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
               },
               grid: {
                 display: true,
-                color: 'rgba(26, 24, 24, 0.18)',
+                color: 'rgba(255, 255, 255, 0.38)',
                 drawBorder: false
               },
               ticks: {
@@ -254,9 +253,11 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
                   return Math.round(value);
                 },
                 font: {
-                  weight: '500'
+                  weight: '500',
+                  color: '#ffffff'
                 },
-                padding: 10
+                padding: 10,
+                color: '#ffffff'
               }
             },
             x: {
@@ -266,9 +267,11 @@ export class ChartOrdersByClientTypeComponent implements OnInit, AfterViewInit, 
               },
               ticks: {
                 font: {
-                  weight: '500'
+                  weight: '500',
+                  color: '#ffffff'
                 },
-                padding: 8
+                padding: 8,
+                color: '#ffffff'
               }
             }
           }

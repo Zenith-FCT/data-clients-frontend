@@ -117,7 +117,7 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
         axisPointer: {
           type: 'cross'
         },
-        backgroundColor: 'rgba(255, 255, 255, 0.88)',
+        backgroundColor: 'rgba(255, 255, 255, 0.64)',
         padding: 10,
         formatter: function(params: any) {
           if (!Array.isArray(params)) {
@@ -152,7 +152,7 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
       grid: {
         left: '2%',
         right: '2%',
-        bottom: '8%',
+        bottom: '10%',
         top: '7%',
         containLabel: true
       },
@@ -161,13 +161,13 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
         data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         axisLine: {
           lineStyle: {
-            color: 'rgba(0, 0, 0, 0.3)'
+            color: 'rgba(255, 255, 255, 0.38)'
           }
         },
         axisLabel: {
           fontSize: 12,
           margin: 14,
-          color: '#000000',
+          color: '#ffffff',
           rotate: 0
         }
       },
@@ -177,18 +177,20 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
           name: 'Total Facturas (€)',
           nameLocation: 'end',
           nameTextStyle: {
-            fontSize: 14,
-            color: '#000000'
+            fontSize: 12,
+            color: '#ffffff',
+            padding: [0, 0, 12, 0]
           },
           position: 'left',
           axisLabel: {
             formatter: (value: number): string => value.toLocaleString('es-ES') + ' €',
             fontSize: 12,
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            color: '#ffffff'
           },
           splitLine: {
             lineStyle: {
-              color: 'rgba(0, 0, 0, 0.1)'
+              color: 'rgba(255, 255, 255, 0.33)'
             }
           }
         },
@@ -197,14 +199,16 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
           name: 'Nº de Ventas',
           nameLocation: 'end',
           nameTextStyle: {
-            fontSize: 14,
-            color: '#000000'
+            fontSize: 12,
+            color: '#ffffff',
+            padding: [0, 0, 12, 0]
           },
           position: 'right',
           axisLabel: {
             formatter: (value: number): string => Math.round(value).toString(),
             fontSize: 12,
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            color: '#ffffff'
           },
           splitLine: {
             show: false
@@ -219,20 +223,21 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
           smooth: false,
           lineStyle: {
             width: 3,
-            color: '#2bb84b'
+            color: '#dfff03'
           },
           symbol: 'circle',
-          symbolSize: 8,
+          symbolSize: 12,
           itemStyle: {
-            color: '#2bb84b'
+            color: '#dfff03'
           },
           emphasis: {
             itemStyle: {
               borderWidth: 3,
-              borderColor: '#2bb84b',
-              color: '#2bb84b'
+              borderColor: '#dfff03',
+              color: '#dfff03'
             }
           },
+          
           z: 10,
           data: []
         },
@@ -242,11 +247,11 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
           yAxisIndex: 1,
           barWidth: '50%',
           itemStyle: {
-            color: 'rgba(65, 75, 218, 0.2)'
+            color: 'rgba(255, 255, 255, 0.52)'
           },
           emphasis: {
             itemStyle: {
-              color: 'rgba(65, 75, 218, 0.3)'
+              color: 'rgba(255, 255, 255, 0.43)'
             }
           },
           z: 5,
@@ -295,8 +300,7 @@ export class ChartEvolutionOrdersInvoicesComponent implements OnInit, AfterViewI
       ]
     });
     
-    // Forzar resize después de actualizar los datos para garantizar visualización correcta
-    setTimeout(() => {
+   setTimeout(() => {
       if (this.chart) {
         this.chart.resize();
       }

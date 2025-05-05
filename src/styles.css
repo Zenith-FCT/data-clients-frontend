@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'Swiss 721 BT';
+  src: local('Swiss721BT-Roman'), 
+       local('Swiss 721 BT Roman'),
+       local('Swiss721BT-ExRoman'),
+       local('Swiss 721 BT EX Roman');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --md-source-primary: #8C4A60;
   --md-source-on-primary: #FFFFFF;
@@ -35,7 +45,7 @@ html, body, app-root, .mat-typography {
   overflow: hidden;
   background-color: var(--md-source-background);
   color: var(--md-source-on-surface);
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Swiss 721 BT', 'Swiss721BT-ExRoman', 'Swiss721BT-Roman', 'Poppins', sans-serif;
 }
 
 app-root {
@@ -147,7 +157,7 @@ mat-dialog-container {
 
 .mat-mdc-option {
   font-family: 'Poppins', sans-serif !important;
-  font-size: 0.875rem !important; // 14px
+  font-size: 0.875rem !important;
 }
 
 .mat-mdc-select-panel {
@@ -157,13 +167,13 @@ mat-dialog-container {
 .mdc-menu-surface {
   .mat-mdc-option {
     font-family: 'Poppins', sans-serif !important;
-    font-size: 0.875rem !important; // 14px
+    font-size: 0.875rem !important;
   }
 }
 
 .mdc-list-item__primary-text {
   font-family: 'Poppins', sans-serif !important;
-  font-size: 0.875rem !important; // 14px
+  font-size: 0.875rem !important; 
 }
 
 .mat-mdc-form-field {
@@ -190,12 +200,11 @@ mat-dialog-container {
 
   .mdc-list-item {
     font-family: 'Poppins', sans-serif !important;
-    font-size: 0.875rem !important; // 14px
-  }
+    font-size: 0.875rem !important; 
 
   .mat-mdc-option .mdc-list-item__primary-text {
     font-family: 'Poppins', sans-serif !important;
-    font-size: 0.875rem !important; // 14px
+    font-size: 0.875rem !important;
   }
 }
 
@@ -210,4 +219,5 @@ mat-dialog-container {
 ::-webkit-scrollbar-thumb {
   background: var(--md-source-primary);
   border-radius: 5px;
+}
 }

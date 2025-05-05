@@ -3,14 +3,14 @@
     <div class="chart-header">
       <h3>Carritos</h3>
       <div class="date-selectors">
-        <mat-form-field appearance="outline">
+        <mat-form-field>
           <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
             <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
               {{getMonthName(i + 1)}}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field>
           <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
             <mat-option *ngFor="let year of cartsViewModel.availableYears$()" [value]="year">
               {{year}}

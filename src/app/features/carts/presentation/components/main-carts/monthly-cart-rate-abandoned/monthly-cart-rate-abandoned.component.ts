@@ -85,15 +85,22 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
       const months = [
         'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
         'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
-      ];
-
-
-      this.chartOption = {
-        backgroundColor: '#ffffff',        tooltip: {
+      ];      this.chartOption = {
+        backgroundColor: 'transparent',
+        silent: false, 
+        animation: true,
+        textStyle: {
+          fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',
+          fontSize: 12,
+        },
+        tooltip: {
           trigger: 'axis',
           formatter: (params: any) => {
             const data = params[0];
             return `${data.name}: ${data.value.toFixed(2)}%`;
+          },
+          textStyle: {
+            fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif'
           }
         },
         grid: {
@@ -109,12 +116,14 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
           boundaryGap: false,
           axisLine: {
             lineStyle: {
-              color: '#666'
+              color: '#fff'
             }
-          },
+          },          
           axisLabel: {
-            color: '#666',
-            fontSize: 12
+            color: '#fff',
+            fontSize: 16,
+            margin: 18,
+            fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif'
           }
         },
         yAxis: {
@@ -124,32 +133,34 @@ export class MonthlyCartRateAbandonedComponent implements OnInit, OnDestroy {
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#666'
+              color: '#fff'
             }
-          },          axisLabel: {
-            color: '#666',
-            fontSize: 12,
+          },            axisLabel: {
+            color: '#fff',
+            fontSize: 14,
+            fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',
             formatter: (value: number) => {
               return value.toFixed(2) + '%';
             }
           },
           splitLine: {
             lineStyle: {
-              color: 'rgba(0,0,0,0.1)'
+              color: 'rgba(255, 255, 255, 0.3)'
             }
           }
         },
+        
         series: [{
           data: monthlyData,
           type: 'line',
           smooth: true,
           name: 'Carritos abandonados',
           itemStyle: {
-            color: '#aeaeae'
+            color: 'rgba(255, 255, 255, 0.9)',
           },
           areaStyle: {
             opacity: 0.3,
-            color: '#aeaeae'
+            color: 'rgba(255, 255, 255, 0.45)'
           }
         }]
       };

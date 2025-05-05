@@ -70,7 +70,8 @@ export class MainOrdersInvoiceComponent implements OnInit {
   }
 
   getMonthName(month: number): string {
-    return new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
+    const monthName = new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
+    return monthName.charAt(0).toUpperCase() + monthName.slice(1);
   }
 
   private extractAvailableYears(data: any[]): void {

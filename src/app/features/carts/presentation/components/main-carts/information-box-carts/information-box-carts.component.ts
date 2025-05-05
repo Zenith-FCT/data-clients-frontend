@@ -37,9 +37,9 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   getTitle(): string {
     switch (this.type) {
       case 'total': return 'Total de Carritos Abandonados';
-      case 'total-monthly': return 'Carritos Abandonados por Mes';
-      case 'rate': return 'Tasa de Carritos Abandonados';
-      case 'rate-monthly': return 'Tasa de Carritos Abandonados por Mes';
+      case 'total-monthly': return 'Carritos Abandonados Mensuales';
+      case 'rate': return 'Tasa de Abandono';
+      case 'rate-monthly': return 'Tasa de Abandono Mensual';
       default: return '';
     }
   }
@@ -69,9 +69,9 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
       case 'total-monthly':
         return `Carritos abandonados en ${monthName} del ${year}`;
       case 'rate':
-        return `Tasa total de carritos abandonados en ${year}`;
+        return `Tasa total de abandono en ${year}`;
       case 'rate-monthly':
-        return `Tasa de carritos abandonados en ${monthName} del ${year}`;
+        return `Tasa de abandono en ${monthName} del ${year}`;
       default:
         return '';
     }

@@ -125,7 +125,8 @@ export class InvoiceClientTypeComponent implements OnInit, AfterViewInit, OnDest
         left: 'left',
         padding: 20,
         textStyle: {
-          fontSize: 12
+          fontSize: 12,
+          color: '#ffffff'
         }
       },
       series: [
@@ -135,11 +136,6 @@ export class InvoiceClientTypeComponent implements OnInit, AfterViewInit, OnDest
           radius: '85%', 
           center: ['60%', '50%'],
           avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 0,
-            borderColor: '#fff',
-            borderWidth: 1
-          },
           label: {
             show: false
           },
@@ -147,8 +143,8 @@ export class InvoiceClientTypeComponent implements OnInit, AfterViewInit, OnDest
             show: false
           },
           data: [
-            { value: recurring, name: 'Clientes Recurrentes', itemStyle: { color: '#C0C0C0' } },
-            { value: unique, name: 'Clientes Únicos', itemStyle: { color: '#FE2800' } }
+            { value: recurring, name: 'Clientes Recurrentes', itemStyle: { color: 'rgba(255, 255, 255, 0.51)' } },
+            { value: unique, name: 'Clientes Únicos', itemStyle: { color: 'rgb(31, 31, 31)' } }
           ]
         }
       ]

@@ -1,7 +1,9 @@
 $primary-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-$border-radius: 8px;
+$border-radius: 16px;
 $spacing-unit: 1rem;
 $transition-speed: 0.3s;
+
+$primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .main-wrapper {
   display: flex;
@@ -14,45 +16,8 @@ $transition-speed: 0.3s;
   height: 98vh;
   width: 100%;
   overflow: hidden;
-}
-
-.sticky-header {
-  position: sticky;
-  top: 0;
-  z-index: 10000;
-  background-color: #f5f5f5;
-  padding: 6px 16px;
-  width: 100%;
-  box-sizing: border-box;
-  height: auto;
-  min-height: 50px;
-  flex-shrink: 0;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0 4%;
-
-  h3 {
-    margin: 0;
-    font-size: 1.2rem;
-  }
-
-  .date-selectors {
-    display: flex;
-    gap: 16px;
-    padding-right: 8%;
-
-    mat-form-field {
-      width: 120px;
-      margin: 0;
-      transform: scale(0.9);
-      transform-origin: right center;
-    }
-  }
+  background-color: #E5E5E5;
+  font-family: $primary-font;
 }
 
 .orders-container {
@@ -62,7 +27,209 @@ $transition-speed: 0.3s;
   padding-bottom: 5rem;
   box-sizing: border-box;
   width: 100%;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 20px);
+  background-color: #E5E5E5;
+}
+
+.sticky-header-container {
+  position: sticky;
+  top: -20px;
+  z-index: 10000;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  padding: 0;
+  background-color: transparent; 
+
+}
+
+.date-selectors-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  
+  background-color: #a5a5a5;
+  border-radius: $border-radius;
+  
+  padding: 12px 20px;
+  box-shadow: $primary-shadow;  width: 100%;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    color: black;
+    font-weight: bold;
+    flex: 1;
+  }
+  
+  .selectors-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    
+    @media (max-width: 576px) {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+    mat-form-field {
+    width: 105px;
+    margin: 0;
+    transform: scale(0.85);
+    transform-origin: right center;
+      ::ng-deep {
+      .mat-mdc-text-field-wrapper {
+        background-color: #FFFFFF !important;
+        border-radius: $border-radius;
+        border: none !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      
+      .mat-mdc-form-field-flex {
+        background-color: #FFFFFF !important;
+        height: 48px;
+        overflow: hidden;
+        border-radius: $border-radius;
+      }
+      
+      .mat-mdc-text-field-wrapper {
+        background-color: #FFFFFF !important;
+        overflow: hidden;
+        border-radius: $border-radius;
+        border: none !important;
+        box-shadow: $primary-shadow;
+      }
+      
+      .mat-mdc-form-field-flex {
+        background-color: #FFFFFF !important;
+        height: 48px;
+        overflow: hidden;
+        border-radius: $border-radius;
+      }
+      
+      .mat-mdc-form-field-infix {
+        min-height: 48px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      
+      .mdc-line-ripple {
+        display: none;
+      }
+      
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      
+      .mat-mdc-form-field-bottom-align::before {
+        display: none;
+      }
+      
+      .mat-mdc-select-value {
+        font-family: $primary-font !important;
+        line-height: 24px;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mdc-list-item__primary-text {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-select-arrow-wrapper {
+        background-color: #FFFFFF !important;
+      }
+
+      .mat-mdc-form-field-focus-overlay {
+        opacity: 0 !important;
+      }
+      
+      .mat-mdc-select {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-option {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-option-text {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-form-field-label {
+        font-family: $primary-font !important;
+      }
+      
+      .mdc-menu-surface {
+        border-radius: $border-radius !important;
+        
+        .mat-mdc-option {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+        
+        .mdc-list-item__primary-text {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+      }
+      .mat-mdc-select,
+      .mat-mdc-select *,
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text,
+      .mat-mdc-select-arrow,
+      .mat-mdc-form-field-infix {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .mat-mdc-select-value-text,
+  .mat-mdc-select,
+  .mat-mdc-option,
+  .mat-mdc-option-text,
+  .mdc-list-item__primary-text,
+  .mat-mdc-form-field {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+  
+  .cdk-overlay-pane {
+    .mat-mdc-option {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
+  }
 }
 
 .orders-summary {
@@ -74,16 +241,47 @@ $transition-speed: 0.3s;
   padding: 0 16px;
   box-sizing: border-box;
   transition: all $transition-speed ease;
-
-  .summary-cards {
+  font-family: $primary-font;
+  background-color: #E5E5E5;  .summary-cards {
     display: flex;
     width: 100%;
     justify-content: space-between;
-
     app-information-box {
       width: 24%;
       margin: 0 0.5%;
       box-sizing: border-box;
+      display: flex;
+      height: 100%;
+
+      ::ng-deep {
+        * {
+          font-family: $primary-font !important;
+        }
+        
+        .information-box {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+        }
+
+        .box-content {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          flex: 1;
+          padding: 0;
+        }
+
+        .data-state {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          padding: 0;
+        }
+      }
     }
 
     @media (max-width: 768px) {
@@ -124,7 +322,7 @@ $transition-speed: 0.3s;
   padding: 16px;
   height: 400px;
   margin-top: $spacing-unit;
-  margin-bottom: 4rem;
+  margin-bottom: 16px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -133,7 +331,7 @@ $transition-speed: 0.3s;
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 2rem;
+  gap: 16px;
 }
 
 .charts-section {
@@ -144,7 +342,15 @@ $transition-speed: 0.3s;
   box-sizing: border-box;
   transition: all $transition-speed ease;
   gap: 1.5%;
-
+  margin-bottom: 16px;
+  align-items: stretch;
+  
+  @media (max-width: 992px) {
+    flex-direction: column;
+    height: auto;
+    gap: 24px;
+  }
+  
   .chart-item {
     height: 580px;
     background: white;
@@ -154,11 +360,32 @@ $transition-speed: 0.3s;
     overflow: hidden;
     transition: all $transition-speed ease;
     width: 49.25%;
+    margin-bottom: 16px;
+    display: flex;
+    flex: 1 1 auto;
+    
+    @media (max-width: 992px) {
+      width: 100%;
+      height: 450px;
+    }
+      @media (max-width: 576px) {
+      height: 380px;
+      margin-bottom: 12px;
+    }
 
     canvas {
       max-height: 100%;
       max-width: 100%;
       height: 570px;
+      width: 100%;
+      
+      @media (max-width: 992px) {
+        height: 440px;
+      }
+      
+      @media (max-width: 576px) {
+        height: 370px;
+      }
     }
   }
 }
@@ -176,14 +403,37 @@ $transition-speed: 0.3s;
   flex-direction: row;
   overflow: hidden;
   box-sizing: border-box;
-  transition: all $transition-speed ease;
-  margin-bottom: 2rem;
+  transition: all $transition-speed ease;  margin-bottom: 0;
   margin-top: 0.5rem;
   gap: $spacing-unit;
 
-  app-chart-tm {
+  @media (max-width: 992px) {
+    flex-direction: column;
+    min-height: auto;
+    gap: 1.5rem;
+    height: auto;
+  }
+  
+  @media (max-width: 576px) {
+    gap: 1rem;
+  }  app-chart-tm {
     width: 75%;
     height: 100%;
+    margin-bottom: 16px;
+    flex: 1;
+    
+    @media (max-width: 992px) {
+      width: 100%;
+      flex: 1;
+      height: 520px;
+      margin-bottom: 16px;
+    }
+    
+    @media (max-width: 576px) {
+      width: 100%;
+      height: 450px;
+      margin-bottom: 16px;
+    }
   }
 
   .chart-header {
@@ -201,9 +451,18 @@ $transition-speed: 0.3s;
 .chart-tm-container {
   display: flex;
   gap: $spacing-unit;
+  
+  @media (max-width: 992px) {
+    flex-direction: column;
+  }
 
   .chart-tm {
     flex: 0 0 75%;
+    
+    @media (max-width: 992px) {
+      flex: 0 0 100%;
+      width: 100%;
+    }
   }
 }
 
@@ -214,6 +473,18 @@ $transition-speed: 0.3s;
   gap: $spacing-unit;
   width: 25%;
   height: 100%;
+  
+  @media (max-width: 992px) {
+    flex: 0 0 100%;
+    width: 100%;
+    flex-direction: row;
+    gap: 16px;
+    margin-top: 1rem;
+  }
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
 }
 
 .chart-container {
@@ -226,6 +497,15 @@ $transition-speed: 0.3s;
   height: 650px;
   padding: 20px;
   margin-bottom: 20px;
+  
+  @media (max-width: 992px) {
+    width: 100%;
+    height: 500px;
+  }
+  
+  @media (max-width: 576px) {
+    height: 400px;
+  }
 }
 
 .info-container {
@@ -238,9 +518,24 @@ $transition-speed: 0.3s;
   padding: 0;
   align-self: stretch !important;
   margin-top: 0 !important;
-
-  > div {
-    flex: 1;
+  justify-content: center;
+  
+  @media (max-width: 992px) {
+    width: 100%;
+    flex-direction: row;
+    height: auto;
+    min-height: 250px;
+  }
+  
+  &.tm-info-container {
+    align-self: flex-start;
+    margin-top: -10px;
+  }
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    min-height: auto;
+  }  > div {
     background: white;
     border-radius: $border-radius;
     box-shadow: $primary-shadow;
@@ -248,19 +543,73 @@ $transition-speed: 0.3s;
     box-sizing: border-box;
     height: calc(50% - 8px);
     display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    ::ng-deep {
+      .information-box {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .box-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .data-state {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      .amount {
+        margin: 0;
+      }
+
+      .description {
+        margin: 5px 0 0;
+      }
+    }
+    
+    @media (max-width: 992px) {
+      height: 250px;
+      width: 50%;
+      margin-right: 16px;
+    }
+    
+    @media (max-width: 576px) {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 16px;
+    }
 
     &:first-child {
       margin-bottom: 16px;
+      
+      @media (max-width: 992px) {
+        margin-bottom: 0;
+      }
+      
+      @media (max-width: 576px) {
+        margin-bottom: 16px;
+      }
     }
 
     &:last-child {
       margin-bottom: 0;
-    }
-
-    > app-information-box {
+    }    > app-information-box {
       width: 100%;
       height: 100%;
       display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
   }
 }
@@ -344,21 +693,20 @@ $transition-speed: 0.3s;
   width: 100%;
   display: flex;
   gap: 2rem;
-  min-height: 550px;
-  height: 550px;
+  min-height: 650px;
+  height: 650px;
   margin-bottom: 2rem;
   overflow: visible;
   padding-top: 10px;
-
   .chart-container {
     width: 100%;
-    background-color: white;
+    background-color: #a5a5a5;
     border-radius: $border-radius;
     padding: 1rem;
     padding-top: 0.5rem;
     box-shadow: $primary-shadow;
-    min-height: 550px;
-    height: 550px;
+    min-height: 650px;
+    height: 650px;
     display: flex;
     flex-direction: column;
     overflow: visible;
@@ -368,12 +716,20 @@ $transition-speed: 0.3s;
 .full-width-chart-container {
   width: 100%;
   margin: 0.25rem 0;
-  height: 600px;
+  height: 650px;
   background: white;
   border-radius: $border-radius;
   box-shadow: $primary-shadow;
   box-sizing: border-box;
   overflow: hidden;
+  
+  @media (max-width: 992px) {
+    height: 600px;
+  }
+  
+  @media (max-width: 576px) {
+    height: 500px;
+  }
 
   .full-width-chart {
     width: 100%;
@@ -385,5 +741,45 @@ $transition-speed: 0.3s;
 @media screen and (max-width: 1366px) {
   .orders-client-type-chart {
     height: 420px;
+  }
+}
+
+:host ::ng-deep {
+  .mat-mdc-select-value-text,
+  .mat-mdc-select-value,
+  .mat-mdc-select-arrow,
+  .mat-mdc-select-min-line,
+  .mat-mdc-option-text,
+  .mat-mdc-select-trigger,
+  .mdc-list-item__primary-text {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+}
+
+::ng-deep .cdk-overlay-container {
+  .mat-mdc-select-panel, 
+  .mat-mdc-select-panel * {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+  
+  .mat-mdc-option {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+    .mdc-menu-surface {
+    border-radius: $border-radius !important;
+    
+    .mat-mdc-option,
+    .mat-mdc-option *,
+    .mdc-list-item__primary-text {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
   }
 }
