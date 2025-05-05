@@ -16,9 +16,8 @@
       </div>
 
       <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
-        <div class="amount">
-          <ng-container *ngIf="type === 'amount'">
-            <span class="value">{{ ordersInvoiceViewModel.totalOrdersAmount$() | number:'1.2-2' }}</span>
+        <div class="amount">          <ng-container *ngIf="type === 'amount'">
+            <span class="value">{{ ordersInvoiceViewModel.totalOrdersAmount$() | number:'1.0-0' }}</span>
             <span class="currency">€</span>
           </ng-container>
           <ng-container *ngIf="type === 'count'">
@@ -42,8 +41,7 @@
 
       <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
         <div class="amount-container">
-          <div class="amount">
-            <span class="value">{{ ordersInvoiceViewModel.totalTm$() | number:'1.2-2' }}</span>
+          <div class="amount">            <span class="value">{{ ordersInvoiceViewModel.totalTm$() | number:'1.0-0' }}</span>
             <span class="unit">€</span>
           </div>
         </div>
@@ -62,9 +60,8 @@
         <p>{{ ordersInvoiceViewModel.error$() }}</p>
       </div>
 
-      <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
-        <div class="amount">
-          <span class="value">{{ ordersInvoiceViewModel.monthlySales$() | number:'1.2-2' }}</span>
+      <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">        <div class="amount">
+          <span class="value">{{ ordersInvoiceViewModel.monthlySales$() | number:'1.0-0' }}</span>
           <span class="currency">€</span>
         </div>
         <p class="description">Ventas del mes de {{getMonthName(ordersInvoiceViewModel.selectedMonth$())}} de {{ ordersInvoiceViewModel.selectedYear$() }}</p>
@@ -103,8 +100,7 @@
 
       <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
         <div class="amount-container">
-          <div class="amount">
-            <span class="value">{{ ordersInvoiceViewModel.monthlyTm$() | number:'1.2-2' }}</span>
+          <div class="amount">            <span class="value">{{ ordersInvoiceViewModel.monthlyTm$() | number:'1.0-0' }}</span>
             <span class="currency">€</span>
           </div>
         </div>
