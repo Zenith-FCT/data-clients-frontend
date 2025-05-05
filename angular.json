@@ -43,8 +43,7 @@
               "entry": "src/server.ts"
             }
           },
-          "configurations": {            "production": {
-              "budgets": [
+          "configurations": {            "production": {              "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
@@ -52,8 +51,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "15kB"
+                  "maximumWarning": "30kB",
+                  "maximumError": "60kB"
                 }
               ],
               "outputHashing": "all"

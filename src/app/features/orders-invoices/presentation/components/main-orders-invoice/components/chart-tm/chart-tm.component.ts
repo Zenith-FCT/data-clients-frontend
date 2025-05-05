@@ -22,35 +22,8 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
   private isBrowser: boolean;
   years: number[] = [];
   
-  private readonly chartColors = [
-    'rgba(255, 99, 132, 0.2)',   
-    'rgba(54, 162, 235, 0.2)', 
-    'rgba(255, 206, 86, 0.2)',  
-    'rgba(75, 192, 192, 0.2)',  
-    'rgba(153, 102, 255, 0.2)', 
-    'rgba(255, 159, 64, 0.2)',  
-    'rgba(76, 175, 80, 0.2)',  
-    'rgba(121, 85, 72, 0.2)',  
-    'rgba(233, 30, 99, 0.2)',  
-    'rgba(156, 39, 176, 0.2)',  
-    'rgba(3, 169, 244, 0.2)', 
-    'rgba(255, 87, 34, 0.2)' 
-  ];
-
-  private readonly chartBorderColors = [
-    'rgba(255, 99, 132, 1)',
-    'rgba(54, 162, 235, 1)',
-    'rgba(255, 206, 86, 1)',
-    'rgba(75, 192, 192, 1)',
-    'rgba(153, 102, 255, 1)',
-    'rgba(255, 159, 64, 1)',
-    'rgba(76, 175, 80, 1)',
-    'rgba(121, 85, 72, 1)',
-    'rgba(233, 30, 99, 1)',
-    'rgba(156, 39, 176, 1)',
-    'rgba(3, 169, 244, 1)',
-    'rgba(255, 87, 34, 1)'
-  ];
+  private readonly chartColors = Array(12).fill('rgba(255, 255, 255, 0.48)');
+  private readonly chartBorderColors = Array(12).fill('rgba(255, 255, 255, 1)');
   
   dataLoaded = false;
   chartInitialized = false;
@@ -143,10 +116,10 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         confine: true,
       },
       grid: {
-        left: '5%',
-        right: '8%',
-        bottom: '3%', 
-        top: '10%',
+        left: '3%',
+        right: '25%',
+        bottom: '1%', 
+        top: '11%',
         containLabel: true
       },
       xAxis: {
@@ -154,13 +127,13 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         axisLine: {
           lineStyle: {
-            color: 'rgba(0, 0, 0, 0.3)'
+            color: 'rgba(255, 255, 255, 0.21)'
           }
         },
         axisLabel: {
           fontSize: 14,
           margin: 12,
-          color: '#000000'
+          color: '#ffffff'
         }
       },
       yAxis: {
@@ -170,18 +143,19 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         nameTextStyle: {
           fontWeight: 'bold',
           fontSize: 14,
-          color: '#000000'
+          color: '#ffffff',
+          padding: [0, 0, 12, 0]
         },
         axisLine: {
           show: false        },
         axisLabel: {
           formatter: (value: number): string => value.toLocaleString('es-ES') + ' €',
           fontSize: 12,
-          color: '#000000'
+          color: '#ffffff'
         },
         splitLine: {
           lineStyle: {
-            color: 'rgba(0, 0, 0, 0.1)'
+            color: 'rgba(255, 255, 255, 0.3)'
           }
         }
       },      series: [

@@ -1,4 +1,4 @@
-import {Observable} from "rxjs";
+import {Observable,map} from "rxjs";
 import {CouponsRepository} from "../repositories/coupons.repository";
 
 export class GetTotalDiscountByMonthUseCase {
@@ -7,7 +7,9 @@ export class GetTotalDiscountByMonthUseCase {
 
 
   execute(month: string, year: string): Observable<number> {
-      return this.couponService.getTotalDiscountByMonth(month, year)
+      return this.couponService.getTotalDiscountByMonth(month, year).pipe(
+        map(total => Math.floor(total))
+      )
   }
 
 }

@@ -1,4 +1,9 @@
+$primary-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+$border-radius: 16px;
 $spacing-unit: 1rem;
+$transition-speed: 0.3s;
+
+$primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .main-wrapper {
   display: flex;
@@ -10,62 +15,123 @@ $spacing-unit: 1rem;
   bottom: 0;
   height: 98vh;
   width: 100%;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: $primary-font;
 }
 
 .sticky-header {
   position: sticky;
-  top: 0;
+  top: -22px;
   z-index: 10000;
-  background-color: var(--md-source-surface-variant);
-  padding: 6px 16px;
-  width: 100%;
+  width: 97%;
+  margin: 0 1.5%;
   box-sizing: border-box;
-  height: auto;
-  min-height: 50px;
-  flex-shrink: 0;
+  margin-bottom: 16px;
+  padding: 20px 0 0 0;
+  background-color: transparent;
+  transition: all $transition-speed ease;
 }
 
 .chart-header {
-  width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 4%;
-
-  h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--md-source-on-surface);
-    font-family: 'Poppins', sans-serif;
+  justify-content: space-between;  
+  background-color: #a5a5a5;
+  border-radius: $border-radius;
+  padding: 12px 20px;
+  box-shadow: $primary-shadow;
+  width: 100%;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  user-select: none;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }  h3 {
+    margin: 6px 0 0 0;
+    font-size: 18px;
+    color: black;
+    font-weight: bold;
+    flex: 1;
+    font-family: $primary-font;
+    user-select: none;
+    cursor: default;
   }
-
   .date-selectors {
     display: flex;
-    gap: 16px;
-    padding-right: 8%;
-
-    mat-form-field {
-      width: 120px;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    font-family: $primary-font;
+    
+    @media (max-width: 576px) {
+      width: 100%;
+      justify-content: flex-end;
+    }    mat-form-field {
+      width: 105px;
       margin: 0;
-      transform: scale(0.9);
+      transform: scale(0.85);
       transform-origin: right center;
-      font-family: 'Poppins', sans-serif !important;
       
       ::ng-deep {
-        .mat-mdc-form-field {
-          font-size: 12px;
-          font-family: 'Poppins', sans-serif !important;
+        .mat-mdc-text-field-wrapper {
+          background-color: #FFFFFF !important;
+          border-radius: $border-radius;
+          border: none !important;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+        }          .mat-mdc-form-field-flex {
+          background-color: #FFFFFF !important;
+          height: 48px;
+          overflow: hidden;
+          border-radius: $border-radius;
         }
-
-        .mat-mdc-select-value-text {
-          font-family: 'Poppins', sans-serif !important;
-          font-size: 12px;
+        
+        .mdc-line-ripple {
+          display: none;
         }
-
-        .mat-mdc-form-field-infix {
-          font-family: 'Poppins', sans-serif !important;
+        
+        .mat-mdc-form-field-subscript-wrapper {
+          display: none !important;
+          height: 0 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        
+        .mat-mdc-form-field-bottom-align::before {
+          display: none;
+        }          .mat-mdc-form-field-infix {
+          min-height: 48px;
+          padding-top: 12px;
+          padding-bottom: 12px;
+          font-family: $primary-font !important;
+        }
+        
+        .mat-mdc-select {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+        
+        .mat-mdc-option-text {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+        
+        .mat-mdc-form-field-label {
+          font-family: $primary-font !important;
+        }.mat-mdc-select-value {
+          font-family: $primary-font !important;
+          line-height: 24px;
+          font-size: 15px !important;
+          font-weight: normal !important;
+          text-transform: capitalize;
         }
       }
     }
@@ -74,13 +140,15 @@ $spacing-unit: 1rem;
 
 .orders-container {
   flex: 1;
-  overflow-y: auto;
-  padding: $spacing-unit;
+  padding: $spacing-unit 0;
   padding-bottom: 12rem;
   box-sizing: border-box;
-  width: 100%;
-  height: calc(100vh - 50px);
+  width: 97%;
+  margin: 0 1.5%;
   background-color: var(--md-source-surface-variant);
+  display: flex;
+  flex-direction: column;
+  font-family: $primary-font;
 }
 
 .carts-summary {
@@ -88,7 +156,9 @@ $spacing-unit: 1rem;
   gap: 24px;
   width: 100%;
   box-sizing: border-box;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  height: 620px;
+  padding: 0;
 
   .info-container {
     flex: 1;
@@ -97,43 +167,50 @@ $spacing-unit: 1rem;
     gap: 12px;
     min-width: 300px;
     max-width: 400px;
+    box-sizing: border-box;
+    height: 100%;
 
     app-information-box-carts {
-      height: 145px;
+      flex: 1;
       background-color: var(--md-source-surface);
       border: 1px solid var(--md-source-outline);
-      border-radius: 8px;
+      border-radius: 16px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       overflow: hidden;
+      box-sizing: border-box;
     }
-  }
-
-  .chart-section {
+  }    .chart-section {
     flex: 2;
-    background-color: #FFFFFF;
+    background-color: #a5a5a5;
     border: 1px solid var(--md-source-outline);
-    border-radius: 8px;
+    border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 24px 24px 24px 16px;
-    min-width: 500px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    height: 570px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
+    font-family: $primary-font;
+    user-select: none; 
     
-    h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 500;
+      h3 {
+      font-size: 1.25rem;
+      font-weight: bold;
       color: var(--md-source-on-surface);
-      margin-bottom: 16px;
+      margin: 6px 0 16px 0;
+      cursor: default; 
     }
-
+    
     app-monthly-abandoned-carts {
       flex: 1;
-      min-height: 0;
       display: flex;
       flex-direction: column;
-      margin-left: -8px;
+      width: 100%;
+      height: calc(100% - 50px);
+      max-height: 550px;
+      margin-top: 0;
     }
   }
 }
@@ -141,62 +218,80 @@ $spacing-unit: 1rem;
 .charts-row {
   display: flex;
   justify-content: space-between;
-  width: 97%;
-  margin: 0 ;
-  height: 480px;
-  margin-bottom: 24px;
-  flex-wrap: nowrap;
-  flex-direction: row;
-
-  .chart-section-evolution, .chart-section-rate {
-    background-color: #FFFFFF;
+  width: 100%;
+  margin: 0;
+  height: 620px;
+  margin-bottom: 40px;
+  gap: 24px;
+  padding: 0;
+  box-sizing: border-box;  .chart-section-evolution, .chart-section-rate {
+    background-color: #a5a5a5;
     border: 1px solid var(--md-source-outline);
-    border-radius: 8px;
+    border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 16px;
-    width: 48%;
-    flex: 0 0 48%;
+    padding: 20px;
+    flex: 1;
     display: flex;
     flex-direction: column;
     height: 100%;
-    
-    h3 {
-      font-size: 1.1rem;
-      font-weight: 500;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: $primary-font;
+    user-select: none;
+      h3 {
+      font-size: 1.25rem;
+      font-weight: bold;
       color: var(--md-source-on-surface);
-      margin-bottom: 16px;
+      margin: 6px 0 16px 0;
       flex-shrink: 0;
+      cursor: default;
     }
-
+    
     app-evolution-abandoned-carts,
     app-monthly-cart-rate-abandoned {
       flex: 1;
-      min-height: 0;
       display: flex;
       flex-direction: column;
-      height: calc(100% - 40px);
+      height: calc(100% - 50px);
       overflow: hidden;
+      width: 100%;
+      max-height: 550px;
+      margin-top: 0;
     }
-  }
-  
-  .chart-section-evolution {
-    margin-right: 2%;
-  }
-  
-  .chart-section-rate {
-    margin-right: 0;
   }
 }
 
 ::ng-deep .mat-mdc-select-panel {
-  font-family: 'Poppins', sans-serif !important;
+  font-family: $primary-font !important;
   
   .mat-mdc-option {
-    font-family: 'Poppins', sans-serif !important;
-    font-size: 12px;
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+    
+    .mdc-list-item__primary-text {
+      text-transform: capitalize;
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
   }
 }
 
 ::ng-deep .mdc-menu-surface {
-  font-family: 'Poppins', sans-serif !important;
+  font-family: $primary-font !important;
+  border-radius: $border-radius !important;
+  
+  .mat-mdc-option {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+  
+  .mdc-list-item__primary-text {
+    text-transform: capitalize;
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
 }

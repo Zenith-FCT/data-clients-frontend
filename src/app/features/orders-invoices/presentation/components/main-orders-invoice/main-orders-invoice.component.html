@@ -1,37 +1,40 @@
 <div class="main-wrapper">
-  <div class="sticky-header">
-    <div class="chart-header">
-      <h3>Pedidos y Facturación</h3>
-      <div class="date-selectors">
-        <mat-form-field appearance="outline">
-          <mat-select
-            [(ngModel)]="selectedMonth"
-            (selectionChange)="onDateChange()"
-          >
-            <mat-option
-              *ngFor="let month of months; let i = index"
-              [value]="i + 1"
-            >
-              {{ getMonthName(i + 1) }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-select
-            [(ngModel)]="selectedYear"
-            (selectionChange)="onDateChange()"
-          >
-            <mat-option *ngFor="let year of years" [value]="year">
-              {{ year }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
-  </div>
-
   <div class="orders-container">
     <div class="orders-summary">
+      
+      <div class="sticky-header-container">
+        <div class="date-selectors-left">
+          <h2>Pedidos y Facturacion</h2>
+          <div class="selectors-container">
+            <mat-form-field>
+              <mat-select
+                [(ngModel)]="selectedMonth"
+                (selectionChange)="onDateChange()"
+                #monthSelect
+              >
+                <mat-option
+                  *ngFor="let month of months; let i = index"
+                  [value]="i + 1"
+                >
+                  {{ getMonthName(i + 1) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select
+                [(ngModel)]="selectedYear"
+                (selectionChange)="onDateChange()"
+                #yearSelect
+              >
+                <mat-option *ngFor="let year of years" [value]="year">
+                  {{ year }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      
       <div class="summary-cards">
         <app-information-box type="amount"></app-information-box>
         <app-information-box type="monthly"></app-information-box>
@@ -51,13 +54,8 @@
           <app-chart-evolution-orders-invoices
             class="full-width-chart"
           ></app-chart-evolution-orders-invoices>
-        </div>
-
-        <div class="chart-section-tm">
-          <div
-            class="info-container"
-            style="align-self: flex-start; margin-top: -10px"
-          >
+        </div>        <div class="chart-section-tm">
+          <div class="info-container tm-info-container">
             <div>
               <app-information-box type="tm-year"></app-information-box>
             </div>

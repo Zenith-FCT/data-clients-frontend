@@ -63,10 +63,8 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
     const months = [
       'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
       'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
-    ];
-
-    this.chartOption = {
-      backgroundColor: '#ffffff',
+    ];    this.chartOption = {
+      backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
         formatter: (params: any) => {
@@ -74,6 +72,12 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
           return `${data.name}: ${data.value} carritos`;
         }
       },
+      textStyle: {
+        fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',
+        fontSize: 12,
+      },
+      silent: false, 
+      animation: true,
       grid: {
         top: 30,
         right: '2%',
@@ -87,12 +91,13 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
         boundaryGap: false,
         axisLine: {
           lineStyle: {
-            color: '#ff0c00'
+            color: '#fff'
           }
         },
         axisLabel: {
-          color: '#666',
-          fontSize: 12
+          color: '#fff',
+          fontSize: 12,
+          margin: 18,
         }
       },
       yAxis: {
@@ -102,11 +107,11 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
         axisLine: {
           show: true,
           lineStyle: {
-            color: '#666'
+            color: '#fff'
           }
         },
         axisLabel: {
-          color: '#666',
+          color: '#fff',
           fontSize: 12,
           formatter: (value: number) => {
             return Math.round(value).toString();
@@ -114,7 +119,7 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
         },
         splitLine: {
           lineStyle: {
-            color: 'rgba(0,0,0,0.1)'
+            color: 'rgba(255, 255, 255, 0.38)'
           }
         }
       },
@@ -124,11 +129,11 @@ export class EvolutionAbandonedCartsComponent implements OnInit, OnDestroy {
         smooth: true,
         name: 'Carritos abandonados',
         itemStyle: {
-          color: '#ff0c00'
+          color: '#dff03c'
         },
         areaStyle: {
           opacity: 0.3,
-          color: '#ff0c00'
+          color: '#dff03c',
         }
       }]
     };

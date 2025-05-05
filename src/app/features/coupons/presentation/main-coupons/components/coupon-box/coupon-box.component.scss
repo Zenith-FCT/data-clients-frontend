@@ -10,31 +10,33 @@
 
 h3 {
   margin: 0;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 700;
   color: #333;
   white-space: nowrap;
+  text-align: center;
+  font-family: "Swiss 721 BT EX Roman", "Swiss721BT-ExRoman", Arial, sans-serif;
 }
 
 .coupons-total {
 
+  .coupons-info {
+    font-size: 46px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
   p {
     text-align: center;
     margin-bottom: 0;
-    margin-top: 8px;
-  }
-
-  p:first-child {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: #333;
+    margin-top: 0;
+    font-family: "Swiss 721 BT EX Roman", "Swiss721BT-ExRoman", Arial, sans-serif;
   }
 
   p:last-child {
-    color: #777;
-    font-size: 12px;
+    font-size: 15px;
     margin: 0;
+    font-family: "Swiss 721 BT EX Roman", "Swiss721BT-ExRoman", Arial, sans-serif;
   }
 
 }

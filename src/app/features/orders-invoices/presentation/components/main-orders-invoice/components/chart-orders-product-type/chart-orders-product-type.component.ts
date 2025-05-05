@@ -22,7 +22,7 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
   public isBrowser: boolean;
   chartOption: EChartsOption = {};
   
-  private colors = ['#2D2D2D', '#E63946', '#BDBDBD', '#6F1D1B', '#F4A261', '#3D405B', '#8D99AE'];
+  private colors = ['#dfff03', '#eff1ea', '#b9d400', '#c7c9c2', '#373836', '#171c00', '#585956'];
 
   constructor(
     public orderInvoiceProductViewModel: OrderInvoiceProductViewModelService,
@@ -81,7 +81,6 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
       this.updateChart();
     }
   }
-
   private updateChart(): void {
     if (!this.isBrowser) return;
 
@@ -111,34 +110,56 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
           const percentage = Math.round((value / total) * 100);
           return `${params.name}: ${value.toLocaleString('es-ES')} pedidos (${percentage}%)`;
         },
-        confine: true
-      },
-      legend: {
-        orient: 'vertical',
-        left: '2%',
-        top: 'top',
-        padding: 20,
+        backgroundColor: 'rgba(33, 33, 33, 0.9)',
+        borderColor: '#444',
         textStyle: {
-          fontSize: 12
+          color: '#fff',
         }
       },
       series: [
         {
           name: 'Pedidos por tipo de producto',
           type: 'pie',
-          radius: ['50%', '80%'],
-          center: ['60%', '50%'],
+          radius: ['40%', '70%'],
+          center: ['50%', '45%'],
           avoidLabelOverlap: false,
           itemStyle: {
-            borderRadius: 0,
-            borderColor: '#fff',
-            borderWidth: 1
+            borderRadius: 8,
+            borderWidth: 4,
           },
-          label: {
-            show: false
-          },
-          labelLine: {
-            show: false
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '18',
+              fontWeight: 'bold',
+              color: '#333',
+            },
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },          label: {
+            show: true,
+            position: 'outside',
+            formatter: (params: any) => {
+              let formattedValue = params.value;
+              if (params.value >= 1000000) {
+                formattedValue = (params.value / 1000000).toFixed(1) + 'M';
+              } else if (params.value >= 1000) {
+                formattedValue = (params.value / 1000).toFixed(1) + 'k';
+              } else {
+                formattedValue = params.value;
+              }
+              return `${params.name}: ${formattedValue}`;
+            },
+            color: '#000',
+            fontSize: 14,
+          },          labelLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+            },
           },
           data: chartData
         }
