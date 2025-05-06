@@ -12,6 +12,7 @@ import { TmModel } from '../../domain/use-cases/get-all-monthly-tm.use-case';
 import { GetTmYearUseCase } from '../../domain/use-cases/get-tm-year.use-case';
 import { GetMonthlyTmUseCase } from '../../domain/use-cases/get-monthly-tm.use-case';
 import { GetTotalsForAllYearsUseCase } from '../../domain/use-cases/get-totals-for-all-years.use-case';
+import { GetTmForAllYearsUseCase } from '../../domain/use-cases/get-tm-for-all-year.use-case';
 
 export interface OrdersInvoicesUIState {
   isLoading: boolean;
@@ -28,7 +29,8 @@ export interface OrdersInvoicesUIState {
   selectedTmYear: number;
   monthlyTm: number;
   totals: MonthlySalesModel;
-  isShowingAllYears: boolean; // Indica si se ha seleccionado "Todos" en el selector de año
+  totalsYearTm: number;
+  isShowingAllYears: boolean; 
 }
 
 @Injectable({
@@ -67,7 +69,8 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     selectedTmYear: new Date().getFullYear(),
     monthlyTm: 0,
     totals: new MonthlySalesModel('', '', '', ''),
-    isShowingAllYears: false
+    isShowingAllYears: false,
+    totalsYearTm: 0
   });
 
   public readonly isLoading$ = computed(() => this.uiState().isLoading);
@@ -85,6 +88,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   public readonly monthlyTm$ = computed(() => this.uiState().monthlyTm);
   public readonly totals$ = computed(() => this.uiState().totals);
   public readonly isShowingAllYears$ = computed(() => this.uiState().isShowingAllYears);
+  public readonly totalsYearTm$ = computed(() => this.uiState().totalsYearTm);
 
   private getMonthlySalesUseCase: GetMonthlySalesUseCase;
   private getAllMonthWithTotalsUseCase: GetAllMonthWithTotalsUseCase;
@@ -94,6 +98,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   private getTmYearUseCase: GetTmYearUseCase;
   private getMonthlyTMUseCase: GetMonthlyTmUseCase;
   private getTotalsForAllYearsUseCase: GetTotalsForAllYearsUseCase;
+  private getTmForAllYearsUseCase: GetTmForAllYearsUseCase;
 
   constructor(private monthlySalesRepository: MonthlySalesDataRepository) {
     this.getMonthlySalesUseCase = new GetMonthlySalesUseCase(this.monthlySalesRepository);
@@ -105,6 +110,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     this.getTmYearUseCase = new GetTmYearUseCase(this.monthlySalesRepository);
     this.getMonthlyTMUseCase = new GetMonthlyTmUseCase(this.monthlySalesRepository);
     this.getTotalsForAllYearsUseCase = new GetTotalsForAllYearsUseCase(this.monthlySalesRepository);
+    this.getTmForAllYearsUseCase = new GetTmForAllYearsUseCase(this.monthlySalesRepository);
   }
 
   public setSelectedYear(year: number): void {
@@ -388,6 +394,24 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       this.updateState({ 
         error: 'Error al cargar los totales globales. Intente nuevamente.',
         totals: new MonthlySalesModel('total', 'total of years', '0', '0')
+      });
+    } finally {
+      this.updateState({ isLoading: false });
+    }
+  }
+  public async loadTmForAllYears(): Promise<void> {
+    try {
+      this.updateState({ 
+        isLoading: true, 
+        error: null 
+      });
+
+      const tm = await firstValueFrom(this.getTmForAllYearsUseCase.execute());
+      this.updateState({ totalsYearTm: tm });
+    } catch (error) {
+      this.updateState({ 
+        error: 'Error al cargar el total de TM. Intente nuevamente.',
+        totalsYearTm: 0 
       });
     } finally {
       this.updateState({ isLoading: false });

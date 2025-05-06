@@ -43,9 +43,7 @@
           </ng-container>
         </p>
       </div>
-    </ng-container>
-
-    <ng-container *ngIf="type === 'tm-year'">
+    </ng-container>    <ng-container *ngIf="type === 'tm-year'">
       <div *ngIf="ordersInvoiceViewModel.isLoading$()" class="loading-state">
         <div class="spinner"></div>
         <span>Calculando...</span>
@@ -59,14 +57,22 @@
       <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
         <div class="amount-container">
           <div class="amount">
-            <span class="value">
+            <span class="value" *ngIf="!ordersInvoiceViewModel.isShowingAllYears$()">
               {{ ordersInvoiceViewModel.totalTm$() | number:'1.0-0' }}
+            </span>
+            <span class="value" *ngIf="ordersInvoiceViewModel.isShowingAllYears$()">
+              {{ ordersInvoiceViewModel.totalsYearTm$() | number:'1.0-0' }}
             </span>
             <span class="currency">€</span>
           </div>
         </div>
         <p class="description">
-          Ticket Medio del año {{ ordersInvoiceViewModel.selectedYear$() }}
+          <ng-container *ngIf="!ordersInvoiceViewModel.isShowingAllYears$()">
+            Ticket Medio del año {{ ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+          <ng-container *ngIf="ordersInvoiceViewModel.isShowingAllYears$()">
+            Ticket Medio global de todos los años
+          </ng-container>
         </p>
       </div>
     </ng-container>
@@ -132,9 +138,7 @@
           </ng-container>
         </p>
       </div>
-    </ng-container>
-
-    <ng-container *ngIf="type === 'monthly-tm'">
+    </ng-container>    <ng-container *ngIf="type === 'monthly-tm'">
       <div *ngIf="ordersInvoiceViewModel.isLoading$()" class="loading-state">
         <div class="spinner"></div>
         <span>Calculando...</span>

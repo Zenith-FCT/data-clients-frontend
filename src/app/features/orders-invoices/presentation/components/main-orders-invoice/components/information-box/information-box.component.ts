@@ -33,34 +33,41 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
     }
     return new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
   }
-
   constructor(public ordersInvoiceViewModel: OrdersInvoiceViewModelService) {
     effect(() => {
       this.loading = this.ordersInvoiceViewModel.isLoading$();
-    });
-
-    effect(() => {
+    });    effect(() => {
       const year = this.ordersInvoiceViewModel.selectedYear$();
       const month = this.ordersInvoiceViewModel.selectedMonth$();
+      const isShowingAll = this.ordersInvoiceViewModel.isShowingAllYears$();
       
       if (year && month !== undefined) {
         this.updateData(year, month);
       }
+      if (isShowingAll && this.type === 'tm-year') {
+        this.ordersInvoiceViewModel.loadTmForAllYears();
+      }
     });
   }
-  
   ngOnInit(): void {
     const year = this.ordersInvoiceViewModel.selectedYear$();
     const month = this.ordersInvoiceViewModel.selectedMonth$();
+    const isShowingAll = this.ordersInvoiceViewModel.isShowingAllYears$();
+    
     if (year && month !== undefined) {
       this.updateData(year, month);
+    }    if (isShowingAll && this.type === 'tm-year') {
+      this.ordersInvoiceViewModel.loadTmForAllYears();
     }
-  }
-  private updateData(year: number, month: number): void {
+  }private updateData(year: number, month: number): void {
     const isShowingAll = year === -1 || this.ordersInvoiceViewModel.isShowingAllYears$();
     
     if (isShowingAll && (this.type === 'amount' || this.type === 'count')) {
       this.ordersInvoiceViewModel.loadTotalsForAllYears();
+      return;
+    }
+    if (isShowingAll && this.type === 'tm-year') {
+      this.ordersInvoiceViewModel.loadTmForAllYears();
       return;
     }
     
