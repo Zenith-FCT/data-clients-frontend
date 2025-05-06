@@ -42,23 +42,14 @@
       <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
         <div class="amount-container">
           <div class="amount">
-            <!-- Cuando es "Todos", mostrar el Ticket medio anual -->
-            <span class="value" *ngIf="ordersInvoiceViewModel.selectedMonth$() === 0">
+            <span class="value">
               {{ ordersInvoiceViewModel.totalTm$() | number:'1.0-0' }}
-            </span>
-            <span class="value" *ngIf="ordersInvoiceViewModel.selectedMonth$() !== 0">
-              {{ ordersInvoiceViewModel.monthlyTm$() | number:'1.0-0' }}
             </span>
             <span class="currency">€</span>
           </div>
         </div>
         <p class="description">
-          <ng-container *ngIf="ordersInvoiceViewModel.selectedMonth$() === 0">
-            Ticket Medio del año {{ ordersInvoiceViewModel.selectedYear$() }}
-          </ng-container>
-          <ng-container *ngIf="ordersInvoiceViewModel.selectedMonth$() !== 0">
-            Ticket Medio del mes de {{getMonthName(ordersInvoiceViewModel.selectedMonth$())}} de {{ ordersInvoiceViewModel.selectedYear$() }}
-          </ng-container>
+          Ticket Medio del año {{ ordersInvoiceViewModel.selectedYear$() }}
         </p>
       </div>
     </ng-container>
