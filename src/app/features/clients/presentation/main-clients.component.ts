@@ -63,10 +63,14 @@ export class ClientsComponent implements OnInit {
   displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];  globalYear = new Date().getFullYear().toString();
   globalMonth = (new Date().getMonth() + 1).toString();  onGlobalYearChange(event: MatSelectChange): void {
     this.globalYear = event.value;
+    
+    // Solo actualizar los filtros que no tienen selectores específicos
     Object.keys(this.filters).forEach(key => {
-      if (this.filters[key as FilterType].year) {
+      // Excluir filtros que tienen sus propios selectores
+      if (key !== 'clients' && key !== 'orders' && key !== 'ticket' && this.filters[key as FilterType].year) {
         this.filters[key as FilterType].year = event.value;
-          if (key === 'monthlyClients') {          
+        
+        if (key === 'monthlyClients') {          
           // Cargar nuevos datos para gráfico de clientes
           this.loadMonthlyClientsData(event.value);
         } else if (key === 'monthlyOrders') {
@@ -157,10 +161,26 @@ export class ClientsComponent implements OnInit {
       // Activar pantalla de carga
       this.loadingView = true;
       
-      // Asegurarse de que los filtros con opción "all" usen esa opción por defecto
+      // Inicializar valores para filtros
+      this.globalYear = new Date().getFullYear().toString(); // Por defecto, mostrar año actual
+      this.globalMonth = (new Date().getMonth() + 1).toString(); // Mes actual
+      
+      // Asegurarse de que los filtros con opción "all" mantengan esa opción
       this.filters.clients.year = "all";
       this.filters.orders.year = "all";
       this.filters.ticket.year = "all";
+      
+      // Para filtros basados solo en mes y año, usar los valores globales
+      Object.keys(this.filters).forEach(key => {
+        if (key !== 'clients' && key !== 'orders' && key !== 'ticket') {
+          if (this.filters[key as FilterType].year) {
+            this.filters[key as FilterType].year = this.globalYear;
+          }
+          if (this.filters[key as FilterType].month) {
+            this.filters[key as FilterType].month = this.globalMonth;
+          }
+        }
+      });
       
       // Cargar datos
       this.viewModel.loadData();
@@ -340,32 +360,49 @@ export class ClientsComponent implements OnInit {
       if (otherValue > 0) {
         topCategories.push({ name: 'Otros', value: otherValue });
       }
-    }
-
-    this.chartOption = {
-      tooltip: {
+    }    // Definimos la paleta de colores de acuerdo a orders-invoices
+    const colors = ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69'];
+    
+    this.chartOption = {      tooltip: {
         trigger: 'item',
-        formatter: '{b}: {c} clientes ({d}%)'
+        formatter: function(params: any) {
+          return params.name + ': ' + Math.floor(params.value) + ' clientes (' + Math.floor(params.percent) + '%)';
+        },
+        backgroundColor: 'rgba(255, 255, 255, 0.64)',
+        padding: 10,
+        confine: true,
       },
       legend: {
         orient: 'horizontal',
         bottom: 10,
-        data: topCategories.map(item => item.name)
-      },
-      series: [{
+        data: topCategories.map(item => item.name),
+        textStyle: {
+          color: '#ffffff'
+        }      },
+      color: colors,      series: [{
         name: 'Clientes por Categoría',
         type: 'pie',
-        radius: ['40%', '70%'],
+        radius: '75%', // Aumentado para hacer el gráfico más grande
+        center: ['50%', '40%'], // Ajustado para subir el gráfico en el contenedor
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 8,
           borderColor: '#fff',
           borderWidth: 2
-        },
-        label: {
+        },        label: {
           show: true,
-          position: 'outside',
-          formatter: '{b}: {c}'
+          position: 'outside', // Cambiado para mostrar etiquetas fuera del sector
+          formatter: '{b}: {c}',
+          color: '#ffffff',
+          fontSize: 12,
+          fontWeight: 'bold'
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
         },
         data: topCategories
       }]
@@ -386,48 +423,75 @@ export class ClientsComponent implements OnInit {
         }
       };
       return;
-    }
-
-    const sortedLocations = [...locations].sort((a, b) => b.clientCount - a.clientCount);
+    }    const sortedLocations = [...locations].sort((a, b) => b.clientCount - a.clientCount);
     const locationLabels = sortedLocations.map(item => 
       locationType === 'country' ? item.country : item.city
-    );
-    const locationValues = sortedLocations.map(item => item.clientCount);
-
+    );    // Redondear los valores de clientes para eliminar decimales
+    const locationValues = sortedLocations.map(item => Math.floor(item.clientCount));
+    
     this.locationsChartOption = {
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'shadow' }
+        axisPointer: { type: 'shadow' },
+        formatter: function(params: any[]) {
+          const param = params[0];
+          return param.name + '<br/>' + param.seriesName + ': ' + Math.floor(param.value);
+        }
       },
       grid: {
         left: '3%',
         right: '4%',
         bottom: '10%',
         containLabel: true
-      },
-      xAxis: {
+      },      xAxis: {
         type: 'category',
         data: locationLabels,
+        axisLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.13)'
+          }
+        },
         axisLabel: {
           rotate: 45,
-          interval: 0
+          interval: 0,
+          fontSize: 12,
+          margin: 16,
+          color: '#ffffff'
         }
-      },
-      yAxis: {
+      },      yAxis: {
         type: 'value',
-        name: 'Nº Clientes'
-      },
-      series: [{
+        name: 'Nº Clientes',
+        minInterval: 1, // Asegurar que los valores son enteros
+        axisLabel: {
+          fontSize: 12,
+          color: '#ffffff',
+          formatter: function(value: number) {
+            return Math.floor(value); // Mostrar solo enteros en el eje Y
+          }
+        },
+        nameTextStyle: {
+          fontSize: 14,
+          color: '#ffffff',
+          padding: [0, 0, 12, 0]
+        },
+        splitLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.28)'
+          }
+        }},series: [{
         name: 'Clientes',
         type: 'bar',
         data: locationValues,
         itemStyle: {
-          color: '#d32f2f',
+          color: 'rgba(255, 255, 255, 0.52)',
           borderRadius: [4, 4, 0, 0]
-        },
-        label: {
+        },        label: {
           show: true,
-          position: 'top'
+          position: 'top',
+          color: '#FFFFFF',
+          formatter: function(params: any) {
+            return Math.floor(params.value);
+          }
         }
       }]
     };
@@ -447,36 +511,63 @@ export class ClientsComponent implements OnInit {
     const newOption = {
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'shadow' }
+        axisPointer: { type: 'shadow' },
+        formatter: function(params: any[]) {
+          const param = params[0];
+          return param.name + '<br/>' + param.seriesName + ': ' + Math.round(param.value);
+        }
       },
       grid: {
         left: '10%',  // Aumentar el margen izquierdo para que quepa la etiqueta
         right: '4%',
         bottom: '3%',
         containLabel: true
-      },
-      xAxis: {
+      },      xAxis: {
         type: 'category',
-        data: this.months
+        data: this.months,
+        axisLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.13)'
+          }
+        },
+        axisLabel: {
+          fontSize: 12,
+          margin: 16,
+          color: '#ffffff'
+        }
       },
       yAxis: {
         type: 'value',
         name: 'Nuevos Clientes',
         nameLocation: 'middle',
-        nameGap: 40,  // Espacio entre el nombre y el eje
-        minInterval: 1
-      },
-      series: [{
+        nameGap: 40,
+        minInterval: 1,
+        nameTextStyle: {
+          fontSize: 14,
+          color: '#ffffff',
+          padding: [0, 0, 12, 0]
+        },
+        axisLabel: {
+          fontSize: 12,
+          color: '#ffffff'
+        },
+        splitLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.28)'
+          }
+        }
+      },      series: [{
         name: 'Nuevos Clientes',
         type: 'bar',
-        data: data.map(value => Math.round(value)),
+        data: data.map(value => Math.floor(value)),
         itemStyle: {
-          color: '#E53935',
+          color: 'rgba(255, 255, 255, 0.52)',
           borderRadius: [4, 4, 0, 0]
         },
         label: {
           show: true,
-          position: 'top'
+          position: 'top',
+          color: '#FFFFFF'
         }
       }]
     };
@@ -499,41 +590,91 @@ export class ClientsComponent implements OnInit {
     const newOption = {
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'shadow' }
+        axisPointer: { type: 'shadow' },
+        formatter: function(params: any[]) {
+          const param = params[0];
+          return param.name + '<br/>' + param.seriesName + ': ' + Math.round(param.value);
+        }
       },
       grid: {
         left: '10%',  // Aumentar el margen izquierdo para que quepa la etiqueta
         right: '4%',
         bottom: '3%',
         containLabel: true
-      },
-      xAxis: {
+      },      xAxis: {
         type: 'category',
-        data: this.months
+        data: this.months,
+        axisLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.13)'
+          }
+        },
+        axisLabel: {
+          fontSize: 12,
+          margin: 16,
+          color: '#ffffff'
+        }
       },
       yAxis: {
         type: 'value',
         name: 'Pedidos',
         nameLocation: 'middle',
-        nameGap: 40,  // Espacio entre el nombre y el eje
-        minInterval: 1
-      },
-      series: [{
+        nameGap: 40,
+        minInterval: 1,
+        nameTextStyle: {
+          fontSize: 14,
+          color: '#ffffff',
+          padding: [0, 0, 12, 0]
+        },
+        axisLabel: {
+          fontSize: 12,
+          color: '#ffffff'
+        },
+        splitLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.28)'
+          }
+        }
+      },series: [{
         name: 'Pedidos',
         type: 'bar',
         data: data.map(value => Math.round(value)),
         itemStyle: {
-          color: '#E53935',
+          color: 'rgba(255, 255, 255, 0.52)',
           borderRadius: [4, 4, 0, 0]
         },
         label: {
           show: true,
-          position: 'top'
+          position: 'top',
+          color: '#FFFFFF'
         }
       }]
     };
 
     // Asignar las nuevas opciones
     this.monthlyOrdersChartOption = newOption;
+  }
+  /**
+   * Convierte el número del mes a su nombre en español
+   * @param monthNumber Número del mes (1-12) o undefined
+   * @returns Nombre del mes en español o "Todos" si es undefined
+   */
+  getMonthNameFromNumber(monthNumber: string | undefined): string {
+    if (!monthNumber) {
+      return 'Todos';
+    }
+    
+    const monthNames = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    
+    const monthIndex = parseInt(monthNumber, 10) - 1;
+    
+    if (monthIndex >= 0 && monthIndex < 12) {
+      return monthNames[monthIndex];
+    }
+    
+    return 'Mes desconocido';
   }
 }

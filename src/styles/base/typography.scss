@@ -1,0 +1,18 @@
+// filepath: c:\Users\ruben\Desktop\Desarrollo web\Angular\data-clients-frontend\src\styles\base\typography.scss
+@use "../abstracts/variables" as vars;
+@use "../abstracts/functions" as funcs;
+
+h1 {
+  font-size: funcs.fluid-size(32px, 48px, 320px, 1200px);
+  font-weight: vars.$font-weight-bold;
+}
+
+p {
+  margin-bottom: vars.$spacing-md;
+}
+
+.headline {
+  font-family: vars.$font-secondary;
+  font-weight: vars.$font-weight-bold;
+  text-transform: uppercase;
+}
