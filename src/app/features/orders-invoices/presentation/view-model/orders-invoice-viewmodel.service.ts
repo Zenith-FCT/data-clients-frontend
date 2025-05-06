@@ -11,6 +11,7 @@ import { GetAllMonthlyTMUseCase } from '../../domain/use-cases/get-all-monthly-t
 import { TmModel } from '../../domain/use-cases/get-all-monthly-tm.use-case';
 import { GetTmYearUseCase } from '../../domain/use-cases/get-tm-year.use-case';
 import { GetMonthlyTmUseCase } from '../../domain/use-cases/get-monthly-tm.use-case';
+import { GetTotalsForAllYearsUseCase } from '../../domain/use-cases/get-totals-for-all-years.use-case';
 
 export interface OrdersInvoicesUIState {
   isLoading: boolean;
@@ -26,6 +27,8 @@ export interface OrdersInvoicesUIState {
   totalTm: number;
   selectedTmYear: number;
   monthlyTm: number;
+  totals: MonthlySalesModel;
+  isShowingAllYears: boolean; // Indica si se ha seleccionado "Todos" en el selector de año
 }
 
 @Injectable({
@@ -49,8 +52,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       totalTm: number;
     }
   } = {};
-  
-  private readonly uiState = signal<OrdersInvoicesUIState>({
+    private readonly uiState = signal<OrdersInvoicesUIState>({
     isLoading: false,
     error: null,
     monthlySales: 0,
@@ -63,7 +65,9 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     monthlyTmList: [],
     totalTm: 0,
     selectedTmYear: new Date().getFullYear(),
-    monthlyTm: 0
+    monthlyTm: 0,
+    totals: new MonthlySalesModel('', '', '', ''),
+    isShowingAllYears: false
   });
 
   public readonly isLoading$ = computed(() => this.uiState().isLoading);
@@ -79,15 +83,17 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   public readonly totalTm$ = computed(() => this.uiState().totalTm);
   public readonly selectedTmYear$ = computed(() => this.uiState().selectedTmYear);
   public readonly monthlyTm$ = computed(() => this.uiState().monthlyTm);
+  public readonly totals$ = computed(() => this.uiState().totals);
+  public readonly isShowingAllYears$ = computed(() => this.uiState().isShowingAllYears);
 
   private getMonthlySalesUseCase: GetMonthlySalesUseCase;
   private getAllMonthWithTotalsUseCase: GetAllMonthWithTotalsUseCase;
   private getTotalAmountOrdersUseCase: GetTotalAmountOrdersUseCase;
-  private getTotalOrdersUseCase: GetTotalOrdersUseCase;
-  private getTotalMonthOrdersUseCase: GetTotalMonthOrdersUseCase;
+  private getTotalOrdersUseCase: GetTotalOrdersUseCase;  private getTotalMonthOrdersUseCase: GetTotalMonthOrdersUseCase;
   private getAllMonthlyTMUseCase: GetAllMonthlyTMUseCase;
   private getTmYearUseCase: GetTmYearUseCase;
   private getMonthlyTMUseCase: GetMonthlyTmUseCase;
+  private getTotalsForAllYearsUseCase: GetTotalsForAllYearsUseCase;
 
   constructor(private monthlySalesRepository: MonthlySalesDataRepository) {
     this.getMonthlySalesUseCase = new GetMonthlySalesUseCase(this.monthlySalesRepository);
@@ -98,6 +104,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     this.getAllMonthlyTMUseCase = new GetAllMonthlyTMUseCase(this.monthlySalesRepository);
     this.getTmYearUseCase = new GetTmYearUseCase(this.monthlySalesRepository);
     this.getMonthlyTMUseCase = new GetMonthlyTmUseCase(this.monthlySalesRepository);
+    this.getTotalsForAllYearsUseCase = new GetTotalsForAllYearsUseCase(this.monthlySalesRepository);
   }
 
   public setSelectedYear(year: number): void {
@@ -127,7 +134,6 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     this.updateState({ selectedMonth: month });
   }
 
-  // Método para resetear los valores mensuales
   public resetMonthlyValues(): void {
     this.updateState({ 
       monthlySales: 0,
@@ -137,12 +143,19 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     });
   }
 
+  public setIsShowingAllYears(isShowingAll: boolean): void {
+    this.updateState({ isShowingAllYears: isShowingAll });
+    
+    if (isShowingAll) {
+      this.loadTotalsForAllYears();
+    }
+  }
+
   public setSelectedTmYear(year: number): void {
     this.updateState({ selectedTmYear: year });
   }
 
   public async loadMonthlySales(year: number, month: number): Promise<void> {
-    // Si el mes es 0 (opción "Todos"), usar los totales anuales en su lugar
     if (month === 0) {
       return;
     }
@@ -362,7 +375,24 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       this.updateState({ isLoading: false });
     }
   }
-
+  public async loadTotalsForAllYears(): Promise<void> {
+    try {
+      this.updateState({ 
+        isLoading: true, 
+        error: null 
+      });
+      
+      const totals = await firstValueFrom(this.getTotalsForAllYearsUseCase.execute());
+      this.updateState({ totals: totals });
+    } catch (error) {
+      this.updateState({ 
+        error: 'Error al cargar los totales globales. Intente nuevamente.',
+        totals: new MonthlySalesModel('total', 'total of years', '0', '0')
+      });
+    } finally {
+      this.updateState({ isLoading: false });
+    }
+  }
   public async refreshData(forceRefresh: boolean = false): Promise<void> {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1; 
@@ -374,7 +404,8 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       this.loadMonthlyOrders(this.selectedYear$(), currentMonth),
       this.loadTotalOrdersAmount(this.selectedYear$()),
       this.loadTotalOrders(this.selectedYear$()),
-      this.loadMonthlyTmList()
+      this.loadMonthlyTmList(),
+      this.loadTotalsForAllYears()
     ]);
   }
 

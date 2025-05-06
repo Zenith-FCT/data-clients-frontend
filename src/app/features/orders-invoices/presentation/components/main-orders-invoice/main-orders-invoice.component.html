@@ -20,18 +20,18 @@
                   {{ getMonthName(i + 1) }}
                 </mat-option>
               </mat-select>
-            </mat-form-field>
-            <mat-form-field>
+            </mat-form-field>            <mat-form-field>
               <mat-select
                 [(ngModel)]="selectedYear"
                 (selectionChange)="onDateChange()"
                 #yearSelect
               >
+                <mat-option [value]="'todos'">Todos</mat-option>
                 <mat-option *ngFor="let year of years" [value]="year">
                   {{ year }}
                 </mat-option>
               </mat-select>
-            </mat-form-field>
+            </mat-form-field>           
           </div>
         </div>
       </div>

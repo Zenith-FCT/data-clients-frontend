@@ -56,8 +56,14 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
       this.updateData(year, month);
     }
   }
-  
   private updateData(year: number, month: number): void {
+    const isShowingAll = year === -1 || this.ordersInvoiceViewModel.isShowingAllYears$();
+    
+    if (isShowingAll && (this.type === 'amount' || this.type === 'count')) {
+      this.ordersInvoiceViewModel.loadTotalsForAllYears();
+      return;
+    }
+    
     switch (this.type) {
       case 'monthly':
         if (month === 0) {
