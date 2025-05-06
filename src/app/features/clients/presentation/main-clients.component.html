@@ -1,28 +1,31 @@
-<div class="page-header">
-  <h1>Clientes</h1>
-  <div class="global-filters">
-    <mat-form-field appearance="outline" class="month-selector">
-      <mat-select [(value)]="globalMonth" (selectionChange)="onGlobalMonthChange($event)">
-        <mat-option value="1">Enero</mat-option>
-        <mat-option value="2">Febrero</mat-option>
-        <mat-option value="3">Marzo</mat-option>
-        <mat-option value="4">Abril</mat-option>
-        <mat-option value="5">Mayo</mat-option>
-        <mat-option value="6">Junio</mat-option>
-        <mat-option value="7">Julio</mat-option>
-        <mat-option value="8">Agosto</mat-option>
-        <mat-option value="9">Septiembre</mat-option>
-        <mat-option value="10">Octubre</mat-option>
-        <mat-option value="11">Noviembre</mat-option>
-        <mat-option value="12">Diciembre</mat-option>
-      </mat-select>
-    </mat-form-field>    <mat-form-field appearance="outline" class="year-selector">
-      <mat-select [(value)]="globalYear" (selectionChange)="onGlobalYearChange($event)">
-        <mat-option value="2023">2023</mat-option>
-        <mat-option value="2024">2024</mat-option>
-        <mat-option value="2025">2025</mat-option>
-      </mat-select>
-    </mat-form-field>
+<div class="sticky-header-container">
+  <div class="date-selectors-left">
+    <h2>Clientes</h2>
+    <div class="selectors-container">
+      <mat-form-field>
+        <mat-select [(value)]="globalMonth" (selectionChange)="onGlobalMonthChange($event)">
+          <mat-option value="1">Enero</mat-option>
+          <mat-option value="2">Febrero</mat-option>
+          <mat-option value="3">Marzo</mat-option>
+          <mat-option value="4">Abril</mat-option>
+          <mat-option value="5">Mayo</mat-option>
+          <mat-option value="6">Junio</mat-option>
+          <mat-option value="7">Julio</mat-option>
+          <mat-option value="8">Agosto</mat-option>
+          <mat-option value="9">Septiembre</mat-option>
+          <mat-option value="10">Octubre</mat-option>
+          <mat-option value="11">Noviembre</mat-option>
+          <mat-option value="12">Diciembre</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select [(value)]="globalYear" (selectionChange)="onGlobalYearChange($event)">
+          <mat-option value="2023">2023</mat-option>
+          <mat-option value="2024">2024</mat-option>
+          <mat-option value="2025">2025</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
 </div>
 
@@ -65,12 +68,12 @@
 
           <ng-container matColumnDef="ltv">
             <th mat-header-cell *matHeaderCellDef>LTV</th>
-            <td mat-cell *matCellDef="let client">{{client.ltv}}€</td>
+            <td mat-cell *matCellDef="let client">{{client.ltv | number:'1.0-0'}}€</td>
           </ng-container>
 
           <ng-container matColumnDef="averageOrderValue">
             <th mat-header-cell *matHeaderCellDef>Ticket Medio</th>
-            <td mat-cell *matCellDef="let client">{{client.averageOrderValue}}€</td>
+            <td mat-cell *matCellDef="let client">{{client.averageOrderValue | number:'1.0-0'}}€</td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -174,7 +177,7 @@
             
             <div *ngIf="!viewModel.loading() && !viewModel.error()" class="data-state">
               <div class="amount">
-                <span class="value">{{ viewModel.totalAverageOrders() | number:'1.2-2' }}</span>
+                <span class="value">{{ viewModel.totalAverageOrders() | number:'1.0-0' }}</span>
               </div>              <p class="description">
                 {{ filters.orders.year === 'all' ? 'Promedio global por cliente' : 'Promedio por cliente año ' + filters.orders.year }}
               </p>
@@ -237,7 +240,7 @@
             
             <div *ngIf="!viewModel.loading() && !viewModel.error()" class="data-state">
               <div class="amount">
-                <span class="value">{{ viewModel.averageTicket() | number:'1.2-2' }}</span>
+                <span class="value">{{ viewModel.averageTicket() | number:'1.0-0' }}</span>
                 <span class="currency">€</span>
               </div>              <p class="description">
                 {{ filters.ticket.year === 'all' ? 'Ticket medio global' : 'Ticket medio año ' + filters.ticket.year }}
@@ -262,7 +265,7 @@
             
             <div *ngIf="!viewModel.loading() && !viewModel.error()" class="data-state">
               <div class="amount">
-                <span class="value">{{ viewModel.ltv() | number:'1.2-2' }}</span>
+                <span class="value">{{ viewModel.ltv() | number:'1.0-0' }}</span>
                 <span class="currency">€</span>
               </div>
               <p class="description">

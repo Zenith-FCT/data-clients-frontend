@@ -6,7 +6,7 @@ $transition-speed: 0.3s;
 $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 :host {
-  --color-corporate: #0FF959;
+  --color-corporate: #dfff03;
   --main-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   --text-color: #333333;
   --border-color: #EEEEEE;
@@ -17,81 +17,174 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #E5E5E5; /* Fondo gris claro como en los otros componentes */
-}:host ::ng-deep {
+}
+
+:host ::ng-deep {
   .mat-mdc-table, .mdc-data-table__row {
     background-color: #a5a5a5 !important;
   }
   
   .mdc-data-table__content,
   .mat-mdc-table .mdc-data-table__row,
-  .mat-mdc-table .mdc-data-table__cell,
-  .mat-mdc-cell,
-  .mat-mdc-header-cell,
-  .mat-mdc-table .mat-mdc-cell {
+  .mat-mdc-header-cell {
     color: #333333 !important;
+  }
+  
+  /* Color blanco para las celdas de datos */
+  .mat-mdc-cell,
+  .mat-mdc-table .mdc-data-table__cell,
+  .mat-mdc-table .mat-mdc-cell {
+    color: #FFFFFF !important;
   }
   
   tbody, td, tfoot, th, thead, tr {
     border-color: #EEEEEE !important;
   }
-}.page-header {
-  padding: 12px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  
+  /* Estilos para el panel desplegable de los selectores */
+  .mat-mdc-select-panel,
+  .mat-select-panel,
+  .mat-mdc-select-panel-wrap,
+  .cdk-overlay-pane,
+  .mat-mdc-select-panel,
+  .mat-select-panel-wrap {
+    background-color: #FFFFFF !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  /* Asegurar que las opciones tengan fondo blanco */
+  .mat-mdc-option, 
+  .mat-option,
+  .mdc-list-item {
+    background-color: #FFFFFF !important;
+    color: #333333 !important;
+  }
+  
+  /* Estilo hover para las opciones */
+  .mat-mdc-option:hover,
+  .mat-option:hover,
+  .mdc-list-item:hover {
+    background-color: #f5f5f5 !important;
+  }
+  
+  /* Estilo para la opción seleccionada */
+  .mat-mdc-option.mat-mdc-option-active,
+  .mat-option.mat-selected,
+  .mat-mdc-option.mat-selected {
+    background-color: #dfff03 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+  }
+}
+
+/* Estilos para los botones toggle */
+
+.sticky-header-container {
+  position: sticky;
+  top: -20px;
+  z-index: 10000;
+  width: 100%;
+  box-sizing: border-box;
   margin-bottom: 16px;
+  padding: 0 12px; /* Reducido el padding horizontal para aumentar el ancho efectivo */
+  background-color: transparent; /* Fondo transparente como estaba antes */
+}
+
+.date-selectors-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  
   background-color: #a5a5a5;
   border-radius: $border-radius;
+  padding: 12px 20px;
   box-shadow: $primary-shadow;
-
-  h1 {
-    font-size: 22px;
+  width: calc(100% - 0px); /* Ajuste para alinear perfectamente con los elementos de abajo */
+  max-width: 1600px; /* Limitar el ancho máximo */
+  margin: 0 auto; /* Centrar horizontalmente */
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    color: black;
     font-weight: bold;
-    font-family: $primary-font;
-    color: #333333;
-    margin: 6px 0 0 0;
-  }  .global-filters {
+    flex: 1;
+  }
+  
+  .selectors-container {
     display: flex;
-    gap: 16px;
-    background-color: #ffffff;
-    padding: 8px 16px;
-    border-radius: $border-radius;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
     
-    .filter-group {
-      display: flex;
-      flex-direction: column;
+    @media (max-width: 576px) {
+      width: 100%;
+      justify-content: flex-end;
     }
     
-    .filter-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: #555;
-      margin-bottom: 2px;
-      margin-left: 4px;
-    }
-    
-    .mat-form-field {
-      width: 120px;
-      margin-bottom: -1.25em;
-      
-      &.month-selector {
-        width: 130px;
-      }
-      
-      &.year-selector {
-        width: 100px;
-      }
+    mat-form-field {
+      width: 105px;
+      margin: 0;
+      transform: scale(0.85);
+      transform-origin: right center;
       
       ::ng-deep {
         .mat-mdc-text-field-wrapper {
-          background-color: #f8f8f8;
-          border-radius: 8px;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+          background-color: #FFFFFF !important;
+          border-radius: $border-radius;
+          border: none !important;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
         }
         
-        .mat-mdc-form-field-label {
-          font-weight: 500;
+        .mat-mdc-form-field-flex {
+          background-color: #FFFFFF !important;
+          height: 48px;
+          overflow: hidden;
+          border-radius: $border-radius;
+        }
+        
+        .mat-mdc-form-field-infix {
+          min-height: 48px;
+          padding-top: 12px;
+          padding-bottom: 12px;
+        }
+        
+        .mdc-line-ripple {
+          display: none;
+        }
+        
+        .mat-mdc-form-field-subscript-wrapper {
+          display: none !important;
+          height: 0 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        
+        .mat-mdc-form-field-bottom-align::before {
+          display: none;
+        }
+        
+        .mat-mdc-select-value {
+          font-family: $primary-font !important;
+          line-height: 24px;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
+        
+        .mdc-list-item__primary-text {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
         }
       }
     }
@@ -102,9 +195,11 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 12px 12px 24px;
+  padding: 0 12px 24px;
   background: #E5E5E5;
   justify-content: space-between;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .top-row {
@@ -177,7 +272,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     td.mat-mdc-cell {
     padding: 12px 12px;
     font-size: 14px;
-    color: #333333;
+    color: #FFFFFF; /* Cambiado a blanco para los datos */
     border-bottom: 1px solid #EEEEEE;
     text-align: center; /* Centrar el texto en las celdas */
   }
@@ -398,7 +493,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     width: 16px;
     height: 16px;
     border: 2px solid #f3f3f3;
-    border-top: 2px solid #3498db;
+    border-top: 2px solid #dfff03; /* Actualizado al color corporativo */
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -527,7 +622,17 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     
     .mat-mdc-select-arrow {
       color: #333333;
-    }    /* Efecto de hover sutil como el de tus compañeros */
+    }
+    
+    /* Estilo personalizado para el panel de selección */
+    .mat-mdc-select-panel {
+      background-color: #FFFFFF !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+      border-radius: 8px !important;
+      margin-top: 4px !important;
+    }
+    
+    /* Efecto de hover sutil como el de tus compañeros */
     &:hover .mat-mdc-text-field-wrapper {
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -589,6 +694,37 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 .chart-controls {
   display: flex;
   align-items: center;
+
+  ::ng-deep {
+    .mat-button-toggle-group {
+      border-radius: 12px;
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      
+      .mat-button-toggle {
+        background-color: #ffffff;
+        color: #333333;
+        transition: all 0.3s ease;
+        font-family: $primary-font;
+        
+        &-checked {
+          background-color: #dfff03;  /* Color corporativo */
+          color: #000000;
+          font-weight: bold;
+        }
+        
+        &:not(.mat-button-toggle-checked):hover {
+          background-color: #f5f5f5;
+        }
+        
+        .mat-button-toggle-label-content {
+          padding: 0 16px;
+          line-height: 32px;
+        }
+      }
+    }
+  }
 }
 
 .loading-text, .error-text {
@@ -608,7 +744,7 @@ h2 {
   width: 100%;
   height: 100%;
   background: rgba(255, 255, 255, 0.9);
-  z-index: 1000;
+  z-index: 12000; /* Aumentado para estar por encima de la barra de navegación */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -626,7 +762,7 @@ h2 {
     ::ng-deep .mdc-circular-progress__determined-container,
     ::ng-deep .mdc-circular-progress__indeterminate-container {
       circle {
-        stroke: #0FF959 !important;
+        stroke: #dfff03 !important; /* Actualizado al color corporativo */
       }
     }
   }
@@ -642,42 +778,35 @@ h2 {
   }
 }
 
-@media (max-width: 1200px) {
-  .main-container {
-    flex-direction: column;
-  }
-  
-  .clients-container, 
-  .info-panel, 
-  .chart-wrapper {
-    width: 100%;
-    flex: 0 0 100%;
-    max-width: 100%;
-    max-height: none;
-    margin-left: 0; /* Asegúrate de eliminar cualquier margen en vista móvil */
-  }
-  
-  .info-panel {
-    margin-top: 16px;
-    height: auto;
-  }
-  
-  .info-row {
-    flex-direction: column;
-    height: auto;
-  }
-  
-  .info-box {
-    min-height: 150px;
-  }
-  
-  .chart-wrapper {
-    margin: 16px 0;
+/* Estilos globales para los paneles de selección Angular Material */
+::ng-deep {
+  .cdk-overlay-container {
+    .cdk-overlay-pane {
+      .mat-mdc-select-panel, 
+      .mat-mdc-autocomplete-panel, 
+      .mat-datepicker-content {
+        background-color: #FFFFFF !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        
+        .mat-mdc-option,
+        .mat-calendar-body-cell,
+        .mat-calendar-body-cell-content {
+          background-color: #FFFFFF;
+          color: #333333;
+          
+          &:hover {
+            background-color: #f5f5f5;
+          }
+          
+          &.mat-calendar-body-selected,
+          &.mat-mdc-option-active {
+            background-color: #dfff03 !important;
+            color: #000000 !important;
+          }
+        }
+      }
+    }
   }
 }
 
-@media (min-width: 1200px) {
-  .chart-wrapper {
-    width: 48%; /* Coherente con otros contenedores */
-  }
-}
