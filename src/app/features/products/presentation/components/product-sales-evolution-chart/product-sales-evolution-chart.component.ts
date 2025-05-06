@@ -214,17 +214,8 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
       const [year, monthNum] = month.split('-');
       const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       return `${monthNames[parseInt(monthNum) - 1]}`;
-    });
-      // Año seleccionado para mostrar en el título
-    const yearText = this.selectedYear ? ` ${this.selectedYear}` : '';
-    
-    // Crear opciones del gráfico
+    });    // Crear opciones del gráfico sin título para evitar duplicación
     this.chartOption = {
-      title: {
-        text: `Evolución de Ventas Mensuales por Producto${yearText}`,
-        left: 'center',
-        textStyle: { color: '#333' },
-      },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -236,7 +227,7 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
       },      legend: {
         data: productEvolution.map(p => p.productName),
         orient: 'horizontal',
-        bottom: '0',
+        bottom: '20px', // Aumentamos el margen inferior para separarla más del borde
         type: 'scroll', // Permite desplazamiento si hay muchos productos
         width: '90%',
         textStyle: {
@@ -250,12 +241,11 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
         pageTextStyle: {
           color: '#666'
         }
-      },
-      grid: {
+      },      grid: {
         left: '5%',
         right: '5%',
         bottom: '12%', // Aumentado para dejar espacio a la leyenda en la parte inferior
-        top: '50px', // Reducido ya que la leyenda ya no está arriba
+        top: '30px', // Reducido para subir el gráfico más arriba
         containLabel: true
       },
       xAxis: [

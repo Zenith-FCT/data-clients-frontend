@@ -1,8 +1,7 @@
 <div class="chart-container" *ngIf="isBrowser">
   <div class="chart-header">
     <h3>Top 10 Productos Más Vendidos por Mes</h3>
-    <div class="filter-controls">
-      <div class="selectors-container">
+    <div class="filter-controls">      <div class="selectors-container">
         <mat-form-field appearance="outline" class="month-selector">
           <mat-select [(value)]="selectedMonth" (selectionChange)="onDateChange()">
             <mat-option *ngFor="let month of getAvailableMonths()" [value]="month">

@@ -1,21 +1,147 @@
+$primary-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+$border-radius: 16px;
+$spacing-unit: 1rem;
+$transition-speed: 0.3s;
+
+$primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
+
+:host {
+  --color-corporate: #dfff03;
+  --main-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
+  --text-color: #333333;
+  --border-color: #EEEEEE;
+  display: block;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--main-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #E5E5E5;
+}
+
 // Contenedor principal
 .main-container {
-  padding: 0.5rem 2rem; // Reducido el padding superior para que esté más pegado a la barra
+  padding: 0.5rem 2rem; // Mantenemos el padding original
   width: 100%;
   box-sizing: border-box;
+  background-color: #E5E5E5;
+}
+
+// Estilos unificados para selectores
+/* Estilo común para todos los selectores de la aplicación */
+:host ::ng-deep {  mat-form-field,
+  .selector-común, 
+  .month-selector, 
+  .year-selector,
+  .product-selector {
+    width: 120px; /* Aumentado el ancho para dar más espacio al texto */
+    margin: 0;
+    transform: scale(0.9); /* Reducido ligeramente la escala para mantener proporción */
+    transform-origin: right center;
+    
+    .mat-mdc-text-field-wrapper {
+      background-color: #FFFFFF !important;
+      border-radius: $border-radius;
+      border: none !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .mat-mdc-form-field-flex {
+      background-color: #FFFFFF !important;
+      height: 48px;
+      overflow: hidden;
+      border-radius: $border-radius;
+    }
+      .mat-mdc-form-field-infix {
+      min-height: 48px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      padding-left: 8px;
+      padding-right: 8px;
+      width: 100% !important;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .mdc-line-ripple {
+      display: none;
+    }
+    
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+      height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    
+    .mat-mdc-form-field-bottom-align::before {
+      display: none;
+    }
+      .mat-mdc-select-value {
+      font-family: $primary-font !important;
+      line-height: 24px;
+      font-size: 15px !important;
+      font-weight: normal !important;
+      text-align: center !important;
+      padding: 0 8px !important;
+    }
+    
+    .mdc-list-item__primary-text {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+    }
+  }
+    /* Estilo global para dropdown panels */
+  .mat-mdc-select-panel,
+  .mat-select-panel,
+  .mat-mdc-select-panel-wrap,
+  .cdk-overlay-pane,
+  .mat-select-panel-wrap {
+    background-color: #FFFFFF !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  /* Asegurar que las opciones tengan fondo blanco */
+  .mat-mdc-option, 
+  .mat-option,
+  .mdc-list-item {
+    background-color: #FFFFFF !important;
+    color: #333333 !important;
+    font-family: $primary-font;
+  }
+  
+  /* Estilo hover para las opciones */
+  .mat-mdc-option:hover,
+  .mat-option:hover,
+  .mdc-list-item:hover {
+    background-color: #f5f5f5 !important;
+  }
+  
+  /* Estilo para la opción seleccionada */
+  .mat-mdc-option.mat-mdc-option-active,
+  .mat-option.mat-selected,
+  .mat-mdc-option.mat-selected {
+    background-color: #dfff03 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+  }
 }
 
 .products-container {
   width: 100%;
+  font-family: $primary-font;
 }
 
 .products-title {
   font-size: 1.5rem;
   font-weight: 500;
   color: #333;
-  margin-top: 0; // Aseguramos que no tiene margen superior
+  margin-top: 0;
   margin-bottom: 1rem;
   padding-left: 0.5rem;
+  font-family: $primary-font;
 }
 
 /* Layout de dos mitades para los gráficos */
@@ -74,13 +200,14 @@
   height: 100%;
   width: 100%;
   color: #666;
+  font-family: $primary-font;
 
   .spinner {
     border: 4px solid rgba(0, 0, 0, 0.1);
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border-left-color: #09f;
+    border-left-color: #dfff03; /* Color corporativo actualizado */
     animation: spin 1s linear infinite;
     margin-bottom: 15px;
   }
@@ -183,4 +310,40 @@
   }
 }
 
-// Los estilos de los selectores se han movido a los componentes individuales
+/* Estilos globales para los paneles de selección Angular Material */
+::ng-deep {
+  .cdk-overlay-container {
+    .cdk-overlay-pane {
+      .mat-mdc-select-panel, 
+      .mat-mdc-autocomplete-panel, 
+      .mat-datepicker-content {
+        background-color: #FFFFFF !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        
+        .mat-mdc-option,
+        .mat-calendar-body-cell,
+        .mat-calendar-body-cell-content {
+          background-color: #FFFFFF;
+          color: #333333;
+          font-family: $primary-font;
+          
+          &:hover {
+            background-color: #f5f5f5;
+          }
+          
+          &.mat-calendar-body-selected,
+          &.mat-mdc-option-active,
+          &.mat-mdc-option.mat-selected {
+            background-color: #dfff03 !important;
+            color: #000000 !important;
+            font-weight: bold !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Los estilos para el panel desplegable de los selectores están ahora
+   consolidados en la sección "Estilo global para dropdown panels" arriba */

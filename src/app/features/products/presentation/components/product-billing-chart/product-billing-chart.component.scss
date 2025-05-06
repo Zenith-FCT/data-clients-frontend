@@ -1,8 +1,12 @@
+$primary-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+$border-radius: 16px;
+$primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
+
 .chart-container {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
+  background-color: #a5a5a5;
+  border-radius: $border-radius;
+  box-shadow: $primary-shadow;
+  padding: 16px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -10,20 +14,23 @@
   box-sizing: border-box;
   position: relative;
   margin: 0 auto 0 0;
+  color: #333333;
 }
 
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
   flex-shrink: 0;
   
   h3 {
     margin: 0;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #333;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333333;
+    font-family: $primary-font;
+    text-align: center;
   }
 }
 
@@ -40,28 +47,34 @@
   display: flex;
   
   button {
-    background: #eee;
-    border: 1px solid #ccc;
+    background-color: #ffffff;
+    color: #333333;
+    border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
-    margin: 0; /* Importante: elimina márgenes */
+    margin: 0;
+    font-family: $primary-font;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     
     &:first-child {
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
-      border-right: none; /* Elimina borde derecho para que se unan */
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
     }
     
     &:last-child {
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
-      border-left: none; /* Elimina borde izquierdo para que se unan */
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
     }
     
     &.active {
-      background: #007bff;
-      color: white;
-      border-color: #0069d9;
+      background-color: #dfff03; /* Color corporativo */
+      color: #000000;
+      font-weight: bold;
+    }
+    
+    &:not(.active):hover {
+      background-color: #f5f5f5;
     }
   }
 }
@@ -88,7 +101,7 @@
   height: 40px;
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
-  border-top-color: #333;
+  border-top-color: #dfff03; /* Color corporativo */
   animation: spin 1s ease-in-out infinite;
   margin-bottom: 1rem;
 }
