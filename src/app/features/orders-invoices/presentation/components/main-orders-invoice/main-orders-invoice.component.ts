@@ -50,6 +50,7 @@ import { LtvViewModelService } from '../../view-model/ltv-viewmodel.service';
   styleUrl: './main-orders-invoice.component.scss'
 })
 export class MainOrdersInvoiceComponent implements OnInit {
+  readonly ALL_MONTHS = 0;
   selectedMonth: number = new Date().getMonth() + 1;
   selectedYear: number = new Date().getFullYear();
   years: number[] = [];
@@ -70,6 +71,9 @@ export class MainOrdersInvoiceComponent implements OnInit {
   }
 
   getMonthName(month: number): string {
+    if (month === this.ALL_MONTHS) {
+      return 'Todos';
+    }
     const monthName = new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
     return monthName.charAt(0).toUpperCase() + monthName.slice(1);
   }
@@ -91,23 +95,30 @@ export class MainOrdersInvoiceComponent implements OnInit {
   }
 
   onDateChange(): void {
-    this.ordersInvoiceViewModel.setSelectedMonth(this.selectedMonth);
+    
     this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
     this.ordersInvoiceViewModel.setSelectedTmYear(this.selectedYear);
     
-    this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
-    this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
-    this.ordersInvoiceViewModel.loadMonthlyTm(this.selectedYear, this.selectedMonth);
-    this.ordersInvoiceViewModel.loadYearTmList(this.selectedYear);
+    this.ordersInvoiceViewModel.updateSelectedMonth(this.selectedMonth);
+    
+    if (this.selectedMonth === this.ALL_MONTHS) {
+      this.ordersInvoiceViewModel.loadTotalOrdersAmount(this.selectedYear);
+      this.ordersInvoiceViewModel.loadTotalOrders(this.selectedYear);
+      this.ordersInvoiceViewModel.loadYearTmList(this.selectedYear);
+    } else {
+      this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
+      this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
+      this.ordersInvoiceViewModel.loadMonthlyTm(this.selectedYear, this.selectedMonth);
+    }
+    
     this.invoiceClientsViewModel.setSelectedYear(this.selectedYear);
     this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();
+    this.orderInvoiceProductViewModel.setSelectedYear(this.selectedYear);
     this.orderInvoiceProductViewModel.loadInvoiceProductType();
     this.ltvViewModel.setSelectedYear(this.selectedYear);
     this.ltvViewModel.loadLtv();
-    this.orderInvoiceProductViewModel.setSelectedYear(this.selectedYear);
-    this.orderInvoiceProductViewModel.loadInvoiceProductType();
   }
 
   ngOnInit(): void {

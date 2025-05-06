@@ -34,6 +34,22 @@ export interface OrdersInvoicesUIState {
 export class OrdersInvoiceViewModelService implements OnDestroy {
   private destroy$ = new Subject<void>();
   
+  private cachedValues: {
+    [key: string]: {
+      monthlySales?: number;
+      monthlyOrders?: number;
+      monthlyTm?: number;
+    }
+  } = {};
+  
+  private cachedAnnualValues: {
+    [year: number]: {
+      totalOrdersAmount: number;
+      totalOrders: number;
+      totalTm: number;
+    }
+  } = {};
+  
   private readonly uiState = signal<OrdersInvoicesUIState>({
     isLoading: false,
     error: null,
@@ -87,9 +103,13 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   public setSelectedYear(year: number): void {
     if (year) {
       this.updateState({ selectedYear: year });
-      this.loadMonthlySales(year, this.uiState().selectedMonth);
-      this.loadMonthlyOrders(year, this.uiState().selectedMonth);
-      this.loadMonthlyTm(year, this.uiState().selectedMonth);
+      
+      const selectedMonth = this.uiState().selectedMonth;
+      if (selectedMonth !== 0) {
+        this.loadMonthlySales(year, selectedMonth);
+        this.loadMonthlyOrders(year, selectedMonth);
+        this.loadMonthlyTm(year, selectedMonth);
+      }
     }
   }
 
@@ -103,12 +123,36 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     }
   }
 
+  public updateSelectedMonth(month: number): void {
+    this.updateState({ selectedMonth: month });
+  }
+
+  // Método para resetear los valores mensuales
+  public resetMonthlyValues(): void {
+    this.updateState({ 
+      monthlySales: 0,
+      monthlyOrders: 0,
+      monthlyTm: 0,
+      error: null
+    });
+  }
 
   public setSelectedTmYear(year: number): void {
     this.updateState({ selectedTmYear: year });
   }
 
   public async loadMonthlySales(year: number, month: number): Promise<void> {
+    // Si el mes es 0 (opción "Todos"), usar los totales anuales en su lugar
+    if (month === 0) {
+      return;
+    }
+
+    const cacheKey = `${year}-${month}`;
+    if (this.cachedValues[cacheKey]?.monthlySales !== undefined) {
+      this.updateState({ monthlySales: this.cachedValues[cacheKey].monthlySales! });
+      return;
+    }
+    
     try {
       this.updateState({ 
         isLoading: true, 
@@ -116,6 +160,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       });
 
       const total = await firstValueFrom(this.getMonthlySalesUseCase.execute(year, month));
+      this.cachedValues[cacheKey] = { ...this.cachedValues[cacheKey], monthlySales: total };
       this.updateState({ monthlySales: total });
     } catch (error) {
       this.updateState({ 
@@ -128,12 +173,23 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   }
 
   public async loadMonthlyOrders(year: number, month: number): Promise<void> {
+    if (month === 0) {
+      return;
+    }
+
+    const cacheKey = `${year}-${month}`;
+    if (this.cachedValues[cacheKey]?.monthlyOrders !== undefined) {
+      this.updateState({ monthlyOrders: this.cachedValues[cacheKey].monthlyOrders! });
+      return;
+    }
+    
     try {
       this.updateState({ 
         isLoading: true, 
         error: null
       });
       const total = await firstValueFrom(this.getTotalMonthOrdersUseCase.execute(year, month));
+      this.cachedValues[cacheKey] = { ...this.cachedValues[cacheKey], monthlyOrders: total };
       this.updateState({ monthlyOrders: total });
     } catch (error) {
       this.updateState({
@@ -146,11 +202,21 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   }
   
   public async loadMonthlyTm(year: number, month: number): Promise<void> {
-    if (!year || !month) {
+    if (month === 0) {
+      return;
+    }
+
+    if (!year) {
       this.updateState({
-        error: 'Año y mes son requeridos para cargar el ticket medio',
+        error: 'Año requerido para cargar el ticket medio',
         monthlyTm: 0
       });
+      return;
+    }
+
+    const cacheKey = `${year}-${month}`;
+    if (this.cachedValues[cacheKey]?.monthlyTm !== undefined) {
+      this.updateState({ monthlyTm: this.cachedValues[cacheKey].monthlyTm! });
       return;
     }
 
@@ -161,7 +227,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       });
 
       const tm = await firstValueFrom(this.getMonthlyTMUseCase.execute(year, month));
-      
+      this.cachedValues[cacheKey] = { ...this.cachedValues[cacheKey], monthlyTm: tm };
       this.updateState({ 
         monthlyTm: tm,
         error: null
@@ -196,6 +262,11 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
     }
   }
   public async loadYearTmList(year: number): Promise<void> {
+    if (this.cachedAnnualValues[year]?.totalTm !== undefined) {
+      this.updateState({ totalTm: this.cachedAnnualValues[year].totalTm });
+      return;
+    }
+
     try {
       this.updateState({ 
         isLoading: true, 
@@ -203,6 +274,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       });
       
       const amountTm = await firstValueFrom(this.getTmYearUseCase.execute(year));
+      this.cachedAnnualValues[year] = { ...this.cachedAnnualValues[year], totalTm: amountTm };
       this.updateState({ totalTm: amountTm });
     } catch (error) {
       this.updateState({ 
@@ -243,6 +315,11 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   }
 
   public async loadTotalOrdersAmount(year: number): Promise<void> {
+    if (this.cachedAnnualValues[year]?.totalOrdersAmount !== undefined) {
+      this.updateState({ totalOrdersAmount: this.cachedAnnualValues[year].totalOrdersAmount });
+      return;
+    }
+
     try {
       this.updateState({ 
         isLoading: true, 
@@ -250,6 +327,7 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
       });
       
       const amount = await firstValueFrom(this.getTotalAmountOrdersUseCase.execute(year));
+      this.cachedAnnualValues[year] = { ...this.cachedAnnualValues[year], totalOrdersAmount: amount };
       this.updateState({ totalOrdersAmount: amount });
     } catch (error) {
       this.updateState({ 
@@ -262,12 +340,18 @@ export class OrdersInvoiceViewModelService implements OnDestroy {
   }
   
   public async loadTotalOrders(year: number): Promise<void> {
+    if (this.cachedAnnualValues[year]?.totalOrders !== undefined) {
+      this.updateState({ totalOrders: this.cachedAnnualValues[year].totalOrders });
+      return;
+    }
+
     try {
       this.updateState({ 
         isLoading: true, 
         error: null 
       });
       const total = await firstValueFrom(this.getTotalOrdersUseCase.execute(year));
+      this.cachedAnnualValues[year] = { ...this.cachedAnnualValues[year], totalOrders: total };
       this.updateState({ totalOrders: total });
     } catch (error) {
       this.updateState({ 

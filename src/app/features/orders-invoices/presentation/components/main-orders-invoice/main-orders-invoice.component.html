@@ -12,6 +12,7 @@
                 (selectionChange)="onDateChange()"
                 #monthSelect
               >
+                <mat-option [value]="ALL_MONTHS">{{ getMonthName(ALL_MONTHS) }}</mat-option>
                 <mat-option
                   *ngFor="let month of months; let i = index"
                   [value]="i + 1"

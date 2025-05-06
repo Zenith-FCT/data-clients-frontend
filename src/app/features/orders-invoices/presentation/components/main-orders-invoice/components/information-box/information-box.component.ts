@@ -28,6 +28,9 @@ export class InformationBoxComponent implements OnInit, OnDestroy {
   loading = false;
   
   getMonthName(month: number): string {
+    if (month === 0) { 
+      return 'Todos';
+    }
     return new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
   }
 
