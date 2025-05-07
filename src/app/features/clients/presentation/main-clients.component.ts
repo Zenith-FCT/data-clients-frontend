@@ -14,22 +14,10 @@ import { catchError, forkJoin, of } from 'rxjs';
 import { NgxEchartsModule } from 'ngx-echarts';
 
 import { ClientsList } from '../domain/clients-list.model';
-import { GetClientsListUseCase } from '../domain/get-clients-list-use-case';
 import { clientsProviders } from '../clients.providers';
 import { ClientsViewModel } from './main-clients.view-model';
-import { GetTotalClientsUseCase } from '../domain/get-total-clients-use-case';
-import { GetTotalAverageOrdersUseCase } from '../domain/get-total-average-orders-use-case';
-import { GetAverageTicketUseCase } from '../domain/get-average-ticket-use-case';
-import { GetClientsPerProductUseCase } from '../domain/get-clients-per-product-use-case';
-import { GetTotalClientsByYearUseCase } from '../domain/get-total-clients-by-year-use-case';
 import { GetNewClientsByYearMonthUseCase } from '../domain/get-new-clients-by-year-month-use-case';
-import { GetAverageOrdersByYearUseCase } from '../domain/get-average-orders-by-year-use-case';
 import { GetTotalOrdersByYearMonthUseCase } from '../domain/get-total-orders-by-year-month-use-case';
-import { GetAverageTicketByYearUseCase } from '../domain/get-average-ticket-by-year-use-case';
-import { GetLTVByYearMonthUseCase } from '../domain/get-ltv-by-year-month-use-case';
-import { GetTopLocationsByClientsUseCase } from '../domain/get-top-locations-by-clients-use-case';
-import { ProductClientDistribution } from '../domain/product-distribution.model';
-import { TopLocationsByClients } from '../domain/top-locations-by-clients.model';
 
 type FilterType = 'clients' | 'newClients' | 'orders' | 'totalOrders' | 'ticket' | 'ltv' | 'monthlyClients' | 'monthlyOrders';
 
