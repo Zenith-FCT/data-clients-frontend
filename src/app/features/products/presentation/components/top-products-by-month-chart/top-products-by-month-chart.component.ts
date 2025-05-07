@@ -159,15 +159,15 @@ export class TopProductsByMonthChartComponent implements OnInit, OnDestroy {
     const salesCounts = sortedData.map(item => item.salesCount);
     
     // Crear opciones del gráfico
-    this.chartOption = {
-      title: {
+    this.chartOption = {      title: {
         text: `Top 10 Productos Más Vendidos - ${this.monthNames[this.selectedMonth - 1]} ${this.selectedYear}`,
         left: 'center',
         textStyle: {
-          color: '#333',
+          color: '#333333',
+          fontSize: 16,
+          fontWeight: 'bold'
         },
-      },
-      tooltip: {
+      },tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow'
@@ -176,42 +176,69 @@ export class TopProductsByMonthChartComponent implements OnInit, OnDestroy {
           const dataIndex = params[0].dataIndex;
           const product = sortedData[dataIndex];
           return `<strong>${product.productName}</strong><br/>Ventas: ${product.salesCount}`;
-        }
-      },      grid: {
-        left: '8%',
+        },
+        backgroundColor: 'rgba(255, 255, 255, 0.64)',
+        padding: 10,
+        confine: true
+      },grid: {
+        left: '10%',
         right: '5%',
         bottom: '10%',
         top: '15%',
         containLabel: true
-      },
-      xAxis: {
+      },xAxis: {
         type: 'category',
         data: productNames,
+        axisLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.13)'
+          }
+        },
         axisLabel: {
           interval: 0,
           rotate: 45,
           textStyle: {
-            fontSize: 10
-          }
+            fontSize: 10,
+            color: '#ffffff'
+          },
+          margin: 16
         }
       },      yAxis: {
         type: 'value',
         name: 'Unidades vendidas',
         minInterval: 1, // Fuerza valores enteros
         axisLabel: {
-          formatter: '{value}' // Formato sin decimales
+          formatter: '{value}', // Formato sin decimales
+          fontSize: 12,
+          color: '#ffffff'
+        },
+        nameTextStyle: {
+          fontSize: 14,
+          color: '#ffffff',
+          padding: [0, 0, 12, 0]
+        },
+        splitLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.28)'
+          }
         }
       },      series: [
         {
+          name: 'Ventas',
           data: salesCounts,
           type: 'bar',
           itemStyle: {
-            color: '#E53935' // Color rojo similar al utilizado en los gráficos de clientes
+            color: 'rgba(255, 255, 255, 0.52)',
+            borderRadius: [4, 4, 0, 0]
           },
-          emphasis: {
-            itemStyle: {
-              color: '#91cc75'
-            }          }
+          label: {
+            show: true,
+            position: 'top',
+            color: '#FFFFFF',
+            formatter: function(params: any) {
+              return Math.floor(params.value);
+            }
+          }
         }
       ]
     };

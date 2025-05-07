@@ -136,20 +136,16 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
       // Quitamos el título, ya que se muestra en el HTML
       title: {
         show: false
-      },
-      tooltip: {
+      },      tooltip: {
         trigger: 'item',
         formatter: (params: any) => {
           const percentage = (params.value / totalBilling * 100).toFixed(2);
           return `${params.name}: ${params.value.toLocaleString('es-ES')}€ (${percentage}%)`;
         },
-        backgroundColor: 'rgba(33, 33, 33, 0.9)',
-        borderColor: '#444',
-        textStyle: {
-          color: '#fff',
-        },
-      },
-      legend: {
+        backgroundColor: 'rgba(255, 255, 255, 0.64)',
+        padding: 10,
+        confine: true,
+      },legend: {
         type: 'scroll',
         orient: 'horizontal',
         bottom: 10,
@@ -158,11 +154,13 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
           this.billingViewMode === ChartViewMode.ByProduct ? item.productName : item.productType
         ),
         textStyle: {
-          color: '#333',
+          fontSize: 12,
+          color: '#ffffff',
+          fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif'
         },
         pageButtonPosition: 'end',
         pageTextStyle: {
-          color: '#666'
+          color: '#ffffff'
         }
       },
       series: [
@@ -171,26 +169,24 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
           type: 'pie',
           radius: ['40%', '70%'],
           center: ['50%', '45%'],
-          avoidLabelOverlap: false,
-          itemStyle: {
+          avoidLabelOverlap: false,          itemStyle: {
             borderRadius: 8,
             borderColor: '#fff',
-            borderWidth: 2,
+            borderWidth: 2
           },
           emphasis: {
             label: {
               show: true,
               fontSize: '16',
-              fontWeight: 'bold',
-              color: '#333',
+              fontWeight: 'bold',              color: '#ffffff',
+              fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif'
             },
             itemStyle: {
               shadowBlur: 10,
               shadowOffsetX: 0,
               shadowColor: 'rgba(0, 0, 0, 0.5)',
             },
-          },
-          label: {
+          },          label: {
             show: true,
             position: 'outside',
             formatter: (params: any) => {
@@ -204,14 +200,15 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
               }
               return `${params.name}: ${formattedValue}`;
             },
-            color: '#333',
+            color: '#ffffff',
+            fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif'
           },
           labelLine: {
             show: true,
             lineStyle: {
               color: '#666',
             },
-          },
+          },          color: ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69'],
           data: chartData.map((item: any) => ({
             name: this.billingViewMode === ChartViewMode.ByProduct ? item.productName : item.productType,
             value: item.totalBilling,

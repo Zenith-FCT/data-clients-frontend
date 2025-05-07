@@ -1,6 +1,36 @@
+<div class="sticky-header-container">
+  <div class="date-selectors-left">
+    <h2>Productos</h2>
+    <div class="selectors-container">
+      <mat-form-field>
+        <mat-select [(value)]="globalMonth" (selectionChange)="onGlobalMonthChange($event)">
+          <mat-option value="1">Enero</mat-option>
+          <mat-option value="2">Febrero</mat-option>
+          <mat-option value="3">Marzo</mat-option>
+          <mat-option value="4">Abril</mat-option>
+          <mat-option value="5">Mayo</mat-option>
+          <mat-option value="6">Junio</mat-option>
+          <mat-option value="7">Julio</mat-option>
+          <mat-option value="8">Agosto</mat-option>
+          <mat-option value="9">Septiembre</mat-option>
+          <mat-option value="10">Octubre</mat-option>
+          <mat-option value="11">Noviembre</mat-option>
+          <mat-option value="12">Diciembre</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select [(value)]="globalYear" (selectionChange)="onGlobalYearChange($event)">
+          <mat-option value="2023">2023</mat-option>
+          <mat-option value="2024">2024</mat-option>
+          <mat-option value="2025">2025</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
 <div class="main-container">
   <div class="products-container">
-    <h2 class="products-title">Productos</h2>
     
     @if (isBrowser) {
       <!-- Charts layout con dos mitades -->

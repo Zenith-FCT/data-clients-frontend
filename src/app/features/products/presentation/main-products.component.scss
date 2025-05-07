@@ -34,9 +34,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   .month-selector, 
   .year-selector,
   .product-selector {
-    width: 120px; /* Aumentado el ancho para dar más espacio al texto */
+    width: 100px; /* Reducido el ancho para hacer los selectores más pequeños */
     margin: 0;
-    transform: scale(0.9); /* Reducido ligeramente la escala para mantener proporción */
+    transform: scale(0.85); /* Reducida la escala para hacer los selectores más pequeños */
     transform-origin: right center;
     
     .mat-mdc-text-field-wrapper {
@@ -46,22 +46,30 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
-    
-    .mat-mdc-form-field-flex {
+      .mat-mdc-form-field-flex {
       background-color: #FFFFFF !important;
-      height: 48px;
+      height: 40px; /* Reducido la altura */
       overflow: hidden;
       border-radius: $border-radius;
+      border: none !important;
     }
       .mat-mdc-form-field-infix {
-      min-height: 48px;
-      padding-top: 12px;
-      padding-bottom: 12px;
-      padding-left: 8px;
-      padding-right: 8px;
+      min-height: 40px; /* Reducido la altura mínima */
+      padding-top: 8px; /* Reducido el padding vertical */
+      padding-bottom: 8px;
+      padding-left: 6px; /* Reducido el padding horizontal */
+      padding-right: 6px;
       width: 100% !important;
       display: flex;
       justify-content: center;
+    }
+    
+    .mdc-notched-outline,
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border: none !important;
+      display: none !important;
     }
     
     .mdc-line-ripple {
@@ -78,13 +86,13 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     .mat-mdc-form-field-bottom-align::before {
       display: none;
     }
-      .mat-mdc-select-value {
+    .mat-mdc-select-value {
       font-family: $primary-font !important;
-      line-height: 24px;
-      font-size: 15px !important;
+      line-height: 22px;
+      font-size: 14px !important;
       font-weight: normal !important;
       text-align: center !important;
-      padding: 0 8px !important;
+      padding: 0 6px !important;
     }
     
     .mdc-list-item__primary-text {
@@ -181,11 +189,12 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   display: flex;
   width: 100%;
   margin-bottom: 2rem;
+  padding-top: 0.5rem; /* Añadimos padding superior para dar más espacio al título */
 }
 
 .sales-evolution-wrapper {
   width: 100%;
-  margin: 0.25rem 0;
+  margin: 0;
   height: auto;
   box-sizing: border-box;
   overflow: visible; /* Cambiado a visible para evitar recortes */
@@ -347,3 +356,94 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 /* Los estilos para el panel desplegable de los selectores están ahora
    consolidados en la sección "Estilo global para dropdown panels" arriba */
+
+/* Estilos para el header sticky con selectores de fecha */
+.sticky-header-container {
+  position: sticky;
+  top: -20px;
+  z-index: 10000;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  padding: 0 12px; 
+  background-color: transparent;
+}
+
+.date-selectors-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  
+  background-color: #a5a5a5;
+  border-radius: $border-radius;
+  padding: 12px 20px;
+  box-shadow: $primary-shadow;
+  width: calc(100% - 0px);
+  max-width: 1600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    color: black;
+    font-weight: bold;
+    flex: 1;
+  }
+  
+  .selectors-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    
+    @media (max-width: 576px) {
+      width: 100%;
+      justify-content: flex-end;
+    }
+    
+    mat-form-field {
+      width: 105px;
+      margin: 0;
+      transform: scale(0.85);
+      transform-origin: right center;
+      
+      ::ng-deep {
+        .mat-mdc-text-field-wrapper {
+          background-color: #FFFFFF !important;
+          border-radius: $border-radius;
+          border: none !important;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+        }
+        
+        .mat-mdc-form-field-flex {
+          background-color: #FFFFFF !important;
+          height: 40px;
+          overflow: hidden;
+          border-radius: $border-radius;
+          border: none !important;
+        }
+        
+        .mat-mdc-form-field-infix {
+          min-height: 40px;
+          padding-top: 8px;
+          padding-bottom: 8px;
+          padding-left: 6px;
+          padding-right: 6px;
+          width: 100% !important;
+          display: flex;
+          justify-content: center;
+        }
+      }
+    }
+  }
+}
