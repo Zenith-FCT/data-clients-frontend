@@ -45,10 +45,9 @@ export class ProductSalesEvolutionViewModel {
     if (selectedIds.length > 0) {
       filteredProducts = filteredProducts.filter(product => 
         selectedIds.includes(product.productId)
-      );
-    } else {
-      // Si no hay productos seleccionados, devolvemos los top 5 productos
-      filteredProducts = this.getTopProducts(5);
+      );    } else {
+      // Si no hay productos seleccionados, devolvemos los top 3 productos
+      filteredProducts = this.getTopProducts(3);
     }
     
     // Filtrar datos por año seleccionado
@@ -99,10 +98,9 @@ export class ProductSalesEvolutionViewModel {
           availableYears: years,
           selectedYear: years.length > 0 ? Math.max(...years) : null // Seleccionar el año más reciente
         });
-        
-        // Si aún no hay productos seleccionados, seleccionamos los top 5 por defecto
+          // Si aún no hay productos seleccionados, seleccionamos los top 3 por defecto
         if (this.selectedProductIds$().length === 0) {
-          const topProductIds = this.getTopProducts(5).map(p => p.productId);
+          const topProductIds = this.getTopProducts(3).map(p => p.productId);
           this.updateState({ selectedProductIds: topProductIds });
         }
       },
@@ -150,10 +148,10 @@ export class ProductSalesEvolutionViewModel {
       );
       return { ...product, totalSales };
     });
-    
-    // Ordenar por ventas totales y tomar los primeros 'limit'
+      // Ordenar por ventas totales y tomar los primeros 'limit'
     return productsWithTotalSales
       .sort((a, b) => b.totalSales - a.totalSales)
+      .slice(0, limit)
   }
   
   // Método privado para actualizar el estado
