@@ -133,6 +133,15 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
           font-weight: normal !important;
           text-transform: capitalize;
         }
+        
+        .mat-mdc-select-placeholder {
+          opacity: 1;
+          color: rgba(0, 0, 0, 0.87);
+          font-family: $primary-font !important;
+          line-height: 24px;
+          font-size: 15px !important;
+          font-weight: normal !important;
+        }
       }
     }
   }

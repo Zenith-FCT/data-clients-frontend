@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { CartsViewModelService } from '../../../viewmodel/carts-viewmodel.service';
 
 @Component({
@@ -27,10 +27,31 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   
   private destroy$ = new Subject<void>();
   loading = false;
+  
+  // Almacenar valores anteriores para detectar cambios
+  private previousMonth: number | null = null;
+  private previousYear: number | null = null;
 
   constructor(public cartsViewModel: CartsViewModelService) {
+    // Escuchar el estado de carga
     effect(() => {
       this.loading = this.cartsViewModel.loading$();
+    });
+    
+    // Escuchar cambios en el mes y año seleccionados
+    effect(() => {
+      const currentMonth = this.cartsViewModel.selectedMonth$();
+      const currentYear = this.cartsViewModel.selectedYear$();
+      
+      // Si hay cambios en el mes o año, recargar datos según el tipo de caja
+      if (this.previousMonth !== currentMonth || this.previousYear !== currentYear) {
+        this.previousMonth = currentMonth;
+        this.previousYear = currentYear;
+        
+        if (this.type) {
+          this.loadData();
+        }
+      }
     });
   }
 
@@ -47,9 +68,19 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   getValue(): number {
     switch (this.type) {
       case 'total': return this.cartsViewModel.carts$();
-      case 'total-monthly': return this.cartsViewModel.totalCartsMonthly$();
+      case 'total-monthly': 
+        if (this.cartsViewModel.selectedMonth$() === null) {
+          return this.cartsViewModel.carts$();
+        } else {
+          return this.cartsViewModel.totalCartsMonthly$();
+        }
       case 'rate': return this.cartsViewModel.averageLostCarts$();
-      case 'rate-monthly': return this.cartsViewModel.averageCartsMonthly$();
+      case 'rate-monthly': 
+        if (this.cartsViewModel.selectedMonth$() === null) {
+          return this.cartsViewModel.averageLostCarts$();
+        } else {
+          return this.cartsViewModel.averageCartsMonthly$();
+        }
       default: return 0;
     }
   }
@@ -61,17 +92,26 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   getDescription(): string {
     const month = this.cartsViewModel.selectedMonth$();
     const year = this.cartsViewModel.selectedYear$();
-    const monthName = month ? this.getMonthName(month) : '';
-
+    
     switch (this.type) {
       case 'total':
         return `Total de carritos abandonados en ${year}`;
       case 'total-monthly':
-        return `Carritos abandonados en ${monthName} del ${year}`;
+        if (month === null) {
+          return `Total de carritos abandonados en ${year}`;
+        } else {
+          const monthName = this.getMonthName(month);
+          return `Carritos abandonados en ${monthName} del ${year}`;
+        }
       case 'rate':
         return `Tasa total de abandono en ${year}`;
       case 'rate-monthly':
-        return `Tasa de abandono en ${monthName} del ${year}`;
+        if (month === null) {
+          return `Tasa total de abandono en ${year}`;
+        } else {
+          const monthName = this.getMonthName(month);
+          return `Tasa de abandono en ${monthName} del ${year}`;
+        }
       default:
         return '';
     }
@@ -81,13 +121,28 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
     return new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
   }
 
-  ngOnInit(): void {
-    if (this.type === 'total' || this.type === 'rate') {
+  loadData(): void {
+    if (this.type === 'total') {
       this.cartsViewModel.loadCarts();
+    } else if (this.type === 'rate') {
       this.cartsViewModel.loadAverageLostCarts();
-    } else {
-      this.cartsViewModel.loadMonthlyAbandonedCarts();
+    } else if (this.type === 'total-monthly') {
+      if (this.cartsViewModel.selectedMonth$() === null) {
+        this.cartsViewModel.loadCarts();
+      } else {
+        this.cartsViewModel.loadMonthlyAbandonedCarts();
+      }
+    } else if (this.type === 'rate-monthly') {
+      if (this.cartsViewModel.selectedMonth$() === null) {
+        this.cartsViewModel.loadAverageLostCarts();
+      } else {
+        this.cartsViewModel.loadMonthlyAbandonedCarts();
+      }
     }
+  }
+
+  ngOnInit(): void {
+    this.loadData();
   }
   
   ngOnDestroy(): void {
