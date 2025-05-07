@@ -4,14 +4,16 @@
       <h3>Carritos</h3>
       <div class="date-selectors">
         <mat-form-field>
-          <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
-            <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
-              {{getMonthName(i + 1)}}
+          <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()" placeholder="Todos">
+            <mat-option [value]="null">Todos</mat-option>
+            <mat-option *ngFor="let month of months.slice(1)" [value]="month.value">
+              {{month.name}}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
           <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
+            <mat-option [value]="'todos'">Todos</mat-option>
             <mat-option *ngFor="let year of cartsViewModel.availableYears$()" [value]="year">
               {{year}}
             </mat-option>

@@ -96,10 +96,27 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
     
     if (!this.chartContainer || !this.chartContainer.nativeElement) return;
     
-    this.chart = echarts.init(this.chartContainer.nativeElement);
+    // Asegurémonos de que el contenedor sea visible antes de inicializar
+    const containerWidth = this.chartContainer.nativeElement.clientWidth;
+    const containerHeight = this.chartContainer.nativeElement.clientHeight;
+    
+    if (containerWidth <= 0 || containerHeight <= 0) {
+      // El contenedor no tiene dimensiones visibles, programamos un reintento
+      setTimeout(() => this.initChart(), 300);
+      return;
+    }
+    
+    this.chart = echarts.init(this.chartContainer.nativeElement, undefined, { 
+      renderer: 'canvas',
+      width: 'auto',
+      height: 'auto'
+    });
     
     const colors = [...this.chartColors];
     const borderColors = [...this.chartBorderColors];
+    
+    // Determinar si estamos en una ventana pequeña
+    const isSmallWindow = window.innerWidth < 800;
     
     const option: echarts.EChartsOption = {
       tooltip: {
@@ -116,10 +133,10 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         confine: true,
       },
       grid: {
-        left: '3%',
-        right: '25%',
-        bottom: '1%', 
-        top: '11%',
+        left: isSmallWindow ? '5%' : '3%',
+        right: isSmallWindow ? '5%' : '15%',
+        bottom: isSmallWindow ? '15%' : '7%',
+        top: isSmallWindow ? '15%' : '12%',
         containLabel: true
       },
       xAxis: {
@@ -131,9 +148,11 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         axisLabel: {
-          fontSize: 14,
-          margin: 12,
-          color: '#ffffff'
+          fontSize: isSmallWindow ? 10 : 13,
+          margin: isSmallWindow ? 8 : 10,
+          color: '#ffffff',
+          interval: isSmallWindow ? 1 : 'auto',  // Mostrar etiquetas alternadas en ventanas pequeñas
+          rotate: isSmallWindow ? 45 : 0  // Mayor rotación en ventanas pequeñas
         }
       },
       yAxis: {
@@ -142,15 +161,16 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
         nameLocation: 'end',
         nameTextStyle: {
           fontWeight: 'bold',
-          fontSize: 14,
+          fontSize: isSmallWindow ? 12 : 14,
           color: '#ffffff',
           padding: [0, 0, 12, 0]
         },
         axisLine: {
-          show: false        },
+          show: false
+        },
         axisLabel: {
           formatter: (value: number): string => value.toLocaleString('es-ES') + ' €',
-          fontSize: 12,
+          fontSize: isSmallWindow ? 10 : 12,
           color: '#ffffff'
         },
         splitLine: {
@@ -158,11 +178,13 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
             color: 'rgba(255, 255, 255, 0.3)'
           }
         }
-      },      series: [
+      },
+      series: [
         {
           name: 'Ticket Medio Mensual',
           type: 'bar',
-          barWidth: '70%',
+          barWidth: isSmallWindow ? '50%' : '60%',
+          barMaxWidth: isSmallWindow ? 30 : 50,
           data: [],
           markLine: {
             silent: true,
@@ -187,9 +209,20 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     
     this.chart.setOption(option);
+    
     if (this.isBrowser && typeof window !== 'undefined') {
+      // Usamos un enfoque más robusto para monitorear cambios de tamaño
+      const resizeObserver = new ResizeObserver(() => {
+        this.resizeChart();
+      });
+      resizeObserver.observe(this.chartContainer.nativeElement);
+      
+      // Mantenemos también el evento de resize para compatibilidad
       window.addEventListener('resize', this.resizeChart.bind(this));
     }
+    
+    // Asegurémonos de que el gráfico se ajuste inicialmente al contenedor
+    this.chart.resize();
   }
 
   private updateChart(data: TmModel[]): void {
@@ -212,23 +245,95 @@ export class ChartTmComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
+    // Determinar si estamos en una ventana pequeña
+    const isSmallWindow = window.innerWidth < 800;
+    
+    // Ajustar la configuración del grid para optimizar el espacio según el tamaño actual
+    const gridConfig = {
+      left: isSmallWindow ? '5%' : '3%',
+      right: isSmallWindow ? '5%' : '15%',
+      bottom: isSmallWindow ? '15%' : '7%',
+      top: isSmallWindow ? '15%' : '12%',
+      containLabel: true
+    };
+    
     this.chart.setOption({
+      grid: gridConfig,
+      xAxis: {
+        axisLabel: {
+          rotate: isSmallWindow ? 45 : 0,
+          interval: isSmallWindow ? 1 : 'auto',
+          fontSize: isSmallWindow ? 10 : 13,
+          margin: isSmallWindow ? 8 : 10
+        }
+      },
+      yAxis: {
+        nameTextStyle: {
+          fontSize: isSmallWindow ? 12 : 14
+        },
+        axisLabel: {
+          fontSize: isSmallWindow ? 10 : 12
+        }
+      },
       series: [{
-        data: values
+        data: values,
+        barWidth: isSmallWindow ? '50%' : '60%',
+        barMaxWidth: isSmallWindow ? 30 : 50
       }]
     });
     
-    setTimeout(() => {
-      if (this.chart) {
-        this.chart.resize();
-      }
-    }, 0);
+    // Forzar un resize después de actualizar los datos
+    this.chart.resize();
   }
 
   private resizeChart(): void {
-    if (this.chart) {
-      this.chart.resize();
+    if (!this.chart) return;
+    
+    // Verificar si el contenedor es visible
+    const containerWidth = this.chartContainer?.nativeElement?.clientWidth || 0;
+    const containerHeight = this.chartContainer?.nativeElement?.clientHeight || 0;
+    
+    if (containerWidth <= 0 || containerHeight <= 0) {
+      return; // El contenedor no es visible, no hacemos nada
     }
+    
+    // Determinar si estamos en una ventana pequeña
+    const isSmallWindow = window.innerWidth < 800;
+    
+    // Ajustar la configuración del grid para optimizar el espacio según el tamaño actual
+    const gridConfig = {
+      left: isSmallWindow ? '5%' : '3%',
+      right: isSmallWindow ? '5%' : '15%',
+      bottom: isSmallWindow ? '15%' : '7%',
+      top: isSmallWindow ? '15%' : '12%',
+      containLabel: true
+    };
+    
+    this.chart.setOption({
+      grid: gridConfig,
+      xAxis: {
+        axisLabel: {
+          rotate: isSmallWindow ? 45 : 0,
+          interval: isSmallWindow ? 1 : 'auto',
+          fontSize: isSmallWindow ? 10 : 13,
+          margin: isSmallWindow ? 8 : 10
+        }
+      },
+      yAxis: {
+        nameTextStyle: {
+          fontSize: isSmallWindow ? 12 : 14
+        },
+        axisLabel: {
+          fontSize: isSmallWindow ? 10 : 12
+        }
+      },
+      series: [{
+        barWidth: isSmallWindow ? '50%' : '60%',
+        barMaxWidth: isSmallWindow ? 30 : 50
+      }]
+    });
+    
+    this.chart.resize();
   }
 
   ngOnDestroy(): void {

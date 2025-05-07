@@ -49,9 +49,11 @@ import { LtvViewModelService } from '../../view-model/ltv-viewmodel.service';
   templateUrl: './main-orders-invoice.component.html',
   styleUrl: './main-orders-invoice.component.scss'
 })
-export class MainOrdersInvoiceComponent implements OnInit {
+export class MainOrdersInvoiceComponent implements OnInit {  readonly ALL_MONTHS = 0;
+  readonly TODOS_OPTION = 'todos'
   selectedMonth: number = new Date().getMonth() + 1;
-  selectedYear: number = new Date().getFullYear();
+  selectedYear: number | string = new Date().getFullYear();
+  lastSelectedRealYear: number = new Date().getFullYear();
   years: number[] = [];
   months: number[] = Array.from({length: 12}, (_, i) => i + 1);
 
@@ -68,13 +70,19 @@ export class MainOrdersInvoiceComponent implements OnInit {
       }
     });
   }
-
   getMonthName(month: number): string {
+    if (month === this.ALL_MONTHS) {
+      return 'Todos';
+    }
     const monthName = new Date(2000, month - 1, 1).toLocaleString('es-ES', { month: 'long' });
     return monthName.charAt(0).toUpperCase() + monthName.slice(1);
   }
-
-  private extractAvailableYears(data: any[]): void {
+    getYearName(year: number | string): string {
+    if (year === this.TODOS_OPTION) {
+      return 'Todos';
+    }
+    return year.toString();
+  }  private extractAvailableYears(data: any[]): void {
     const uniqueYears = new Set<number>();
     data.forEach(item => {
       const year = parseInt(item.date.split('-')[0]);
@@ -84,35 +92,61 @@ export class MainOrdersInvoiceComponent implements OnInit {
     });
     this.years = Array.from(uniqueYears).sort((a, b) => b - a);
     
-    if (this.years.length > 0 && !this.years.includes(this.selectedYear)) {
+   if (this.selectedYear !== this.TODOS_OPTION && 
+        this.years.length > 0 && 
+        !this.years.includes(this.selectedYear as number)) {
       this.selectedYear = this.years[0];
       this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
     }
-  }
-
-  onDateChange(): void {
-    this.ordersInvoiceViewModel.setSelectedMonth(this.selectedMonth);
-    this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
-    this.ordersInvoiceViewModel.setSelectedTmYear(this.selectedYear);
+  }    onDateChange(): void {
+   const isShowingAllYears = this.selectedYear === this.TODOS_OPTION;
     
-    this.ordersInvoiceViewModel.loadMonthlySales(this.selectedYear, this.selectedMonth);
-    this.ordersInvoiceViewModel.loadMonthlyOrders(this.selectedYear, this.selectedMonth);
-    this.ordersInvoiceViewModel.loadMonthlyTm(this.selectedYear, this.selectedMonth);
-    this.ordersInvoiceViewModel.loadYearTmList(this.selectedYear);
-    this.invoiceClientsViewModel.setSelectedYear(this.selectedYear);
+    if (!isShowingAllYears) {
+      this.lastSelectedRealYear = this.selectedYear as number;
+    }
+    
+   const realYear: number = isShowingAllYears ? 
+      this.lastSelectedRealYear : 
+      this.selectedYear as number;
+    
+    // Actualizar el estado en el view model para indicar si estamos mostrando todos los años
+    this.ordersInvoiceViewModel.setIsShowingAllYears(isShowingAllYears);
+    
+    if (isShowingAllYears) {
+      this.ordersInvoiceViewModel.loadTotalsForAllYears();
+      this.ordersInvoiceViewModel.loadTmForAllYears();
+    } else {
+      // Siempre usamos un año real para el ViewModel, nunca el valor "todos"
+      this.ordersInvoiceViewModel.setSelectedYear(realYear);
+      this.ordersInvoiceViewModel.setSelectedTmYear(realYear);
+      
+      this.ordersInvoiceViewModel.updateSelectedMonth(this.selectedMonth);
+      
+      if (this.selectedMonth === this.ALL_MONTHS) {
+        this.ordersInvoiceViewModel.loadTotalOrdersAmount(realYear);
+        this.ordersInvoiceViewModel.loadTotalOrders(realYear);
+        this.ordersInvoiceViewModel.loadYearTmList(realYear);
+      } else {
+        this.ordersInvoiceViewModel.loadMonthlySales(realYear, this.selectedMonth);
+        this.ordersInvoiceViewModel.loadMonthlyOrders(realYear, this.selectedMonth);
+        this.ordersInvoiceViewModel.loadMonthlyTm(realYear, this.selectedMonth);
+      }
+    }
+    
+    this.invoiceClientsViewModel.setSelectedYear(realYear);
     this.invoiceClientsViewModel.loadOrdersByClientsMonthly();
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();
+    this.orderInvoiceProductViewModel.setSelectedYear(realYear);
     this.orderInvoiceProductViewModel.loadInvoiceProductType();
-    this.ltvViewModel.setSelectedYear(this.selectedYear);
+    this.ltvViewModel.setSelectedYear(realYear);
     this.ltvViewModel.loadLtv();
-    this.orderInvoiceProductViewModel.setSelectedYear(this.selectedYear);
-    this.orderInvoiceProductViewModel.loadInvoiceProductType();
-  }
-
-  ngOnInit(): void {
+  }    ngOnInit(): void {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
+    
+    // Inicializamos lastSelectedRealYear con el año inicial
+    this.lastSelectedRealYear = currentYear;
     
     this.ordersInvoiceViewModel.loadAllMonthWithTotals();
     this.ordersInvoiceViewModel.loadMonthlySales(currentYear, currentMonth);
@@ -122,6 +156,10 @@ export class MainOrdersInvoiceComponent implements OnInit {
     this.ordersInvoiceViewModel.loadMonthlyOrders(currentYear, currentMonth);
     this.ordersInvoiceViewModel.loadMonthlyTmList();
     this.ordersInvoiceViewModel.loadYearTmList(currentYear);
+    
+    // Cargamos los totales para todos los años para tenerlos disponibles
+    this.ordersInvoiceViewModel.loadTotalsForAllYears();
+    this.ordersInvoiceViewModel.loadTmForAllYears();
     
     this.invoiceClientsViewModel.loadInvoiceClientsType();
     this.invoiceClientsViewModel.loadOrdersClientsType();

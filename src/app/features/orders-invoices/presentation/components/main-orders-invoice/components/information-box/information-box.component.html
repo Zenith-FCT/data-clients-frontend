@@ -1,6 +1,6 @@
 <div class="information-box">
   <div class="box-header">
-    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Número de Pedidos totales' : type === 'monthly' ? 'Ventas Mensuales' : type === 'tm-year' ? 'Total TM Anual' : type === 'monthly-tm' ? 'Ticket medio mensual' : 'Pedidos Mensuales' }}</h3>
+    <h3>{{ type === 'amount' ? 'Total de Ventas' : type === 'count' ? 'Pedidos totales' : type === 'monthly' ? 'Ventas Mensuales' : type === 'tm-year' ? 'Total TM Anual' : type === 'monthly-tm' ? 'Ticket medio mensual' : 'Pedidos Mensuales' }}</h3>
   </div>
 
   <div class="box-content">
@@ -15,20 +15,35 @@
         <p>{{ ordersInvoiceViewModel.error$() }}</p>
       </div>
 
-      <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
-        <div class="amount">          <ng-container *ngIf="type === 'amount'">
-            <span class="value">{{ ordersInvoiceViewModel.totalOrdersAmount$() | number:'1.0-0' }}</span>
+      <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">        <div class="amount">
+          <ng-container *ngIf="type === 'amount'">
+            <ng-container *ngIf="!ordersInvoiceViewModel.isShowingAllYears$()">
+              <span class="value">{{ ordersInvoiceViewModel.totalOrdersAmount$() | number:'1.0-0' }}</span>
+            </ng-container>
+            <ng-container *ngIf="ordersInvoiceViewModel.isShowingAllYears$()">
+              <span class="value">{{ ordersInvoiceViewModel.totals$().totalSales | number:'1.0-0' }}</span>
+            </ng-container>
             <span class="currency">€</span>
           </ng-container>
           <ng-container *ngIf="type === 'count'">
-            <span class="value">{{ ordersInvoiceViewModel.totalOrders$() | number:'1.0-0' }}</span>
+            <ng-container *ngIf="!ordersInvoiceViewModel.isShowingAllYears$()">
+              <span class="value">{{ ordersInvoiceViewModel.totalOrders$() | number:'1.0-0' }}</span>
+            </ng-container>
+            <ng-container *ngIf="ordersInvoiceViewModel.isShowingAllYears$()">
+              <span class="value">{{ ordersInvoiceViewModel.totals$().totalSalesNumber | number:'1.0-0' }}</span>
+            </ng-container>
           </ng-container>
         </div>
-        <p class="description">{{ type === 'amount' ? 'Monto total en ventas' : 'Total de pedidos realizados' }}</p>
+        <p class="description">
+          <ng-container *ngIf="!ordersInvoiceViewModel.isShowingAllYears$()">
+            {{ type === 'amount' ? 'Monto total en ventas del año ' + ordersInvoiceViewModel.selectedYear$() : 'Total de pedidos realizados en ' + ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+          <ng-container *ngIf="ordersInvoiceViewModel.isShowingAllYears$()">
+            {{ type === 'amount' ? 'Monto total en ventas de todos los años' : 'Total de pedidos realizados en todos los años' }}
+          </ng-container>
+        </p>
       </div>
-    </ng-container>
-
-    <ng-container *ngIf="type === 'tm-year'">
+    </ng-container>    <ng-container *ngIf="type === 'tm-year'">
       <div *ngIf="ordersInvoiceViewModel.isLoading$()" class="loading-state">
         <div class="spinner"></div>
         <span>Calculando...</span>
@@ -41,11 +56,24 @@
 
       <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
         <div class="amount-container">
-          <div class="amount">            <span class="value">{{ ordersInvoiceViewModel.totalTm$() | number:'1.0-0' }}</span>
-            <span class="unit">€</span>
+          <div class="amount">
+            <span class="value" *ngIf="!ordersInvoiceViewModel.isShowingAllYears$()">
+              {{ ordersInvoiceViewModel.totalTm$() | number:'1.0-0' }}
+            </span>
+            <span class="value" *ngIf="ordersInvoiceViewModel.isShowingAllYears$()">
+              {{ ordersInvoiceViewModel.totalsYearTm$() | number:'1.0-0' }}
+            </span>
+            <span class="currency">€</span>
           </div>
         </div>
-        <p class="description">Ticket Medio anual</p>
+        <p class="description">
+          <ng-container *ngIf="!ordersInvoiceViewModel.isShowingAllYears$()">
+            Ticket Medio del año {{ ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+          <ng-container *ngIf="ordersInvoiceViewModel.isShowingAllYears$()">
+            Ticket Medio global de todos los años
+          </ng-container>
+        </p>
       </div>
     </ng-container>
 
@@ -60,11 +88,24 @@
         <p>{{ ordersInvoiceViewModel.error$() }}</p>
       </div>
 
-      <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">        <div class="amount">
-          <span class="value">{{ ordersInvoiceViewModel.monthlySales$() | number:'1.0-0' }}</span>
+      <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
+        <div class="amount">
+          <span class="value" *ngIf="ordersInvoiceViewModel.selectedMonth$() === 0">
+            {{ ordersInvoiceViewModel.totalOrdersAmount$() | number:'1.0-0' }}
+          </span>
+          <span class="value" *ngIf="ordersInvoiceViewModel.selectedMonth$() !== 0">
+            {{ ordersInvoiceViewModel.monthlySales$() | number:'1.0-0' }}
+          </span>
           <span class="currency">€</span>
         </div>
-        <p class="description">Ventas del mes de {{getMonthName(ordersInvoiceViewModel.selectedMonth$())}} de {{ ordersInvoiceViewModel.selectedYear$() }}</p>
+        <p class="description">
+          <ng-container *ngIf="ordersInvoiceViewModel.selectedMonth$() === 0">
+            Ventas del año {{ ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+          <ng-container *ngIf="ordersInvoiceViewModel.selectedMonth$() !== 0">
+            Ventas del mes de {{getMonthName(ordersInvoiceViewModel.selectedMonth$())}} de {{ ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+        </p>
       </div>
     </ng-container>
     
@@ -81,13 +122,23 @@
 
       <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
         <div class="amount">
-          <span class="value">{{ ordersInvoiceViewModel.monthlyOrders$() | number:'1.0-0' }}</span>
+          <span class="value" *ngIf="ordersInvoiceViewModel.selectedMonth$() === 0">
+            {{ ordersInvoiceViewModel.totalOrders$() | number:'1.0-0' }}
+          </span>
+          <span class="value" *ngIf="ordersInvoiceViewModel.selectedMonth$() !== 0">
+            {{ ordersInvoiceViewModel.monthlyOrders$() | number:'1.0-0' }}
+          </span>
         </div>
-        <p class="description">Órdenes del mes de {{getMonthName(ordersInvoiceViewModel.selectedMonth$())}} de {{ ordersInvoiceViewModel.selectedYear$() }}</p>
+        <p class="description">
+          <ng-container *ngIf="ordersInvoiceViewModel.selectedMonth$() === 0">
+            Órdenes del año {{ ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+          <ng-container *ngIf="ordersInvoiceViewModel.selectedMonth$() !== 0">
+            Órdenes del mes de {{getMonthName(ordersInvoiceViewModel.selectedMonth$())}} de {{ ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+        </p>
       </div>
-    </ng-container>
-
-    <ng-container *ngIf="type === 'monthly-tm'">
+    </ng-container>    <ng-container *ngIf="type === 'monthly-tm'">
       <div *ngIf="ordersInvoiceViewModel.isLoading$()" class="loading-state">
         <div class="spinner"></div>
         <span>Calculando...</span>
@@ -100,11 +151,24 @@
 
       <div *ngIf="!ordersInvoiceViewModel.isLoading$() && !ordersInvoiceViewModel.error$()" class="data-state">
         <div class="amount-container">
-          <div class="amount">            <span class="value">{{ ordersInvoiceViewModel.monthlyTm$() | number:'1.0-0' }}</span>
+          <div class="amount">
+            <span class="value" *ngIf="ordersInvoiceViewModel.selectedMonth$() === 0">
+              {{ ordersInvoiceViewModel.totalTm$() | number:'1.0-0' }}
+            </span>
+            <span class="value" *ngIf="ordersInvoiceViewModel.selectedMonth$() !== 0">
+              {{ ordersInvoiceViewModel.monthlyTm$() | number:'1.0-0' }}
+            </span>
             <span class="currency">€</span>
           </div>
         </div>
-        <p class="description">Ticket Medio del mes de {{getMonthName(ordersInvoiceViewModel.selectedMonth$())}} de {{ ordersInvoiceViewModel.selectedYear$() }}</p>
+        <p class="description">
+          <ng-container *ngIf="ordersInvoiceViewModel.selectedMonth$() === 0">
+            Ticket Medio del año {{ ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+          <ng-container *ngIf="ordersInvoiceViewModel.selectedMonth$() !== 0">
+            Ticket Medio del mes de {{getMonthName(ordersInvoiceViewModel.selectedMonth$())}} de {{ ordersInvoiceViewModel.selectedYear$() }}
+          </ng-container>
+        </p>
       </div>
     </ng-container>
 
