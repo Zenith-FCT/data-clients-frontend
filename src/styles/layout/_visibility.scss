@@ -1,0 +1,28 @@
+@use '../abstracts/variables' as vars;
+
+// Define the mixin locally
+@mixin media-breakpoint-up($breakpoint) {
+  @if $breakpoint == xs {
+    @content;
+  } @else if $breakpoint == sm {
+    @media (min-width: vars.$breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (min-width: vars.$breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (min-width: vars.$breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (min-width: vars.$breakpoint-xl) { @content; }
+  } @else if $breakpoint == xxl {
+    @media (min-width: vars.$breakpoint-xxl) { @content; }
+  }
+}
+
+.d-none { display: none !important; }
+
+@each $breakpoint in (xs, sm, md, lg, xl, xxl) {
+  @include media-breakpoint-up($breakpoint) {
+    .d-#{$breakpoint}-none { display: none !important; }
+    .d-#{$breakpoint}-block { display: block !important; }
+    .d-#{$breakpoint}-flex { display: flex !important; }
+  }
+}

@@ -1,0 +1,28 @@
+@use "../abstracts/variables" as vars;
+@use "../abstracts/mixins" as mixins;
+
+html {
+  font-size: 16px;
+
+  @include mixins.media-breakpoint-up(md) {
+    font-size: 17px;
+  }
+
+  @include mixins.media-breakpoint-up(lg) {
+    font-size: 18px;
+  }
+}
+
+body {
+  font-family: vars.$font-primary;
+  font-size: vars.$font-size-base;
+  color: vars.$color-black;
+  background-color: vars.$color-white;
+}
+
+body {
+  font-family: vars.$font-primary;
+  font-size: vars.$font-size-base;
+  color: vars.$color-black;
+  background-color: vars.$color-white;
+}

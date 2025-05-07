@@ -1,0 +1,34 @@
+@use "sass:math";
+@use "./variables" as vars;
+
+@mixin media-breakpoint-up($breakpoint) {
+  @if $breakpoint == xs {
+    @content;
+  } @else if $breakpoint == sm {
+    @media (min-width: vars.$breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (min-width: vars.$breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (min-width: vars.$breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (min-width: vars.$breakpoint-xl) { @content; }
+  } @else if $breakpoint == xxl {
+    @media (min-width: vars.$breakpoint-xxl) { @content; }
+  }
+}
+
+@mixin aspect-ratio($w, $h) {
+  position: relative;
+
+  &::before {
+    content: '';
+    display: block;
+    padding-top: calc(math.div($h, $w) * 100%);
+  }
+
+  > * {
+    position: absolute;
+    inset: 0;
+  }
+}
+

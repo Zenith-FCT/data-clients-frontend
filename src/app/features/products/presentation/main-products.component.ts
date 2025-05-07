@@ -2,6 +2,9 @@ import { Component, OnInit, Inject, PLATFORM_ID, OnDestroy, ChangeDetectionStrat
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule, MatSelectChange } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 import { productsProviders } from '../products.providers';
 import { ProductBillingViewModel } from './components/product-billing-chart/product-billing.view-model';
 import { ProductSalesViewModel } from './components/product-sales-chart/product-sales.view-model';
@@ -28,6 +31,9 @@ export enum ChartViewMode {
     RouterModule,
     NgxEchartsModule,
     FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
     ProductSalesChartComponent,
     ProductBillingChartComponent,
     TopProductsTableComponent,
@@ -51,7 +57,11 @@ export enum ChartViewMode {
 })
 export class MainProductsComponent implements OnInit, OnDestroy {  
   isBrowser: boolean;
-  private destroy$ = new Subject<void>();  constructor(
+  private destroy$ = new Subject<void>();
+  
+  // Selectores globales
+  globalYear = new Date().getFullYear().toString();
+  globalMonth = (new Date().getMonth() + 1).toString();constructor(
     public billingViewModel: ProductBillingViewModel,
     public salesViewModel: ProductSalesViewModel,
     public topProductsByMonthViewModel: TopProductsByMonthViewModel,
@@ -85,6 +95,24 @@ export class MainProductsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Maneja el cambio en el selector global de mes
+   * @param event Evento del cambio de selección
+   */
+  onGlobalMonthChange(event: MatSelectChange): void {
+    this.globalMonth = event.value;
+    // Aquí se puede añadir lógica para actualizar los gráficos con el nuevo mes
+  }
+
+  /**
+   * Maneja el cambio en el selector global de año
+   * @param event Evento del cambio de selección
+   */
+  onGlobalYearChange(event: MatSelectChange): void {
+    this.globalYear = event.value;
+    // Aquí se puede añadir lógica para actualizar los gráficos con el nuevo año
   }
   // La lógica de los gráficos se ha movido a sus respectivos componentes
 }

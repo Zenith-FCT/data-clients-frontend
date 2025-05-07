@@ -1,0 +1,45 @@
+// abstracts/_variables.scss
+$color-fluor: #dfff03;
+$color-black: #000000;
+$color-gray-35: #5a5a5a;
+$color-gray-65: #a5a5a5;
+$color-gray-90: #e5e5e5;
+$color-white: #ffffff;
+
+$font-primary: 'Swiss 721 BT', 'Helvetica Neue', Arial, sans-serif;
+$font-secondary: 'Swiss 721 BT Ex', 'Helvetica Neue', Arial, sans-serif;
+
+$font-weight-regular: 400;
+$font-weight-bold: 700;
+
+$font-size-base: 1rem;
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-md: 1.125rem;
+$font-size-lg: 1.25rem;
+$font-size-xl: 1.5rem;
+$font-size-2xl: 2rem;
+$font-size-3xl: 2.5rem;
+$font-size-4xl: 3rem;
+
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+$spacing-3xl: 4rem;
+
+$breakpoint-xs: 0;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-xxl: 1400px;
+
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+$transition-default: 0.3s ease;
+

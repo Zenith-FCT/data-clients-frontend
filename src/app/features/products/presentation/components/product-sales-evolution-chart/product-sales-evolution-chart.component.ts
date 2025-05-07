@@ -128,27 +128,40 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
       this.viewModel.setSelectedYear(this.selectedYear);
     }
   }
-
   /**
    * Maneja la selección o deselección de productos mediante checkbox
    * @param productId ID del producto seleccionado o deseleccionado
    */
   toggleProductSelection(productId: string): void {
-    // Si ya está seleccionado, lo quitamos; si no, lo añadimos
+    // Si ya está seleccionado, lo quitamos
     if (this.selectedProductIds.includes(productId)) {
       this.selectedProductIds = this.selectedProductIds.filter(id => id !== productId);
     } else {
-      this.selectedProductIds = [...this.selectedProductIds, productId];
+      // Si no está seleccionado y no hemos llegado al límite de 3, lo añadimos
+      if (this.selectedProductIds.length < 3) {
+        this.selectedProductIds = [...this.selectedProductIds, productId];
+      } else {
+        // Si ya hay 3 productos seleccionados, no hacemos nada
+        return;
+      }
     }
     
     // Notificamos el cambio
     this.onProductSelectionChange();
   }
+  
+  /**
+   * Verifica si un producto se puede seleccionar (menos de 3 seleccionados o ya está seleccionado)
+   * @param productId ID del producto a verificar
+   * @returns boolean que indica si el producto se puede seleccionar
+   */
+  canSelectProduct(productId: string): boolean {
+    return this.selectedProductIds.includes(productId) || this.selectedProductIds.length < 3;
+  }
 
   /**
    * Actualiza las opciones del gráfico cuando cambian los datos
-   */
-  updateChartOption(productEvolution: ProductSalesEvolutionModel[]): void {
+   */  updateChartOption(productEvolution: ProductSalesEvolutionModel[]): void {
     if (!this.isBrowser) return;
     
     if (!productEvolution || productEvolution.length === 0) {
@@ -172,7 +185,7 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
 
     // Convertir a array y ordenar cronológicamente
     const monthsArray = Array.from(allMonths).sort();
-      // Filtrar solo los meses del año seleccionado si hay un año seleccionado
+    // Filtrar solo los meses del año seleccionado si hay un año seleccionado
     // O crear un array con todos los meses del año si no hay datos para algún mes
     let filteredMonthsArray = [];
     
@@ -188,7 +201,7 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
     }
     
     // Crear series para cada producto
-    const series = productEvolution.map(product => {
+    const series = productEvolution.map((product, index) => {
       // Crear un mapa de ventas por mes para este producto
       const salesByMonth = new Map<string, number>();
       product.monthlySales.forEach((sale: { month: string; salesCount: number }) => {
@@ -198,96 +211,142 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
       // Crear array de datos para todos los meses (usando 0 si no hay ventas)
       const data = filteredMonthsArray.map(month => salesByMonth.get(month) || 0);
       
+      // Paleta de colores corporativa
+      const corporateColors = ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69'];
+      
       return {
         name: product.productName,
         type: 'line',
         data: data,
-        smooth: true,
+        smooth: false,
+        lineStyle: {
+          width: 3,
+          color: corporateColors[index % corporateColors.length]
+        },
+        symbol: 'circle',
+        symbolSize: 8,
+        itemStyle: {
+          color: corporateColors[index % corporateColors.length]
+        },
         emphasis: {
-          focus: 'series'
-        }
+          focus: 'series',
+          itemStyle: {
+            borderWidth: 3,
+            borderColor: corporateColors[index % corporateColors.length],
+            color: corporateColors[index % corporateColors.length]
+          }
+        },
+        z: 10
       };
     });
-    
+      
     // Formatear etiquetas de meses para mejor visualización
     const formattedMonths = filteredMonthsArray.map(month => {
       const [year, monthNum] = month.split('-');
       const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       return `${monthNames[parseInt(monthNum) - 1]}`;
     });
-      // Año seleccionado para mostrar en el título
-    const yearText = this.selectedYear ? ` ${this.selectedYear}` : '';
     
-    // Crear opciones del gráfico
+    // Crear opciones del gráfico sin título para que no interfiera con el HTML    
     this.chartOption = {
-      title: {
-        text: `Evolución de Ventas Mensuales por Producto${yearText}`,
-        left: 'center',
-        textStyle: { color: '#333' },
-      },
+      title: null, // Eliminamos completamente el título para evitar conflictos
       tooltip: {
         trigger: 'axis',
         axisPointer: {
-          type: 'cross',
-          label: {
-            backgroundColor: '#6a7985'
+          type: 'cross'
+        },
+        backgroundColor: 'rgba(255, 255, 255, 0.64)',
+        padding: 10,
+        confine: true,
+        formatter: function(params: any) {
+          if (!Array.isArray(params)) {
+            params = [params];
           }
+          
+          let tooltipContent = params[0].name + '<br/>';
+          
+          // Ordenar para mostrar las líneas primero
+          params.sort((a: any, b: any) => a.seriesType === 'line' ? -1 : 1);
+          
+          params.forEach((param: any) => {
+            if (param && param.marker && param.seriesName) {
+              const marker = param.marker;
+              const seriesName = param.seriesName;
+              const value = param.value;
+              tooltipContent += marker + seriesName + ': ' + value + ' unidades<br/>';
+            }
+          });
+          
+          return tooltipContent;
         }
-      },      legend: {
+      },      
+      legend: {
         data: productEvolution.map(p => p.productName),
         orient: 'horizontal',
-        bottom: '0',
-        type: 'scroll', // Permite desplazamiento si hay muchos productos
+        bottom: '20px', 
+        type: 'scroll', 
         width: '90%',
         textStyle: {
           fontSize: 12,
+          color: '#ffffff',
+          fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',
           overflow: 'truncate',
           width: 120
         },
         pageIconSize: 12,
-        pageIconColor: '#666',
+        pageIconColor: '#ffffff',
         pageIconInactiveColor: '#aaa',
         pageTextStyle: {
-          color: '#666'
+          color: '#ffffff'
         }
-      },
+      },      
       grid: {
-        left: '5%',
-        right: '5%',
-        bottom: '12%', // Aumentado para dejar espacio a la leyenda en la parte inferior
-        top: '50px', // Reducido ya que la leyenda ya no está arriba
-        containLabel: true
+        left: '4%',
+        right: '4%',
+        bottom: '17%', // Aumentado para dejar más espacio a la leyenda en la parte inferior
+        top: '5%', // Reducido para maximizar el espacio de visualización
+        containLabel: true,
+        width: 'auto', // Ancho automático para adaptarse al contenedor
       },
-      xAxis: [
-        {
-          type: 'category',
-          boundaryGap: false,
-          data: formattedMonths,
-          axisLabel: {
-            interval: 0, // Asegura que todos los meses se muestren
-            textStyle: {
-              fontSize: 10
-            },
-            rotate: 0, // Sin rotación para mejorar la legibilidad
-            margin: 8
-          },
-          axisTick: {
-            alignWithLabel: true
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: formattedMonths,
+        axisLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.38)'
+          }
+        },
+        axisLabel: {
+          fontSize: 12,
+          margin: 14,
+          color: '#ffffff',
+          rotate: 0
+        }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Unidades vendidas',
+        nameLocation: 'end',
+        nameTextStyle: {
+          fontSize: 12,
+          color: '#ffffff',
+          padding: [0, 0, 12, 0]
+        },
+        axisLabel: {
+          formatter: '{value}',
+          fontSize: 12,
+          fontWeight: 'bold',
+          color: '#ffffff'
+        },
+        splitLine: {
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.33)'
           }
         }
-      ],
-      yAxis: [
-        {
-          type: 'value',
-          name: 'Unidades vendidas',
-          minInterval: 1, // Fuerza valores enteros
-          axisLabel: {
-            formatter: '{value}'
-          }
-        }
-      ],
+      },
       series: series,
-      color: ['#E53935', '#4CAF50', '#2196F3', '#FFC107', '#9C27B0', '#607D8B']
+      color: ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69']
     };
   }
 }
