@@ -13,6 +13,7 @@
         </mat-form-field>
         <mat-form-field>
           <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
+            <mat-option [value]="'todos'">Todos</mat-option>
             <mat-option *ngFor="let year of cartsViewModel.availableYears$()" [value]="year">
               {{year}}
             </mat-option>

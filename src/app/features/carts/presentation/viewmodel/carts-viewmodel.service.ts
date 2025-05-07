@@ -10,6 +10,7 @@ import { GetCartsListUseCase } from '../../domain/use-case/get-carts-list.use-ca
 import { CartModel, CartsAbandonedRate } from '../../domain/models/carts.model';
 import { GetRateAbandonedCartsListUseCase } from '../../domain/use-case/get-rate-abandoned-carts-list.use-case';
 import { GetTotalLostCartsForAllYearsUseCase } from '../../domain/use-case/get-total-lost-carts-for-all-years.use-case';
+import { GetRateLostCartsForAllYearsUseCase } from '../../domain/use-case/get-rate-lost-carts-for-all-years.use-case';
 
 interface CartsUiState {
     totalCarts: number;
@@ -24,7 +25,9 @@ interface CartsUiState {
     cartsModelList: CartModel[];
     filteredCartsModelList: CartModel[];
     filteredRateAbandonedCarts: CartsAbandonedRate[];
-    allCarts: number
+    allCarts: number;
+    allRate: number;
+    isAllYearsMode: boolean;
 }
 
 @Injectable({
@@ -44,7 +47,9 @@ export class CartsViewModelService implements OnDestroy {
         cartsModelList: [],
         filteredCartsModelList: [],
         filteredRateAbandonedCarts: [],
-        allCarts: 0
+        allCarts: 0,
+        allRate: 0,
+        isAllYearsMode: false
     });
 
     readonly loading$ = computed(() => this.uiState().loading);
@@ -60,6 +65,8 @@ export class CartsViewModelService implements OnDestroy {
     readonly filteredCartsModelList$ = computed(() => this.uiState().filteredCartsModelList);
     readonly filteredRateAbandonedCarts$ = computed(() => this.uiState().filteredRateAbandonedCarts);
     readonly allCarts$ = computed(() => this.uiState().allCarts);
+    readonly allRate$ = computed(() => this.uiState().allRate);
+    readonly isAllYearsMode$ = computed(() => this.uiState().isAllYearsMode);
 
     private getTotalLostCarsUseCase: GetTotalLostCarsUseCase;
     private getRateLostCarsUseCase: GetRateLostCarsUseCase;
@@ -69,7 +76,7 @@ export class CartsViewModelService implements OnDestroy {
     private getCartsListUseCase: GetCartsListUseCase;
     private getRateAbandonedCartsListUseCase: GetRateAbandonedCartsListUseCase;
     private getTotalLostCartsForAllYearsUseCase: GetTotalLostCartsForAllYearsUseCase;
-
+    private getRateAbandonedCartsForAllYearsUseCase: GetRateLostCartsForAllYearsUseCase;
     constructor(
         private cartsDataRepository: CartsDataRepository,
         private injector: Injector
@@ -82,21 +89,10 @@ export class CartsViewModelService implements OnDestroy {
         this.getCartsListUseCase = new GetCartsListUseCase(this.cartsDataRepository);
         this.getRateAbandonedCartsListUseCase = new GetRateAbandonedCartsListUseCase(this.cartsDataRepository);
         this.getTotalLostCartsForAllYearsUseCase = new GetTotalLostCartsForAllYearsUseCase(this.cartsDataRepository);
-        
+        this.getRateAbandonedCartsForAllYearsUseCase = new GetRateLostCartsForAllYearsUseCase(this.cartsDataRepository);
+
         runInInjectionContext(this.injector, () => {
             this.loadAvailableYears();
-            
-            effect(() => {
-               const selectedYear = this.selectedYear$();
-                const selectedMonth = this.selectedMonth$();
-                if (selectedYear) {
-                    if (selectedMonth !== null) {
-                        console.log(`Year/Month changed: ${selectedYear}/${selectedMonth}`);
-                    } else {
-                        console.log(`Year changed: ${selectedYear}, All months selected`);
-                    }
-                }
-            });
         });
     }    
     public async loadAvailableYears(): Promise<void> {
@@ -109,7 +105,6 @@ export class CartsViewModelService implements OnDestroy {
                 this.setSelectedYear(years[0]);
             }
         } catch (error) {
-            console.error('Error loading available years:', error);
             this.updateState({ 
                 error: error instanceof Error ? error.message : 'Error loading available years',
                 availableYears: []
@@ -123,6 +118,15 @@ export class CartsViewModelService implements OnDestroy {
         this.loadCarts();
         this.loadAverageLostCarts();
         this.loadAbandonedRateCarts();
+    }
+
+    setAllYearsMode(isAllYearsMode: boolean): void {
+        this.updateState({ isAllYearsMode });
+        
+        if (isAllYearsMode) {
+            this.loadAllCarts();
+            this.loadAllRateAbandonedCarts();
+        }
     }
 
     setSelectedMonth(month: number | null): void {
@@ -144,7 +148,6 @@ export class CartsViewModelService implements OnDestroy {
             const selectedYear = this.uiState().selectedYear;
             
             if (!selectedYear) {
-                console.warn('No year selected');
                 return;
             }
             
@@ -163,7 +166,6 @@ export class CartsViewModelService implements OnDestroy {
             const selectedYear = this.uiState().selectedYear;
 
             if (!selectedYear) {
-                console.warn('No year selected');
                 return;
             }
 
@@ -183,7 +185,6 @@ export class CartsViewModelService implements OnDestroy {
             const selectedMonth = this.uiState().selectedMonth;
 
             if (!selectedYear) {
-                console.warn('No year selected');
                 return;
             }
 
@@ -233,7 +234,6 @@ export class CartsViewModelService implements OnDestroy {
 
             await this.filterAndUpdateCarts();
         } catch (error) {
-            console.error('Error loading carts:', error);
             this.updateState({ 
                 error: error instanceof Error ? error.message : 'Error loading carts model list',
                 loading: false,
@@ -247,7 +247,6 @@ export class CartsViewModelService implements OnDestroy {
             const selectedYear = this.uiState().selectedYear;
             
             if (!selectedYear) {
-                console.warn('No year selected');
                 return;
             }
             
@@ -261,7 +260,6 @@ export class CartsViewModelService implements OnDestroy {
                     cartsResult = result;
                 }
             } catch (err) {
-                console.error('Error executing use case:', err);
                 cartsResult = [];
             }
             
@@ -294,21 +292,36 @@ export class CartsViewModelService implements OnDestroy {
     public async loadAllCarts(): Promise<void> {
         try {
             this.updateState({ loading: true, error: null });
-            const cartsList = await firstValueFrom(this.getTotalLostCartsForAllYearsUseCase.execute());
+            const totalCarts = await firstValueFrom(this.getTotalLostCartsForAllYearsUseCase.execute());
             
             this.updateState({ 
-                allCarts: cartsList,
+                allCarts: totalCarts,
                 loading: false 
             });
-
-            await this.filterAndUpdateCarts();
         } catch (error) {
-            console.error('Error loading all carts:', error);
             this.updateState({ 
                 error: error instanceof Error ? error.message : 'Error loading all carts',
                 loading: false,
-                cartsModelList: [],
-                filteredCartsModelList: []
+                allCarts: 0
+            });
+        }
+    }
+    
+    public async loadAllRateAbandonedCarts(): Promise<void> {
+        try {
+            this.updateState({ loading: true, error: null });
+            
+            const rate = await firstValueFrom(this.getRateAbandonedCartsForAllYearsUseCase.execute());
+            
+            this.updateState({
+                allRate: rate,
+                loading: false
+            });
+        } catch (error) {
+            this.updateState({ 
+                error: error instanceof Error ? error.message : 'Error loading all rate abandoned carts',
+                loading: false,
+                allRate: 0
             });
         }
     }

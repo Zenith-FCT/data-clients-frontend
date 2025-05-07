@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { CartsViewModelService } from '../../../viewmodel/carts-viewmodel.service';
 
 @Component({
@@ -28,25 +28,27 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   loading = false;
   
-  // Almacenar valores anteriores para detectar cambios
   private previousMonth: number | null = null;
   private previousYear: number | null = null;
+  private previousAllYearsMode: boolean = false;
 
   constructor(public cartsViewModel: CartsViewModelService) {
-    // Escuchar el estado de carga
     effect(() => {
       this.loading = this.cartsViewModel.loading$();
     });
     
-    // Escuchar cambios en el mes y año seleccionados
     effect(() => {
       const currentMonth = this.cartsViewModel.selectedMonth$();
       const currentYear = this.cartsViewModel.selectedYear$();
+      const currentAllYearsMode = this.cartsViewModel.isAllYearsMode$();
       
-      // Si hay cambios en el mes o año, recargar datos según el tipo de caja
-      if (this.previousMonth !== currentMonth || this.previousYear !== currentYear) {
+      if (this.previousMonth !== currentMonth || 
+          this.previousYear !== currentYear || 
+          this.previousAllYearsMode !== currentAllYearsMode) {
+        
         this.previousMonth = currentMonth;
         this.previousYear = currentYear;
+        this.previousAllYearsMode = currentAllYearsMode;
         
         if (this.type) {
           this.loadData();
@@ -66,22 +68,31 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   }
 
   getValue(): number {
+    const isAllYears = this.cartsViewModel.isAllYearsMode$();
+    const isMonthlyType = this.type === 'total-monthly' || this.type === 'rate-monthly';
+    const hasSelectedMonth = this.cartsViewModel.selectedMonth$() !== null;
+
+   if (isAllYears && !isMonthlyType) {
+      return this.type === 'total' ? this.cartsViewModel.allCarts$() : this.cartsViewModel.allRate$();
+    }
+
+    if (hasSelectedMonth && isMonthlyType) {
+      return this.type === 'total-monthly' 
+        ? this.cartsViewModel.totalCartsMonthly$() 
+        : this.cartsViewModel.averageCartsMonthly$();
+    }
+
     switch (this.type) {
-      case 'total': return this.cartsViewModel.carts$();
+      case 'total': 
+        return this.cartsViewModel.carts$();
       case 'total-monthly': 
-        if (this.cartsViewModel.selectedMonth$() === null) {
-          return this.cartsViewModel.carts$();
-        } else {
-          return this.cartsViewModel.totalCartsMonthly$();
-        }
-      case 'rate': return this.cartsViewModel.averageLostCarts$();
+        return this.cartsViewModel.carts$();
+      case 'rate': 
+        return this.cartsViewModel.averageLostCarts$();
       case 'rate-monthly': 
-        if (this.cartsViewModel.selectedMonth$() === null) {
-          return this.cartsViewModel.averageLostCarts$();
-        } else {
-          return this.cartsViewModel.averageCartsMonthly$();
-        }
-      default: return 0;
+        return this.cartsViewModel.averageLostCarts$();
+      default: 
+        return 0;
     }
   }
 
@@ -92,26 +103,24 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   getDescription(): string {
     const month = this.cartsViewModel.selectedMonth$();
     const year = this.cartsViewModel.selectedYear$();
+    const isAllYears = this.cartsViewModel.isAllYearsMode$();
+    
+    if ((this.type === 'total-monthly' || this.type === 'rate-monthly') && month !== null) {
+      const monthName = this.getMonthName(month);
+      return this.type === 'total-monthly'
+        ? `Carritos abandonados en ${monthName} del ${year}`
+        : `Tasa de abandono en ${monthName} del ${year}`;
+    }
     
     switch (this.type) {
       case 'total':
-        return `Total de carritos abandonados en ${year}`;
+        return isAllYears ? 'Total de carritos abandonados (todos los años)' : `Total de carritos abandonados en ${year}`;
       case 'total-monthly':
-        if (month === null) {
-          return `Total de carritos abandonados en ${year}`;
-        } else {
-          const monthName = this.getMonthName(month);
-          return `Carritos abandonados en ${monthName} del ${year}`;
-        }
+        return month === null ? `Total de carritos abandonados en ${year}` : '';
       case 'rate':
-        return `Tasa total de abandono en ${year}`;
+        return isAllYears ? 'Tasa total de abandono (todos los años)' : `Tasa total de abandono en ${year}`;
       case 'rate-monthly':
-        if (month === null) {
-          return `Tasa total de abandono en ${year}`;
-        } else {
-          const monthName = this.getMonthName(month);
-          return `Tasa de abandono en ${monthName} del ${year}`;
-        }
+        return month === null ? `Tasa total de abandono en ${year}` : '';
       default:
         return '';
     }
@@ -122,21 +131,35 @@ export class InformationBoxCartsComponent implements OnInit, OnDestroy {
   }
 
   loadData(): void {
-    if (this.type === 'total') {
-      this.cartsViewModel.loadCarts();
-    } else if (this.type === 'rate') {
-      this.cartsViewModel.loadAverageLostCarts();
-    } else if (this.type === 'total-monthly') {
-      if (this.cartsViewModel.selectedMonth$() === null) {
-        this.cartsViewModel.loadCarts();
-      } else {
-        this.cartsViewModel.loadMonthlyAbandonedCarts();
+    const isAllYears = this.cartsViewModel.isAllYearsMode$();
+    const isMonthlyType = this.type === 'total-monthly' || this.type === 'rate-monthly';
+    const hasSelectedMonth = this.cartsViewModel.selectedMonth$() !== null;
+    
+    if (isMonthlyType && hasSelectedMonth) {
+      this.cartsViewModel.loadMonthlyAbandonedCarts();
+      return;
+    }
+    if (isAllYears && !isMonthlyType) {
+      if (this.type === 'total') {
+        this.cartsViewModel.loadAllCarts();
+      } else if (this.type === 'rate') {
+        this.cartsViewModel.loadAllRateAbandonedCarts();
       }
-    } else if (this.type === 'rate-monthly') {
-      if (this.cartsViewModel.selectedMonth$() === null) {
+    } else {
+      if (this.type === 'total' || (this.type === 'total-monthly' && !hasSelectedMonth)) {
+        this.cartsViewModel.loadCarts();
+      } else if (this.type === 'rate' || (this.type === 'rate-monthly' && !hasSelectedMonth)) {
         this.cartsViewModel.loadAverageLostCarts();
-      } else {
-        this.cartsViewModel.loadMonthlyAbandonedCarts();
+      } else if (this.type === 'total-monthly' || this.type === 'rate-monthly') {
+        if (hasSelectedMonth) {
+          this.cartsViewModel.loadMonthlyAbandonedCarts();
+        } else {
+          if (this.type === 'total-monthly') {
+            this.cartsViewModel.loadCarts();
+          } else {
+            this.cartsViewModel.loadAverageLostCarts();
+          }
+        }
       }
     }
   }

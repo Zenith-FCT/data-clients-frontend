@@ -27,7 +27,9 @@ import { MonthlyCartRateAbandonedComponent } from './monthly-cart-rate-abandoned
 })
 export class MainCartsComponent implements OnInit {
   selectedMonth: number | null = new Date().getMonth() + 1;
-  selectedYear: number = new Date().getFullYear();
+  selectedYear: string | number = new Date().getFullYear();
+  lastSelectedYear: number = new Date().getFullYear();
+  
   months: { value: number | null, name: string }[] = [
     { value: null, name: 'Todos' },
     ...Array.from({ length: 12 }, (_, i) => ({ 
@@ -46,13 +48,23 @@ export class MainCartsComponent implements OnInit {
 
   onDateChange(): void {
     this.cartsViewModel.setSelectedMonth(this.selectedMonth);
-    this.cartsViewModel.setSelectedYear(this.selectedYear);
     
-    if (this.selectedMonth === null) {
-      this.cartsViewModel.loadCarts();
-      this.cartsViewModel.loadAverageLostCarts();
+    if (this.selectedYear === 'todos') {
+      this.cartsViewModel.setAllYearsMode(true);
+      this.cartsViewModel.setSelectedYear(this.lastSelectedYear);
+      this.cartsViewModel.loadAllCarts();
+      this.cartsViewModel.loadAllRateAbandonedCarts();
     } else {
-      this.cartsViewModel.loadMonthlyAbandonedCarts();
+      this.cartsViewModel.setAllYearsMode(false);
+      this.lastSelectedYear = Number(this.selectedYear);
+      this.cartsViewModel.setSelectedYear(Number(this.selectedYear));
+      
+      if (this.selectedMonth === null) {
+        this.cartsViewModel.loadCarts();
+        this.cartsViewModel.loadAverageLostCarts();
+      } else {
+        this.cartsViewModel.loadMonthlyAbandonedCarts();
+      }
     }
     
     this.cartsViewModel.loadAbandonedRateCarts();
