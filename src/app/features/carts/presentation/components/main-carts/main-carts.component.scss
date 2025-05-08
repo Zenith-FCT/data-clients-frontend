@@ -14,7 +14,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   right: 0;
   bottom: 0;
   height: 98vh;
-  width: 100%;
+  width: 97%;
+  margin: 0 1.5%;
   overflow-y: auto;
   overflow-x: hidden;
   font-family: $primary-font;
@@ -275,17 +276,25 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 ::ng-deep .mat-mdc-select-panel {
   font-family: $primary-font !important;
   padding: 1px 0;
+  background-color: #FFFFFF !important;
+  
+  * {
+    color: #000 !important;
+  }
   
   .mat-mdc-option {
     font-family: $primary-font !important;
     font-size: 15px !important;
     font-weight: normal !important;
+    background-color: #FFFFFF !important;
+    color: #000 !important;
     
     .mdc-list-item__primary-text {
       text-transform: capitalize;
       font-family: $primary-font !important;
       font-size: 15px !important;
       font-weight: normal !important;
+      color: #000 !important;
     }
     
     &:first-child {
@@ -298,12 +307,24 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   font-family: $primary-font !important;
   border-radius: $border-radius !important;
   padding: 1px 0;
+  background-color: #FFFFFF !important;
+  
+  * {
+    color: #000 !important;
+  }
   
   .mat-mdc-option {
     font-family: $primary-font !important;
     font-size: 15px !important;
     font-weight: normal !important;
     padding: 2px 4px;
+    background-color: #FFFFFF !important;
+    color: #000 !important;
+    
+    * {
+      color: #000 !important;
+    }
+    
     &:first-child {
       margin-top: 2px;
     }
@@ -314,5 +335,140 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     font-family: $primary-font !important;
     font-size: 15px !important;
     font-weight: normal !important;
+    color: #000 !important;
+  }
+}
+
+::ng-deep .cdk-overlay-container {
+  .mat-mdc-select-panel, 
+  .mat-mdc-select-panel *,
+  .mat-mdc-option,
+  .mat-mdc-option *,
+  .mdc-list-item__primary-text {
+    color: #000 !important;
+  }
+  
+  .mat-mdc-select-panel, 
+  .mat-mdc-select-panel * {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+    background-color: #FFFFFF !important;
+  }
+  
+  .mat-mdc-option {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+    background-color: #FFFFFF !important;
+    color: #000 !important;
+    
+    .mdc-list-item__primary-text {
+      color: #000 !important;
+      opacity: 1 !important;
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04) !important;
+      .mdc-list-item__primary-text {
+        color: #000 !important;
+      }
+    }
+  }
+  
+  .mdc-menu-surface {
+    border-radius: $border-radius !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+    
+    * {
+      color: #000 !important;
+    }
+    
+    .mat-mdc-option,
+    .mat-mdc-option * {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+      background-color: #FFFFFF !important;
+      color: #000 !important;
+      opacity: 1 !important;
+    }
+    
+    .mdc-list-item__primary-text {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+      background-color: transparent !important;
+      color: #000 !important;
+      opacity: 1 !important;
+    }
+  }
+  
+  .mat-mdc-select-panel .mat-mdc-option .mdc-list-item__primary-text {
+    color: #000 !important;
+    opacity: 1 !important;
+  }
+}
+
+::ng-deep {
+  .mat-mdc-select-panel {
+    background-color: #FFFFFF !important;
+  }
+  
+  .mat-mdc-option {
+    color: #000000 !important;
+    background-color: #FFFFFF !important;
+    
+    .mdc-list-item__primary-text {
+      color: #000000 !important;
+      opacity: 1 !important;
+      position: relative !important;
+      z-index: 10 !important;
+    }
+  }
+  
+  .mdc-menu-surface--open {
+    background-color: #FFFFFF !important;
+    
+    .mat-mdc-option {
+      color: #000000 !important;
+      background-color: #FFFFFF !important;
+      
+      .mdc-list-item__primary-text {
+        color: #000000 !important;
+        opacity: 1 !important;
+        position: relative !important;
+        z-index: 10 !important;
+      }
+    }
+    
+    &::before,
+    &::after {
+      display: none !important;
+    }
+  }
+  
+  .cdk-overlay-pane {
+    .mdc-menu-surface {
+      opacity: 1 !important;
+      
+      .mat-mdc-option {
+        opacity: 1 !important;
+        
+        * {
+          opacity: 1 !important;
+        }
+      }
+    }
+  }
+  
+  .mat-mdc-select-panel, 
+  .mat-mdc-select-panel * {
+    visibility: visible !important;
+    color: #000000 !important;
   }
 }
