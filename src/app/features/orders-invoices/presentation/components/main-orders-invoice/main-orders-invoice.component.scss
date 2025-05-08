@@ -229,9 +229,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       font-size: 15px !important;
       font-weight: normal !important;
       padding: 2px 4px;
+      background-color: #FFFFFF !important;
       
       &:first-child {
-        margin-top: 2px;
+        margin-top: 4px;
       }
     }
   }
@@ -239,11 +240,13 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   .mat-mdc-select-panel {
     font-family: $primary-font !important;
     padding: 1px 0;
+    background-color: #FFFFFF !important;
     
     .mat-mdc-option {
       font-family: $primary-font !important;
       font-size: 15px !important;
       font-weight: normal !important;
+      background-color: #FFFFFF !important;
       
       .mdc-list-item__primary-text {
         text-transform: capitalize;
@@ -253,7 +256,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       }
       
       &:first-child {
-        margin-top: 2px;
+        margin-top: 4px;
       }
     }
   }
@@ -262,15 +265,17 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     font-family: $primary-font !important;
     border-radius: $border-radius !important;
     padding: 1px 0;
+    background-color: #FFFFFF !important;
     
     .mat-mdc-option {
       font-family: $primary-font !important;
       font-size: 15px !important;
       font-weight: normal !important;
       padding: 2px 4px;
+      background-color: #FFFFFF !important;
       
       &:first-child {
-        margin-top: 2px;
+        margin-top: 4px;
       }
     }
     

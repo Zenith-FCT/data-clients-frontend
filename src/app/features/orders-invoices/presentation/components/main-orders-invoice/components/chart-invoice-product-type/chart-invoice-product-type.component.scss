@@ -24,6 +24,10 @@
   font-size: 1.25rem;
   font-weight: bold;
   color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
 }
 
 .year-selector {
@@ -77,6 +81,35 @@
   width: 100% !important;
   height: 600px !important;
   display: block !important;
+}
+
+// Asegurando que las etiquetas del gráfico no se salgan del contenedor
+::ng-deep .echarts-container .echarts-tooltip,
+::ng-deep .echarts-container text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+::ng-deep .echarts-container .echarts-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Para manejar las leyendas y labels en pantallas pequeñas
+@media screen and (max-width: 768px) {
+  ::ng-deep .echarts-container .echarts-legend-item {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  ::ng-deep .echarts-container text {
+    font-size: 10px;
+  }
 }
 
 .loading-state, .error-state {

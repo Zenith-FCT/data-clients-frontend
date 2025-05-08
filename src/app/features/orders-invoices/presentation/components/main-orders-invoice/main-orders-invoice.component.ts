@@ -98,7 +98,8 @@ export class MainOrdersInvoiceComponent implements OnInit {  readonly ALL_MONTHS
       this.selectedYear = this.years[0];
       this.ordersInvoiceViewModel.setSelectedYear(this.selectedYear);
     }
-  }    onDateChange(): void {
+  }    
+  onDateChange(): void {
    const isShowingAllYears = this.selectedYear === this.TODOS_OPTION;
     
     if (!isShowingAllYears) {
@@ -115,7 +116,8 @@ export class MainOrdersInvoiceComponent implements OnInit {  readonly ALL_MONTHS
     if (isShowingAllYears) {
       this.ordersInvoiceViewModel.loadTotalsForAllYears();
       this.ordersInvoiceViewModel.loadTmForAllYears();
-    } else {
+    } 
+    else {
       // Siempre usamos un año real para el ViewModel, nunca el valor "todos"
       this.ordersInvoiceViewModel.setSelectedYear(realYear);
       this.ordersInvoiceViewModel.setSelectedTmYear(realYear);
