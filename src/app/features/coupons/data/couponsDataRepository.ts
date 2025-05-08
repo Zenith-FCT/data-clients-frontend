@@ -77,6 +77,17 @@ export class CouponsDataRepository implements CouponsRepository {
       })
     }
 
+    getMonthlyDiscountByYear(year: string): Observable<number[]> {
+      return new Observable(obs => {
+        this.dataSource.getMonthlyDiscountByYear(year).then(total => {
+          obs.next(total);
+          obs.complete();
+        }).catch((error) =>
+          obs.error(error)
+        )
+      })
+    }
+
     getAvailableYears(): Observable<string[]> {
       return new Observable(obs => {
         this.dataSource.getAvailableYears().then(total => {

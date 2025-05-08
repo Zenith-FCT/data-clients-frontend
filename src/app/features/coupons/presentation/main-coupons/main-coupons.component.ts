@@ -25,7 +25,7 @@ import {MainCouponsViewModel} from './main-coupons.viewModel';
   styleUrl: './main-coupons.component.scss'
 })
 export class MainCouponsComponent  {
-  selectedMonth: number = new Date().getMonth() + 1;
+  selectedMonth: number | string = new Date().getMonth() + 1;
   selectedYear: string = new Date().getFullYear().toString();
   years: string[] = [];
   months: number[] = Array.from({length: 12}, (_, i) => i + 1);
@@ -47,10 +47,24 @@ export class MainCouponsComponent  {
   }
 
   onDateChange(): void {
-    const monthString = this.selectedMonth.toString().padStart(2, '0');
 
-    this.boxViewModel.getTotalCouponsByMonth(monthString, this.selectedYear.toString())
-    this.boxViewModel.getTotalDiscountByMonth(monthString, this.selectedYear.toString())
-    this.countGraphicViewModel.getTotalCoupons(this.selectedYear)
+    if (this.selectedYear.toString() == "0") {
+      this.selectedMonth = 0
+      this.boxViewModel.getTotalCouponsAll()
+      this.boxViewModel.getTotalDiscountAll()
+
+    } else {
+
+      if (this.selectedMonth.toString() == "0") {
+        this.boxViewModel.getTotalCouponsByYear(this.selectedYear.toString())
+        this.boxViewModel.getTotalDiscountByYear(this.selectedYear.toString())
+      } else {
+        const monthString = this.selectedMonth.toString().padStart(2, '0');
+
+        this.boxViewModel.getTotalCouponsByMonth(monthString, this.selectedYear.toString())
+        this.boxViewModel.getTotalDiscountByMonth(monthString, this.selectedYear.toString())
+      }
+      this.countGraphicViewModel.getTotalCoupons(this.selectedYear)
+    }
   }
 }

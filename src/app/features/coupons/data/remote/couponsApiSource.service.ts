@@ -48,7 +48,7 @@ export class CouponsApiSourceService{
       try {
         const response = await fetch(`${this.url}cuponesByYear${year}`);
         const data = await response.json();
-        return data[Number(month)].count;
+        return data[Number(month) - 1].count;
       }
       catch (error) {
         throw new Error("Error al recoger los datos");
@@ -59,7 +59,7 @@ export class CouponsApiSourceService{
       try {
         const response = await fetch(`${this.url}cuponesByYear${year}`);
         const data = await response.json();
-        return data[Number(month)].count;
+        return data[Number(month)-1].count;
       }
       catch (error) {
         throw new Error("Error al recoger los datos");
@@ -73,7 +73,19 @@ export class CouponsApiSourceService{
         return data.map( (c:{count: number })=> c.count );
       }
       catch (error) {
-        throw new Error("Error al recoger los datos");
+        throw error
+      }
+    }
+
+    async getMonthlyDiscountByYear(year: string): Promise<number[]> {
+
+      try {
+        const response = await fetch(`${this.url}cuponesByYear${year}`);
+        const data = await response.json();
+        return data.map( (c:{count: number })=> c.count );
+      }
+      catch (error) {
+        throw error
       }
     }
 
@@ -86,6 +98,6 @@ export class CouponsApiSourceService{
       catch (error) {
         throw new Error("Error al recoger los datos");
       }
-  }
+    }
 
 }

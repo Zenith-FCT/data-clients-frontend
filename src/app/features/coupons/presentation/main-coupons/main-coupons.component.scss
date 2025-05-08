@@ -73,6 +73,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       transform: scale(0.85);
       transform-origin: right center;
 
+      .mdc-list-item__primary-text {
+        font-size: 16px !important;
+      }
+
       ::ng-deep {
         .mat-mdc-text-field-wrapper {
           background-color: #FFFFFF !important;
@@ -121,6 +125,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
           font-weight: normal !important;
         }
 
+        .mdc-text-field {
+          padding: 0 16px;
+        }
+
         .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
           border: none;
         }
@@ -139,6 +147,51 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   }
 
 }
+::ng-deep .mat-mdc-select-panel {
+  font-family: $primary-font !important;
+  padding: 1px 0;
+
+  .mat-mdc-option {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+
+    .mdc-list-item__primary-text {
+      text-transform: capitalize;
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
+
+    &:first-child {
+      margin-top: 2px;
+    }
+  }
+}
+
+::ng-deep .mdc-menu-surface {
+  font-family: $primary-font !important;
+  border-radius: $border-radius !important;
+  padding: 1px 0;
+
+  .mat-mdc-option {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+    padding: 2px 4px;
+    &:first-child {
+      margin-top: 2px;
+    }
+  }
+
+  .mdc-list-item__primary-text {
+    text-transform: capitalize;
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+}
+
 
 
 .coupon-date-selector {
