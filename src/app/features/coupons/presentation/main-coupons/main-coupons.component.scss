@@ -6,7 +6,9 @@ $transition-speed: 0.3s;
 $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .coupon-container {
-  margin: 0 .7%;
+  margin: 0 1.5%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .coupon-header {
@@ -26,15 +28,19 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   padding: 12px 20px;
 
   > * {
-    margin: 0 0.5%;
+    margin: 0;
     border: none !important;
+    display: flex;
+    align-items: center;
   }
 
   h2 {
-    margin: 6px 0 0 0;
+    margin: 0;
     font-size: 18px;
     color: black;
     font-weight: bold;
+    display: flex;
+    align-items: center;
   }
 
   @media (max-width: 576px) {
@@ -61,10 +67,12 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     align-items: center;
     justify-content: flex-end;
     font-family: $primary-font;
+    margin-right: 0;
 
     @media (max-width: 576px) {
       width: 100%;
       justify-content: flex-end;
+      margin-right: 0;
     }
 
     mat-form-field {
@@ -74,7 +82,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       transform-origin: right center;
 
       @media (max-width: 400px) {
-        width: 90px; /* Reducir ancho en pantallas muy pequeñas */
+        width: 90px; 
         transform: scale(0.8);
       }
 
@@ -180,11 +188,6 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 * {
   font-family: "Swiss 721 BT EX Roman", "Swiss721BT-ExRoman", Arial, sans-serif;
-}
-
-.coupon-container {
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .coupons-table {

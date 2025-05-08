@@ -1,3 +1,14 @@
+$primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
+$row-height: 48px;
+$header-height: 56px;
+$table-height: ($row-height * 10) + $header-height;
+
+.coupons-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: $table-height + 70px;
+}
 
 .loading-state {
   display: flex;
@@ -23,27 +34,187 @@
 }
 
 h3 {
-    display: block;
-    font-size: 1.25em;
-    margin: 6px 0 16px 0;
-    font-weight: bold;
-    unicode-bidi: isolate;
+  display: block;
+  font-size: 1.25em;
+  margin: 6px 0 16px 0;
+  font-weight: bold;
+  unicode-bidi: isolate;
+  font-family: $primary-font;
+}
+
+.coupons-table-title {
+  font-family: $primary-font;
+}
+
+.coupons-table-container {
+  display: flex;
+  flex-direction: column;
+  font-family: $primary-font;
+  background-color: #a5a5a5;
+  flex: 1;
+  position: relative;
+  min-height: $table-height;
 }
 
 .coupons-table {
-  overflow-y: auto;
-  max-height: 695px;
+  font-family: $primary-font;
+  flex: 1;
+  
+  table {
+    width: 100%;
+    table-layout: fixed;
+    background-color: #a5a5a5;
+  }
 }
 
 .mat-mdc-table {
-  background-color: #a5a5a5;
+  color: white;
+  
+  th, td {
+    font-family: $primary-font;
+    color: white;
+  }
+  
+  th.mat-header-cell {
+    height: $header-height;
+  }
+  
+  tr.mat-mdc-row {
+    height: $row-height;
+  }
+  
+  tr.empty-row {
+    height: $row-height;
+    
+    td {
+      border-bottom: none;
+      background-color: #a5a5a5;
+    }
+  }
 }
 
 th {
   font-weight: bold;
   font-size: 1rem;
+  font-family: $primary-font;
+  color: white;
+}
+
+td {
+  color: white;
+  font-family: $primary-font;
 }
 
 .error-text {
   color: red;
+  font-family: $primary-font;
+}
+
+.dot-pagination {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  background-color: #a5a5a5;
+  width: 100%;
+  position: relative;
+  
+  .dots-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .pagination-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    padding-bottom: 12px;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    
+    &.active {
+      background-color: white;
+      transform: scale(1.2);
+    }
+    
+    &:hover:not(.active) {
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+::ng-deep {
+  .mat-mdc-paginator {
+    background-color: #a5a5a5;
+    font-family: $primary-font !important;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    
+    .mat-mdc-paginator-container {
+      color: white;
+      justify-content: center;
+      padding: 4px 8px;
+      min-height: 48px;
+    }
+    
+    .mat-mdc-paginator-range-label {
+      margin: 0 24px;
+      color: white;
+      font-family: $primary-font !important;
+    }
+    
+    .mat-mdc-icon-button {
+      color: white;
+      
+      &.mat-mdc-paginator-navigation-first,
+      &.mat-mdc-paginator-navigation-last,
+      &.mat-mdc-paginator-navigation-previous,
+      &.mat-mdc-paginator-navigation-next {
+        border-radius: 4px;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+    
+    .mat-mdc-paginator-page-size {
+      display: none;
+    }
+  }
+  
+  .mat-mdc-paginator-page-number-buttons {
+    display: flex;
+    justify-content: center;
+    
+    .mat-mdc-button {
+      min-width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      margin: 0 2px;
+      padding: 0;
+      color: white;
+      font-family: $primary-font !important;
+      
+      &.mat-primary {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
 }
