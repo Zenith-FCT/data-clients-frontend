@@ -8,5 +8,6 @@ export interface CouponsRepository {
   getTotalCouponsByMonth(month: string, year: string): Observable<number>;
   getTotalDiscountByMonth(month: string, year: string): Observable<number>;
   getMonthlyCouponsByYear(year: string): Observable<number[]>
+  getMonthlyDiscountByYear(year: string): Observable<number[]>
   getAvailableYears(): Observable<string[]>
 }
