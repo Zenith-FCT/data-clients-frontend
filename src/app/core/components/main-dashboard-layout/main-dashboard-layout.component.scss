@@ -137,11 +137,11 @@
 
 .main-content {
   flex: 1;
-  padding: 0; /* Eliminamos todo el padding */
+  padding: 0; 
   background-color: #ebebeb;
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 60px); /* Altura exacta sin padding */
+  height: calc(100vh - 60px); 
   position: relative;
   z-index: 1000;
 }

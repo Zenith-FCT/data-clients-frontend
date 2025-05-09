@@ -17,7 +17,7 @@ import {TableCouponsViewModel} from './coupons-table.view-model';
 export class CouponsTableComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Coupon>([]);
   displayedColumns: string[] = ['name', 'count'];
-  pageSize = 10;
+  pageSize = 12;
   currentPage = 0;
   
   totalItems = 0;

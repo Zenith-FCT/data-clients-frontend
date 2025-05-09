@@ -8,16 +8,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 .main-wrapper {
   display: flex;
   flex-direction: column;
-  position: absolute; 
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 98vh;
-  width: 97%;
-  margin: 0 1.5%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  width: 96%;
+  margin: 0 2%;
   font-family: $primary-font;
 }
 
@@ -25,11 +17,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   position: sticky;
   top: -22px;
   z-index: 10000;
-  width: 97%;
-  margin: 0 1.5%;
+  width: 100%;
   box-sizing: border-box;
   margin-bottom: 16px;
-  padding: 20px 0 0 0;
+  padding: 10px 0 0 0;
   background-color: transparent;
   transition: all $transition-speed ease;
 }
@@ -153,10 +144,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 .orders-container {
   flex: 1;
   padding: $spacing-unit 0;
-  padding-bottom: 12rem;
+  padding-bottom: 8rem;
   box-sizing: border-box;
-  width: 97%;
-  margin: 0 1.5%;
+  width: 100%;
   background-color: var(--md-source-surface-variant);
   display: flex;
   flex-direction: column;
