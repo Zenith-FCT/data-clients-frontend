@@ -152,43 +152,32 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
           const percentage = (params.value / totalSales * 100).toFixed(2);
           return `${params.name}: ${params.value.toLocaleString('es-ES')} unidades (${percentage}%)`;
         },
-        backgroundColor: 'rgba(255, 255, 255, 0.64)',
-        padding: 10,
-        confine: true,
-      },legend: {
-        type: 'scroll',
-        orient: 'horizontal',
-        bottom: 10,
-        left: 'center',
-        data: chartData.map((item: any) => 
-          this.salesViewMode === ChartViewMode.ByProduct ? item.productName : item.productType
-        ),
+        backgroundColor: 'rgba(255, 255, 255, 0.85)',
         textStyle: {
-          fontSize: 12,
-          color: '#ffffff',
-          fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif'
+          fontSize: 16,
+          fontWeight: 'bold',
+          fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',
         },
-        pageButtonPosition: 'end',
-        pageTextStyle: {
-          color: '#ffffff'
-        }
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: [8, 10],
+        extraCssText: 'box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);',
+        confine: true,
       },
       series: [
         {
-          name: this.salesViewMode === ChartViewMode.ByProduct ? 'Ventas por Producto' : 'Ventas por Tipo de Producto',
-          type: 'pie',
-          radius: ['40%', '70%'],
+          name: this.salesViewMode === ChartViewMode.ByProduct ? 'Ventas por Producto' : 'Ventas por Tipo de Producto',          type: 'pie',          radius: ['55%', '85%'],
           center: ['50%', '45%'],
-          avoidLabelOverlap: false,          itemStyle: {
+          avoidLabelOverlap: true,itemStyle: {
             borderRadius: 8,
             borderColor: '#fff',
             borderWidth: 2
-          },
-          emphasis: {
+          },          emphasis: {
             label: {
               show: true,
-              fontSize: '16',
-              fontWeight: 'bold',              color: '#ffffff',
+              fontSize: 22,
+              fontWeight: 'bold',
+              color: '#000',
               fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif'
             },
             itemStyle: {
@@ -196,7 +185,9 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
               shadowOffsetX: 0,
               shadowColor: 'rgba(0, 0, 0, 0.5)',
             },
-          },          label: {
+            scale: true,
+            scaleSize: 1.1
+          },label: {
             show: true,
             position: 'outside',
             formatter: (params: any) => {
@@ -208,17 +199,28 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
               } else {
                 formattedValue = params.value;
               }
-              return `${params.name}: ${formattedValue}`;
+              
+              let name = params.name;
+              if (name && name.length > 15) {
+                name = name.substring(0, 15) + '...';
+              }
+              
+              return `${name}: ${formattedValue}`;
             },
-            color: '#ffffff',
-            fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif'
-          },
-          labelLine: {
+            color: '#000',
+            fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',            fontWeight: 'bold',
+            fontSize: 20,
+            overflow: 'truncate',
+            width: 200,          },          labelLine: {
             show: true,
+            length: 15,
+            length2: 20,
+            smooth: true,
             lineStyle: {
               color: '#666',
+              width: 1.5,
             },
-          },          color: ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69'],
+          },color: ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69'],
           data: chartData.map((item: any) => ({
             name: this.salesViewMode === ChartViewMode.ByProduct ? item.productName : item.productType,
             value: item.totalSales,
@@ -238,10 +240,17 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
       }
     }
   }
-  
-  onProductTypeChange(event: Event): void {
+    onProductTypeChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const productType = target.value || null;
     this.viewModel.setSelectedProductType(productType);
+  }
+  
+  onChartInit(ec: any): void {
+    if (ec) {
+      ec.on('finished', () => {
+        console.log('Sales chart rendering finished');
+      });
+    }
   }
 }

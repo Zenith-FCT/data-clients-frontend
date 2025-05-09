@@ -28,8 +28,7 @@
       <span>📊</span>
       <p>No hay datos disponibles</p>
     </div>
-    
-    <!-- Contenedor para eCharts con opciones inmediatas -->
+      <!-- Contenedor para eCharts con opciones inmediatas -->
     <div 
       *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productSales().length > 0" 
       class="echarts-container" 
@@ -37,7 +36,8 @@
       [options]="salesChartOption"
       [loading]="viewModel.loading()"
       [theme]="'default'"
-      [initOpts]="{renderer: 'canvas'}">
+      [initOpts]="{renderer: 'canvas', width: 'auto', height: 'auto', devicePixelRatio: 2}"
+      (chartInit)="onChartInit($event)">
     </div>
   </div>
 </div>
