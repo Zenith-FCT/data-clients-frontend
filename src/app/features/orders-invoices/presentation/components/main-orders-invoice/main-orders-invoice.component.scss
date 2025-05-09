@@ -8,26 +8,19 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 .main-wrapper {
   display: flex;
   flex-direction: column;
-  position: absolute; 
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 98vh;
   width: 100%;
-  overflow: hidden;
   background-color: #E5E5E5;
   font-family: $primary-font;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.orders-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: $spacing-unit;
-  padding-bottom: 5rem;
+.orders-container {  flex: 1;
+  padding-top: $spacing-unit;
   box-sizing: border-box;
-  width: 100%;
-  height: calc(100vh - 20px);
+  width: 96%;
+  margin: 0 2%; 
   background-color: #E5E5E5;
 }
 
@@ -293,12 +286,13 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   flex-direction: column;
   gap: $spacing-unit;
   width: 100%;
-  margin: 0 auto;
-  padding: 0 16px;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   transition: all $transition-speed ease;
   font-family: $primary-font;
-  background-color: #E5E5E5;  .summary-cards {
+  background-color: #E5E5E5;
+  .summary-cards {
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -388,6 +382,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   flex-direction: column;
   width: 100%;
   gap: 16px;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .charts-section {
@@ -751,7 +747,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   gap: 2rem;
   min-height: 650px;
   height: 650px;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
   overflow: visible;
   padding-top: 10px;
   .chart-container {
