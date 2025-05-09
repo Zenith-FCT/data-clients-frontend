@@ -181,7 +181,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       overflow: hidden;
       box-sizing: border-box;
     }
-  }    .chart-section {
+  }    
+  .chart-section {
     flex: 2;
     background-color: #a5a5a5;
     border: 1px solid var(--md-source-outline);

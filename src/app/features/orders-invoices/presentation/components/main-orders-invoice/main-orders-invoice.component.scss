@@ -279,8 +279,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     width: 100%;
     justify-content: space-between;
     app-information-box {
-      width: 24%;
-      margin: 0 0.5%;
+      width: 23.8%;
+      margin: 0;
       box-sizing: border-box;
       display: flex;
       height: 100%;
@@ -696,7 +696,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .product-charts-container {
   display: flex;
-  gap: 20px;
+  gap: 1.5%;
   margin-top: 0;
   width: 100%;
   
@@ -707,13 +707,14 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .product-type-chart-container {
-  width: 50%;
+  width: 49.2%;
   height: 650px;
   margin-top: 0; 
   background: transparent;
   border-radius: $border-radius;
   box-sizing: border-box;
   display: flex;
+  justify-content: space-between;
 
   app-chart-invoice-product-type,
   app-chart-orders-product-type {
