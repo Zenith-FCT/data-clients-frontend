@@ -439,7 +439,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   box-sizing: border-box;
   transition: all $transition-speed ease;  margin-bottom: 0;
   margin-top: 0.5rem;
-  gap: $spacing-unit;
+  justify-content: space-between;
+  gap: 1.5%;
 
   @media (max-width: 992px) {
     flex-direction: column;
@@ -450,8 +451,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   
   @media (max-width: 576px) {
     gap: 1rem;
-  }  app-chart-tm {
-    width: 75%;
+  }  
+  app-chart-tm {
+    width: 74%;
     height: 100%;
     margin-bottom: 16px;
     flex: 1;
@@ -484,6 +486,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .chart-tm-container {
   display: flex;
+  justify-content: space-between;
   gap: $spacing-unit;
   
   @media (max-width: 992px) {
@@ -491,7 +494,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   }
 
   .chart-tm {
-    flex: 0 0 75%;
+    flex: 0 0 7%;
     
     @media (max-width: 992px) {
       flex: 0 0 100%;
@@ -501,11 +504,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .tm-info-container {
-  flex: 0 0 25%;
   display: flex;
   flex-direction: column;
   gap: $spacing-unit;
-  width: 25%;
+  width: 24%;
   height: 100%;
   
   @media (max-width: 992px) {
@@ -543,7 +545,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .info-container {
-  width: 25%;
+  width: 23.8%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -650,7 +652,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .clients-charts-container {
   display: flex;
-  gap: 2rem;
+  gap: 1.5%;
   width: 100%;
   margin: 0.5rem 0 2rem 0;
   height: 650px;
