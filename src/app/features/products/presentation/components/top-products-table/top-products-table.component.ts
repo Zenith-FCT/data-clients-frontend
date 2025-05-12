@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, signal, computed } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TopProductsViewModel } from './top-products.view-model';
 import { Subject } from 'rxjs';
@@ -13,6 +13,27 @@ import { Subject } from 'rxjs';
 export class TopProductsTableComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   isBrowser: boolean;
+  currentPageSignal = signal(0);
+  itemsPerPage = 8;
+  
+  get currentPage(): number {
+    return this.currentPageSignal();
+  }
+    set currentPage(value: number) {
+    this.currentPageSignal.set(value);
+  }
+  paginatedProducts = computed(() => {
+    const start = this.currentPage * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    const sortedProducts = [...this.viewModel.topProducts$()]
+      .sort((a, b) => b.salesCount - a.salesCount);
+    return sortedProducts.slice(start, end);
+  });
+  
+  totalPages = computed(() => {
+    const total = this.viewModel.topProducts$().length;
+    return Math.ceil(total / this.itemsPerPage);
+  });
 
   constructor(
     public viewModel: TopProductsViewModel,
@@ -39,6 +60,33 @@ export class TopProductsTableComponent implements OnInit, OnDestroy {
         (process.env && (process.env['CI'] === 'true' || 
          process.env['NODE_ENV'] === 'test'))))
     );
+  }  
+  goToPage(page: number): void {
+    console.log('Navegando a página:', page);
+    if (page >= 0 && page < this.totalPages()) {
+      this.currentPageSignal.set(page);
+      console.log('Página actual después del cambio:', this.currentPage);
+    }
+  }
+  
+
+  createRange(count: number): number[] {
+    return Array.from({ length: count }, (_, i) => i);
+  }
+
+  nextPage(): void {
+    console.log('Página siguiente');
+    if (this.currentPage < this.totalPages() - 1) {
+      this.currentPage = this.currentPage + 1;
+    }
+  }
+  
+ 
+  prevPage(): void {
+    console.log('Página anterior');
+    if (this.currentPage > 0) {
+      this.currentPage = this.currentPage - 1;
+    }
   }
 
   ngOnDestroy(): void {

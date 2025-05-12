@@ -7,8 +7,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 .chart-container {
   position: relative;
   width: 100%;
-  margin: 20px auto 0;
-  height: 470px;
+  margin: 1% auto 0;
+  height: 650px;
   display: flex;
   flex-direction: column;
   background-color: #a5a5a5; /* Cambiado a gris estándar */
@@ -20,11 +20,12 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .chart-header {
-  padding: 12px $spacing-unit 6px $spacing-unit; /* Reducimos el padding inferior */
+  margin-top: 16px 
+  $spacing-unit 6px 
+  $spacing-unit; /* Reducimos el padding inferior */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #EAEAEA;
   margin-bottom: 0; /* Eliminamos el margen inferior */
   background-color: #a5a5a5; /* Aseguramos que tenga el mismo color de fondo */
   position: relative; /* Para que los elementos hijos posicionados tengan referencia */
@@ -41,7 +42,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .chart-header h3 {
-  margin: 0;
+  margin: 16px 0 0 0;
   font-size: 20px;
   font-weight: bold;
   color: #333333;
@@ -135,14 +136,15 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 .product-selection-panel {
   width: 200px;
   padding: $spacing-unit;
-  border-right: 1px solid #EAEAEA;
   overflow-y: auto;
   flex-shrink: 0;
   height: 100%;
   box-sizing: border-box;
-  border-bottom-left-radius: $border-radius;
+  border-radius: $border-radius;
   background-color: #909090; /* Gris más oscuro para el panel lateral */
-  
+  display: flex;
+  flex-direction: column;
+
   h4 {
     margin: 0 0 10px 0;
     font-size: 16px;
@@ -150,7 +152,6 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     color: #FFFFFF; /* Texto blanco para mejor contraste */
     padding-bottom: 8px;
     font-family: $primary-font;
-    border-bottom: 1px solid #f5f5f5;
   }
 }
 
@@ -257,4 +258,47 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   margin-right: 5px;
   flex-grow: 1; /* Permitimos que crezca para ocupar el espacio disponible */
   display: block; /* Aseguramos que sea un bloque de visualización */
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+  margin-top: auto;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.pagination-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #cccccc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  &.active {
+    background-color: #FFFFFF;
+    width: 12px;
+    height: 12px;
+    /* transform: scale(1.1); Removed as direct size is set */
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.4);
+  }
+
+  &:hover:not(.active) {
+    background-color: #b3b3b3;
+  }
 }

@@ -6,13 +6,14 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .chart-container {
   width: 100%;
-  height: 470px; /* Mantenemos la altura fija para igualar con la tabla */
+  height: 565px; /* Increased height by a few more pixels */
   display: flex;
   flex-direction: column;
   background-color: #a5a5a5; /* Actualizado al gris estándar */
   border-radius: $border-radius;
   box-shadow: $primary-shadow;
   overflow: hidden;
+  box-sizing: border-box; /* Added for consistency */
 }
 
 .chart-header {
@@ -20,7 +21,6 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #EAEAEA;
 }
 
 .chart-header h3 {
