@@ -1,8 +1,9 @@
 <div class="coupon-container">
-  <div class="coupon-header">
-    <h2>Cupones</h2>
+  <div class="sticky-header">
+    <div class="coupon-header">
+      <h2>Cupones</h2>
 
-    <div class="coupon-date-selector">
+      <div class="coupon-date-selector">
       <mat-form-field appearance="outline">
         <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()">
           <mat-option [value]="0">
@@ -22,7 +23,7 @@
             {{year}}
           </mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field>    </div>
     </div>
   </div>
 

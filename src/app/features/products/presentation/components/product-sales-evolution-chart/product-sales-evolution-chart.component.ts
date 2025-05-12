@@ -1,10 +1,8 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy, Input } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProductSalesEvolutionViewModel } from './product-sales-evolution.view-model';
@@ -18,8 +16,6 @@ import { ProductSalesEvolutionModel } from '../../../domain/product-sales-evolut
     NgxEchartsModule, 
     FormsModule, 
     ReactiveFormsModule,
-    MatSelectModule, 
-    MatFormFieldModule, 
     MatIconModule,
     MatCheckboxModule
   ],
@@ -37,7 +33,35 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
   // Productos seleccionados para mostrar en el gráfico
   selectedProductIds: string[] = [];
     // Año seleccionado para filtrar datos
-  selectedYear: number | null = null;  
+  // selectedYear: number | null = null;  // Replaced by Input setter/getter
+  private _selectedYear: number | null = null;
+
+  @Input()
+  set selectedYear(value: number | string | null) {
+    const yearNumber = typeof value === 'string' ? parseInt(value, 10) : value;
+    if (yearNumber && yearNumber !== this._selectedYear) {
+      this._selectedYear = yearNumber;
+      if (this.viewModel && typeof this.viewModel.setSelectedYear === 'function') {
+        this.viewModel.setSelectedYear(this._selectedYear);
+      }
+      if (this.dataLoaded && this.viewModel.selectedProductsEvolution$() && this.viewModel.selectedProductsEvolution$().length > 0) {
+        this.updateChartOption(this.viewModel.selectedProductsEvolution$());
+      }
+    } else if (value === null && this._selectedYear !== null) {
+      this._selectedYear = null;
+      if (this.dataLoaded && this.viewModel.selectedProductsEvolution$() && this.viewModel.selectedProductsEvolution$().length > 0) {
+        this.updateChartOption(this.viewModel.selectedProductsEvolution$());
+      }
+    }
+  }
+  get selectedYear(): number | null {
+    return this._selectedYear;
+  }
+  
+  // Pagination properties
+  currentPage: number = 1;
+  itemsPerPage: number = 8;
+  totalPages: number = 0;
   
   // Referencias a los efectos para su posterior limpieza
   private readonly effectRefs: ReturnType<typeof effect>[] = [];
@@ -54,8 +78,21 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
       if (productEvolution && productEvolution.length > 0) {
         this.dataLoaded = true;
         this.selectedProductIds = this.viewModel.selectedProductIds$();
-        this.selectedYear = this.viewModel.selectedYear$();
         this.updateChartOption(productEvolution);
+      }
+    }));
+
+    // Effect to update totalPages when availableProducts changes
+    this.effectRefs.push(effect(() => {
+      const availableProducts = this.viewModel.availableProducts$();
+      if (availableProducts) {
+        this.totalPages = Math.ceil(availableProducts.length / this.itemsPerPage);
+        // Adjust currentPage if it's out of bounds
+        if (this.currentPage > this.totalPages && this.totalPages > 0) {
+          this.currentPage = this.totalPages;
+        } else if (this.totalPages === 0) {
+          this.currentPage = 1;
+        }
       }
     }));
 
@@ -120,15 +157,6 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Maneja el cambio en la selección de año
-   * Actualiza el modelo de vista con el nuevo año seleccionado
-   */
-  onYearSelectionChange(): void {
-    if (this.selectedYear) {
-      this.viewModel.setSelectedYear(this.selectedYear);
-    }
-  }
-  /**
    * Maneja la selección o deselección de productos mediante checkbox
    * @param productId ID del producto seleccionado o deseleccionado
    */
@@ -157,6 +185,23 @@ export class ProductSalesEvolutionChartComponent implements OnInit, OnDestroy {
    */
   canSelectProduct(productId: string): boolean {
     return this.selectedProductIds.includes(productId) || this.selectedProductIds.length < 3;
+  }
+
+  // Pagination methods
+  getPaginatedProducts(): { id: string, name: string }[] {
+    const availableProducts = this.viewModel.availableProducts$();
+    if (!availableProducts) {
+      return [];
+    }
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return availableProducts.slice(startIndex, endIndex);
+  }
+
+  goToPage(pageNumber: number): void {
+    if (pageNumber >= 1 && pageNumber <= this.totalPages) {
+      this.currentPage = pageNumber;
+    }
   }
 
   /**

@@ -6,7 +6,25 @@ $transition-speed: 0.3s;
 $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .coupon-container {
-  margin: 0 .7%;
+  width: 96%;
+  margin: 0 2% 100px 2%;
+  display: flex;
+  flex-wrap: wrap;
+  font-family: $primary-font;
+  justify-content: space-between;
+  padding-top: $spacing-unit;
+}
+
+.sticky-header {
+  position: sticky;
+  top: -22px;
+  z-index: 10000;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  padding: 10px 0 0 0;
+  background-color: transparent;
+  transition: all $transition-speed ease;
 }
 
 .coupon-header {
@@ -14,27 +32,27 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: -22px;
-  z-index: 100;
   box-sizing: border-box;
-  margin: auto 0.5%;
-  margin-bottom: 16px;
   background-color: #a5a5a5;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
+  border-radius: $border-radius;
   padding: 12px 20px;
+  box-shadow: $primary-shadow;
+  margin-bottom: 0.5%;
 
   > * {
-    margin: 0 0.5%;
+    margin: 0;
     border: none !important;
+    display: flex;
+    align-items: center;
   }
 
   h2 {
-    margin: 6px 0 0 0;
+    margin: 0;
     font-size: 18px;
     color: black;
     font-weight: bold;
+    display: flex;
+    align-items: center;
   }
 
   @media (max-width: 576px) {
@@ -61,17 +79,23 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     align-items: center;
     justify-content: flex-end;
     font-family: $primary-font;
+    margin-right: 0;
 
     @media (max-width: 576px) {
       width: 100%;
       justify-content: flex-end;
-    }
-
+      margin-right: 0;    }
+    
     mat-form-field {
       width: 105px;
       margin: 0;
       transform: scale(0.85);
       transform-origin: right center;
+      
+      @media (max-width: 400px) {
+        width: 90px; 
+        transform: scale(0.8);
+      }
 
       .mdc-list-item__primary-text {
         font-size: 16px !important;
@@ -79,11 +103,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
       ::ng-deep {
         .mat-mdc-text-field-wrapper {
-          background-color: #FFFFFF !important;
-          border-radius: $border-radius;
-          border: none !important;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
+          padding: 0 !important;
         }
 
         .mat-mdc-form-field-flex {
@@ -91,6 +111,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
           height: 48px;
           overflow: hidden;
           border-radius: $border-radius;
+          padding: 0 8px !important;
         }
 
         .mdc-line-ripple {
@@ -106,11 +127,17 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
         .mat-mdc-form-field-bottom-align::before {
           display: none;
-        }          .mat-mdc-form-field-infix {
+        }          
+        
+        .mat-mdc-form-field-infix {
           min-height: 48px;
           padding-top: 12px;
           padding-bottom: 12px;
           font-family: $primary-font !important;
+          width: auto !important;
+          padding-left: 0;
+          padding-right: 0;
+          text-align: center;
         }
 
         .mat-mdc-select {
@@ -135,68 +162,37 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
         .mat-mdc-form-field-label {
           font-family: $primary-font !important;
-        }.mat-mdc-select-value {
+        }
+        
+        .mat-mdc-select-value {
           font-family: $primary-font !important;
           line-height: 24px;
           font-size: 15px !important;
           font-weight: normal !important;
           text-transform: capitalize;
+          padding: 0 !important;
+          text-align: left !important;
+          justify-content: flex-start;
+          margin-left: 8px;
+          margin-right: 5px;
+        }
+        
+        .mdc-list-item__primary-text {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
+          text-align: center;
+        }
+        
+        .mat-mdc-select-arrow-wrapper {
+          background-color: #FFFFFF !important;
+          transform: translateY(0) !important;
+        }        .mat-mdc-form-field-focus-overlay {
+          opacity: 0 !important;
         }
       }
     }
   }
-
-}
-::ng-deep .mat-mdc-select-panel {
-  font-family: $primary-font !important;
-  padding: 1px 0;
-
-  .mat-mdc-option {
-    font-family: $primary-font !important;
-    font-size: 15px !important;
-    font-weight: normal !important;
-
-    .mdc-list-item__primary-text {
-      text-transform: capitalize;
-      font-family: $primary-font !important;
-      font-size: 15px !important;
-      font-weight: normal !important;
-    }
-
-    &:first-child {
-      margin-top: 2px;
-    }
-  }
-}
-
-::ng-deep .mdc-menu-surface {
-  font-family: $primary-font !important;
-  border-radius: $border-radius !important;
-  padding: 1px 0;
-
-  .mat-mdc-option {
-    font-family: $primary-font !important;
-    font-size: 15px !important;
-    font-weight: normal !important;
-    padding: 2px 4px;
-    &:first-child {
-      margin-top: 2px;
-    }
-  }
-
-  .mdc-list-item__primary-text {
-    text-transform: capitalize;
-    font-family: $primary-font !important;
-    font-size: 15px !important;
-    font-weight: normal !important;
-  }
-}
-
-
-
-.coupon-date-selector {
-  display: flex;
-  gap: 16px;
 }
 
 .coupon-element {
@@ -205,36 +201,121 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+  margin-bottom: 0;
+  margin-top: 0;
+  margin-left: 0;
+  width: 100%;
 }
 
 * {
   font-family: "Swiss 721 BT EX Roman", "Swiss721BT-ExRoman", Arial, sans-serif;
 }
 
-.coupon-container {
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .coupons-table {
-  width: 49%;
-  margin: 0.5%;
+  width: 49.25%;
+  float: left;
+  height: 800px;
+  margin-top: 0.5%;
+  overflow-y: hidden;
+  box-sizing: border-box;
 }
 
 .coupon-box-container {
-  width: 50%;
+  width: 49.25%;
+  margin: 0;
+  float: right;
   display: flex;
   flex-wrap: wrap;
+  height: 800px;
+  box-sizing: border-box;
+  justify-content: space-between;
 }
 
 .coupon-box {
-  width: 48%;
-  margin: 1%;
-  height: 125px;
-  padding: 16px 8px 8px 8px;
+  width: 48.5%;
+  margin-top: 1.5%;
+  height: 135px;
 }
 
 .coupon-graphic {
-  width: 98%;
-  margin: 1%;
+  margin-top: 1.5%;
+  width: 100%;
+  height: 498px;
+  margin-bottom: 0;
+}
+
+::ng-deep {
+  .mat-mdc-select-panel {
+    font-family: $primary-font !important;
+    padding: 1px 0;
+    background-color: #FFFFFF !important;
+    
+    .mat-mdc-option {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+      padding: 2px 4px;
+      min-height: 36px !important;
+      background-color: #FFFFFF !important;
+      
+      &:first-child {
+        margin-top: 4px;
+      }
+    }
+    
+    .mdc-list-item__primary-text {
+      text-transform: capitalize;
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
+  }
+  
+  .cdk-overlay-container {
+    .mat-mdc-select-panel, 
+    .mat-mdc-select-panel * {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
+    
+    .mat-mdc-option {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+      padding: 2px 4px;
+      background-color: #FFFFFF !important;
+      
+      &:first-child {
+        margin-top: 4px;
+      }
+    }
+    
+    .mdc-menu-surface {
+      border-radius: $border-radius !important;
+      background-color: #FFFFFF !important;
+      
+      .mat-mdc-option,
+      .mat-mdc-option *,
+      .mdc-list-item__primary-text {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+    }
+  }
+  
+  :host ::ng-deep {
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-value,
+    .mat-mdc-select-arrow,
+    .mat-mdc-select-min-line,
+    .mat-mdc-option-text,
+    .mat-mdc-select-trigger,
+    .mdc-list-item__primary-text {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
+  }
 }

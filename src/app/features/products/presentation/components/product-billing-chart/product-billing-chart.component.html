@@ -28,17 +28,15 @@
     <div *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productBilling().length === 0" class="no-data-state">
       <span>📊</span>
       <p>No hay datos disponibles</p>
-    </div>
-    
-    <!-- Contenedor para eCharts con opciones inmediatas -->
-    <div 
+    </div>    <div 
       *ngIf="!viewModel.loading() && !viewModel.error() && viewModel.productBilling().length > 0" 
       class="echarts-container" 
       echarts 
       [options]="chartOption"
       [loading]="viewModel.loading()"
       [theme]="'default'"
-      [initOpts]="{renderer: 'canvas'}">
+      [initOpts]="{renderer: 'canvas', width: 'auto', height: 'auto', devicePixelRatio: 2}"
+      (chartInit)="onChartInit($event)">
     </div>
   </div>
 </div>

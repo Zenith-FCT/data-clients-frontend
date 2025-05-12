@@ -1,29 +1,28 @@
 <div class="main-wrapper">
-  <div class="sticky-header">
-    <div class="chart-header">
-      <h3>Carritos</h3>
-      <div class="date-selectors">
-        <mat-form-field>
-          <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()" placeholder="Todos">
-            <mat-option [value]="null">Todos</mat-option>
-            <mat-option *ngFor="let month of months.slice(1)" [value]="month.value">
-              {{month.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
-            <mat-option [value]="'todos'">Todos</mat-option>
-            <mat-option *ngFor="let year of cartsViewModel.availableYears$()" [value]="year">
-              {{year}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+  <div class="carts-container">
+    <div class="sticky-header-container">
+      <div class="chart-header">
+        <h3>Carritos</h3>
+        <div class="date-selectors">
+          <mat-form-field>
+            <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onDateChange()" placeholder="Todos">
+              <mat-option [value]="null">Todos</mat-option>
+              <mat-option *ngFor="let month of months.slice(1)" [value]="month.value">
+                {{month.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select [(ngModel)]="selectedYear" (selectionChange)="onDateChange()">
+              <mat-option [value]="'todos'">Todos</mat-option>
+              <mat-option *ngFor="let year of cartsViewModel.availableYears$()" [value]="year">
+                {{year}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="orders-container">
     <div class="carts-summary">
       <div class="info-container">
         <app-information-box-carts type="total"></app-information-box-carts>

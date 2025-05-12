@@ -1,67 +1,68 @@
-<div class="sticky-header-container">
-  <div class="date-selectors-left">
-    <h2>Productos</h2>
-    <div class="selectors-container">
-      <mat-form-field>
-        <mat-select [(value)]="globalMonth" (selectionChange)="onGlobalMonthChange($event)">
-          <mat-option value="1">Enero</mat-option>
-          <mat-option value="2">Febrero</mat-option>
-          <mat-option value="3">Marzo</mat-option>
-          <mat-option value="4">Abril</mat-option>
-          <mat-option value="5">Mayo</mat-option>
-          <mat-option value="6">Junio</mat-option>
-          <mat-option value="7">Julio</mat-option>
-          <mat-option value="8">Agosto</mat-option>
-          <mat-option value="9">Septiembre</mat-option>
-          <mat-option value="10">Octubre</mat-option>
-          <mat-option value="11">Noviembre</mat-option>
-          <mat-option value="12">Diciembre</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-select [(value)]="globalYear" (selectionChange)="onGlobalYearChange($event)">
-          <mat-option value="2023">2023</mat-option>
-          <mat-option value="2024">2024</mat-option>
-          <mat-option value="2025">2025</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </div>
-</div>
-
-<div class="main-container">
+<div class="main-wrapper">
   <div class="products-container">
-    
-    @if (isBrowser) {
-      <!-- Charts layout con dos mitades -->
-      <div class="charts-layout">
-        <!-- Product Earnings Chart (Mitad izquierda) -->
-        <div class="chart-wrapper left">
-          <app-product-billing-chart></app-product-billing-chart>
+    <div class="products-summary">
+      <div class="sticky-header-container">
+        <div class="date-selectors-left">
+          <h2>Productos</h2>
+          <div class="selectors-container">
+            <mat-form-field>
+              <mat-select [(value)]="globalMonth" (selectionChange)="onGlobalMonthChange($event)">
+                <mat-option value="1">Enero</mat-option>
+                <mat-option value="2">Febrero</mat-option>
+                <mat-option value="3">Marzo</mat-option>
+                <mat-option value="4">Abril</mat-option>
+                <mat-option value="5">Mayo</mat-option>
+                <mat-option value="6">Junio</mat-option>
+                <mat-option value="7">Julio</mat-option>
+                <mat-option value="8">Agosto</mat-option>
+                <mat-option value="9">Septiembre</mat-option>
+                <mat-option value="10">Octubre</mat-option>
+                <mat-option value="11">Noviembre</mat-option>
+                <mat-option value="12">Diciembre</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select [(value)]="globalYear" (selectionChange)="onGlobalYearChange($event)">
+                <mat-option value="2023">2023</mat-option>
+                <mat-option value="2024">2024</mat-option>
+                <mat-option value="2025">2025</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
-        
-        <!-- Total Sales Per Product Chart (Mitad derecha) -->
-        <div class="chart-wrapper right">
-          <app-product-sales-chart></app-product-sales-chart>
+      </div>      @if (isBrowser) {
+        <!-- Charts layout con dos mitades -->
+        <div class="charts-layout">
+          <!-- Product Earnings Chart (Mitad izquierda) -->
+          <div class="chart-wrapper left">
+            <app-product-billing-chart></app-product-billing-chart>
+          </div>
+          
+          <!-- Total Sales Per Product Chart (Mitad derecha) -->
+          <div class="chart-wrapper right">
+            <app-product-sales-chart></app-product-sales-chart>
+          </div>
         </div>
-      </div>
-        <!-- Top Products row (tabla y gráfico por mes) -->
-      <div class="top-products-row">
-        <!-- Tabla de productos más vendidos (Mitad izquierda) -->
-        <div class="top-products-left">
-          <app-top-products-table></app-top-products-table>
-        </div>
-        
-        <!-- Gráfico de productos más vendidos por mes (Mitad derecha) -->
-        <div class="top-products-right">
-          <app-top-products-by-month-chart></app-top-products-by-month-chart>
-        </div>
-      </div>      <!-- Gráfico de evolución de ventas mensuales por producto (Ancho completo) -->
-      <div class="sales-evolution-row">
-        <div class="sales-evolution-wrapper">
-          <app-product-sales-evolution-chart></app-product-sales-evolution-chart>
-        </div>
-      </div>
-    }
+          <!-- Top Products row (tabla y gráfico por mes) -->
+        <div class="top-products-row">
+          <!-- Tabla de productos más vendidos (Mitad izquierda) -->
+          <div class="top-products-left">
+            <app-top-products-table></app-top-products-table>
+          </div>
+          
+          <!-- Gráfico de productos más vendidos por mes (Mitad derecha) -->
+          <div class="top-products-right">
+            <app-top-products-by-month-chart
+              [year]="globalYear"
+              [month]="globalMonth">
+            </app-top-products-by-month-chart>
+          </div>
+        </div>      <!-- Gráfico de evolución de ventas mensuales por producto (Ancho completo) -->
+        <div class="sales-evolution-row">
+          <div class="sales-evolution-wrapper">
+            <app-product-sales-evolution-chart [selectedYear]="globalYear"></app-product-sales-evolution-chart>
+          </div>
+        </div>      }
+    </div>
   </div>
 </div>

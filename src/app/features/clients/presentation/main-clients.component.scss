@@ -40,6 +40,70 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   tbody, td, tfoot, th, thead, tr {
     border-color: #EEEEEE !important;
   }
+    /* Estilos para el contenido de las celdas con margen izquierdo */
+  .cell-content {
+    margin-left: 8px;
+  }
+  /* Estilos para la paginación con puntos */  
+  .dot-pagination {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    width: 100%;
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    height: 20px;
+    pointer-events: auto;
+    
+    .dots-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+    }
+    
+    .pagination-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.7);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      position: relative;
+      
+      &.active {
+        background-color: white;
+        transform: scale(1.2);
+      }
+      
+      &:hover:not(.active) {
+        background-color: rgba(255, 255, 255, 0.7);
+      }
+      
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+  
+  /* Estilos para filas vacías */
+  tr.empty-row {
+    height: 48px;
+    
+    td {
+      border-bottom: none;
+      background-color: #a5a5a5;
+    }
+  }
   
   /* Estilos para el panel desplegable de los selectores */
   .mat-mdc-select-panel,
@@ -82,13 +146,15 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .sticky-header-container {
   position: sticky;
-  top: -20px;
+  top: -40px;
   z-index: 10000;
   width: 100%;
   box-sizing: border-box;
-  margin-bottom: 16px;
-  padding: 0 12px; /* Reducido el padding horizontal para aumentar el ancho efectivo */
-  background-color: transparent; /* Fondo transparente como estaba antes */
+  margin-bottom: 1.25%;
+  padding: 28px 0 0 0;
+  background-color: transparent;
+  transition: all $transition-speed ease;
+  transform: translateZ(0);
 }
 
 .date-selectors-left {
@@ -99,12 +165,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   border-radius: $border-radius;
   padding: 12px 20px;
   box-shadow: $primary-shadow;
-  width: calc(100% - 0px); /* Ajuste para alinear perfectamente con los elementos de abajo */
-  max-width: 1600px; /* Limitar el ancho máximo */
-  margin: 0 auto; /* Centrar horizontalmente */
+  width: 96%;
+  margin: 0 2%;
   box-sizing: border-box;
-  margin-left: auto;
-  margin-right: auto;
   
   @media (max-width: 576px) {
     flex-direction: column;
@@ -195,17 +258,19 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 0 12px 24px;
+  padding: 10px 0 24px;
   background: #E5E5E5;
   justify-content: space-between;
-  max-width: 1600px;
-  margin: 0 auto;
+  width: 96%;
+  margin: 0 2%;
+  box-sizing: border-box; /* Aseguramos que el ancho y márgenes se calculen exactamente igual */
 }
 
 .top-row {
   width: 100%;
-}.clients-container {
-  width: calc(48% - 4px); /* Ajustado para equilibrar el margen */
+}
+.clients-container {
+  width: 49.25%; /* Simplificado para usar exactamente 48% del espacio disponible */
   background: #a5a5a5;
   border-radius: $border-radius;
   color: #333333;
@@ -213,24 +278,25 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   flex-direction: column;
   height: 504px;
   box-shadow: $primary-shadow;
-  margin-left: 4px; /* Ajuste fino para alinearse con el gráfico de abajo */
+  margin-left: 0;
 }
 
 .clients-title {
   margin: 0;
-  padding: 12px 24px;
-  text-align: center;
+  padding: 22px 12px;
+  text-align: left;
   font-size: 18px;
   font-weight: bold;
   font-family: $primary-font;
   background: #a5a5a5;
   border-radius: $border-radius $border-radius 0 0;
-  border-bottom: 1px solid #E5E5E5;
-}.table-container {
+}
+.table-container {
+  position: relative;
   overflow: auto;
   background: #a5a5a5;
   border-radius: 0 0 $border-radius $border-radius;
-  padding: 0 0 12px 0;
+  padding: 0 0 42px 0;
   height: calc(100% - 41px);
   min-height: 0;
   width: 100%;
@@ -263,18 +329,18 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     font-weight: bold;
     font-family: $primary-font;
     color: #333333;
-    border-bottom: 2px solid #777777;
     position: sticky;
     top: 0;
     z-index: 3;
-    text-align: center; /* Centrar el texto en las cabeceras */
+    text-align: left;
+    margin-left: 8px;
   }
     td.mat-mdc-cell {
     padding: 12px 12px;
     font-size: 14px;
     color: #FFFFFF; /* Cambiado a blanco para los datos */
-    border-bottom: 1px solid #EEEEEE;
-    text-align: center; /* Centrar el texto en las celdas */
+    text-align: left; /* Centrar el texto en las celdas */
+    margin-left: 8px;
   }
     tr.mat-mdc-row {
     height: 48px;
@@ -284,22 +350,19 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       background: rgba(15, 249, 89, 0.1);
     }
   }
-  
-  /* Asegurarse de que cualquier contenido dentro de las celdas esté centrado */
   .mat-mdc-cell > * {
-    margin: 0 auto;
+    margin: 0;
     display: flex;
-    justify-content: center;
     align-items: center;
   }
 }.info-panel {
-  width: calc(48% - 4px); /* Ajustado para equilibrar el margen */
-  display: flex;
+  width: 49.25%; /* Simplificado para usar exactamente 48% del espacio disponible */
+  display: flex;  
   flex-direction: column;
   gap: 12px;
   height: 504px;
   justify-content: space-between;
-  margin-right: 4px; /* Mismo ajuste que los otros contenedores para mantener equilibrio */
+  margin-right: 0; /* Eliminamos el margen derecho para que esté perfectamente alineado */
 }
 
 .info-row {
@@ -647,9 +710,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .chart-wrapper {
-  width: calc(48% - 4px); /* Ajustado para equilibrar el margen */
+  width: 49.25%; /* Simplificado para usar exactamente 48% del espacio disponible */
   margin-top: 16px;
-  margin-left: 4px; /* Mismo ajuste que el contenedor de la tabla para mantener la alineación */
+  margin-left: 0; /* Eliminamos el margen izquierdo para que esté perfectamente alineado */
 }
 
 .chart-container {

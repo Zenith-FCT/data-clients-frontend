@@ -1,11 +1,8 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, effect, ChangeDetectionStrategy, Input } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { FormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { TopProductsByMonthViewModel } from './top-products-by-month.view-model';
 import { TopProductsByMonthModel } from '../../../domain/top-products-by-month.model';
 
@@ -16,7 +13,7 @@ import { TopProductsByMonthModel } from '../../../domain/top-products-by-month.m
 @Component({
   selector: 'app-top-products-by-month-chart',
   standalone: true,
-  imports: [CommonModule, NgxEchartsModule, FormsModule, MatSelectModule, MatFormFieldModule, MatIconModule],
+  imports: [CommonModule, NgxEchartsModule, FormsModule],
   templateUrl: './top-products-by-month-chart.component.html',
   styleUrl: './top-products-by-month-chart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -28,8 +25,27 @@ export class TopProductsByMonthChartComponent implements OnInit, OnDestroy {
   dataLoaded = false;
   
   // Propiedades para selección de año y mes
-  selectedYear: number = new Date().getFullYear();
-  selectedMonth: number = new Date().getMonth() + 1; // 1-12
+  selectedYear!: number;
+  selectedMonth!: number;
+
+  @Input() set year(value: string) {
+    if (value) {
+      this.selectedYear = parseInt(value, 10);
+      if (this.dataLoaded && this.viewModel.topProductsByMonth$()) {
+        this.updateChartOption(this.viewModel.topProductsByMonth$());
+      }
+    }
+  }
+
+  @Input() set month(value: string) {
+    if (value) {
+      this.selectedMonth = parseInt(value, 10);
+      if (this.dataLoaded && this.viewModel.topProductsByMonth$()) {
+        this.updateChartOption(this.viewModel.topProductsByMonth$());
+      }
+    }
+  }
+
   availableYears: number[] = [];
   readonly monthNames: string[] = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -50,13 +66,8 @@ export class TopProductsByMonthChartComponent implements OnInit, OnDestroy {
         this.dataLoaded = true;
         
         // Extraer años disponibles de los datos
-        this.extractAvailableDates(topProductsByMonth);
         
-        // Usar el año y mes más recientes por defecto si no se ha seleccionado ninguno
-        if (this.availableYears.length > 0 && !this.selectedYear) {
-          this.selectedYear = Math.max(...this.availableYears);
-          console.log(`TopProductsByMonthChartComponent: Año seleccionado automáticamente: ${this.selectedYear}`);
-        }
+      
         
         this.updateChartOption(topProductsByMonth);
       }
@@ -80,13 +91,7 @@ export class TopProductsByMonthChartComponent implements OnInit, OnDestroy {
   /**
    * Extrae la lista de años disponibles de los datos
    */
-  private extractAvailableDates(data: TopProductsByMonthModel[]): void {
-    // Extraer años únicos de los datos
-    this.availableYears = [...new Set(data.map(item => {
-      const [year] = item.month.split('-');
-      return parseInt(year, 10);
-    }))].sort((a, b) => b - a); // Ordenar de más reciente a más antiguo
-  }
+
     ngOnInit(): void {
     console.log('TopProductsByMonthChartComponent: Iniciando carga de datos');
     if (this.isBrowser && !this.isTestEnvironment()) {
@@ -117,9 +122,7 @@ export class TopProductsByMonthChartComponent implements OnInit, OnDestroy {
   /**
    * Maneja el cambio de año o mes en los selectores
    */
-  onDateChange(): void {
-    this.updateChartOption(this.viewModel.topProductsByMonth$());
-  }
+
 
   /**
    * Obtener el código de mes en formato YYYY-MM basado en las selecciones actuales

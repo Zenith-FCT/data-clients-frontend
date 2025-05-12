@@ -81,6 +81,7 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
       this.updateChart();
     }
   }
+  
   private updateChart(): void {
     if (!this.isBrowser) return;
 
@@ -102,6 +103,8 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
 
     const total = values.reduce((sum, value) => sum + value, 0);
     
+    const isSmallScreen = window.innerWidth < 768;
+    
     this.chartOption = {
       tooltip: {
         trigger: 'item',
@@ -110,11 +113,11 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
           const percentage = Math.round((value / total) * 100);
           return `${params.name}: ${value.toLocaleString('es-ES')} € (${percentage}%)`;
         },
-        backgroundColor: 'rgba(33, 33, 33, 0.9)',
-        borderColor: '#444',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
         textStyle: {
-          color: '#fff',
-        }
+          color: '#000',
+        },
+        confine: true
       },
       series: [
         {
@@ -122,7 +125,7 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
           type: 'pie',
           radius: ['40%', '70%'],
           center: ['50%', '45%'],
-          avoidLabelOverlap: false,
+          avoidLabelOverlap: true,
           itemStyle: {
             borderRadius: 8,
             borderWidth: 2,
@@ -152,10 +155,15 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
               } else {
                 formattedValue = params.value + ' €';
               }
-              return `${params.name}: ${formattedValue}`;
+              let name = params.name;
+              if (isSmallScreen && name.length > 8) {
+                name = name.substring(0, 6) + '...';
+              }
+              
+              return isSmallScreen ? `${formattedValue}` : `${name}: ${formattedValue}`;
             },
             color: '#000',
-            fontSize: 14,
+            fontSize: isSmallScreen ? 10 : 14,
           },
           labelLine: {
             show: true,

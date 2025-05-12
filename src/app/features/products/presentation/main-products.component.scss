@@ -19,9 +19,16 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   background-color: #E5E5E5;
 }
 
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #E5E5E5;
+  font-family: $primary-font;
+}
+
 // Contenedor principal
 .main-container {
-  padding: 0.5rem 2rem; // Mantenemos el padding original
   width: 100%;
   box-sizing: border-box;
   background-color: #E5E5E5;
@@ -29,7 +36,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 // Estilos unificados para selectores
 /* Estilo común para todos los selectores de la aplicación */
-:host ::ng-deep {  mat-form-field,
+:host ::ng-deep {  
+  mat-form-field:not(.date-selectors-left mat-form-field),
   .selector-común, 
   .month-selector, 
   .year-selector,
@@ -85,11 +93,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     
     .mat-mdc-form-field-bottom-align::before {
       display: none;
-    }
-    .mat-mdc-select-value {
+    }    .mat-mdc-select-value {
       font-family: $primary-font !important;
-      line-height: 22px;
-      font-size: 14px !important;
+      line-height: 24px;
+      font-size: 15px !important;
       font-weight: normal !important;
       text-align: center !important;
       padding: 0 6px !important;
@@ -138,8 +145,28 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .products-container {
-  width: 100%;
+  flex: 1;
+  box-sizing: border-box;
+  width: 96%;
+  margin: 0 2%;
+  padding-top: $spacing-unit;
+  background-color: #E5E5E5;
+  display: flex;
+  flex-direction: column;
   font-family: $primary-font;
+}
+
+.products-summary {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-unit;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: all $transition-speed ease;
+  font-family: $primary-font;
+  background-color: #E5E5E5;
 }
 
 .products-title {
@@ -174,7 +201,6 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   width: 100%;
   gap: 1.5rem;
   flex-wrap: wrap;
-  margin-bottom: 2rem;
 }
 
 .top-products-left, .top-products-right {
@@ -354,19 +380,97 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   }
 }
 
-/* Los estilos para el panel desplegable de los selectores están ahora
-   consolidados en la sección "Estilo global para dropdown panels" arriba */
+/* Estilos globales para los menús desplegables */
+::ng-deep {
+  .mat-mdc-select-value-text,
+  .mat-mdc-select,
+  .mat-mdc-option,
+  .mat-mdc-option-text,
+  .mdc-list-item__primary-text,
+  .mat-mdc-form-field {
+    font-family: $primary-font !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+  }
+  
+  .cdk-overlay-pane {
+    .mat-mdc-option {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+      padding: 2px 4px;
+      background-color: #FFFFFF !important;
+      
+      &:first-child {
+        margin-top: 4px;
+      }
+    }
+  }
+  
+  .mat-mdc-select-panel {
+    font-family: $primary-font !important;
+    padding: 1px 0;
+    background-color: #FFFFFF !important;
+    
+    .mat-mdc-option {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+      background-color: #FFFFFF !important;
+      
+      .mdc-list-item__primary-text {
+        text-transform: capitalize;
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      &:first-child {
+        margin-top: 4px;
+      }
+    }
+  }
+  
+  .mdc-menu-surface {
+    font-family: $primary-font !important;
+    border-radius: $border-radius !important;
+    padding: 1px 0;
+    background-color: #FFFFFF !important;
+    
+    .mat-mdc-option {
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+      padding: 2px 4px;
+      background-color: #FFFFFF !important;
+      
+      &:first-child {
+        margin-top: 4px;
+      }
+    }
+    
+    .mdc-list-item__primary-text {
+      text-transform: capitalize;
+      font-family: $primary-font !important;
+      font-size: 15px !important;
+      font-weight: normal !important;
+    }
+  }
+}
 
 /* Estilos para el header sticky con selectores de fecha */
 .sticky-header-container {
+  position: -webkit-sticky; /* Para Safari */
   position: sticky;
-  top: -20px;
+  top: -22px; /* Este valor controla cuánto del border-radius se oculta */
   z-index: 10000;
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 16px;
-  padding: 0 12px; 
+  padding: 10px 0 0 0;
   background-color: transparent;
+  transition: all $transition-speed ease;
+  transform: translateZ(0); /* Añadir para hardware acceleration */
 }
 
 .date-selectors-left {
@@ -377,9 +481,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   border-radius: $border-radius;
   padding: 12px 20px;
   box-shadow: $primary-shadow;
-  width: calc(100% - 0px);
-  max-width: 1600px;
-  margin: 0 auto;
+  width: 100%;
   box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
@@ -409,40 +511,115 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       width: 100%;
       justify-content: flex-end;
     }
-    
+  }
     mat-form-field {
-      width: 105px;
-      margin: 0;
-      transform: scale(0.85);
-      transform-origin: right center;
+    width: 105px;
+    margin: 0;
+    transform: scale(0.85);
+    transform-origin: right center;      ::ng-deep {
+      .mat-mdc-text-field-wrapper {
+        background-color: #FFFFFF !important;
+        border-radius: $border-radius;
+        border: none !important;
+        box-shadow: $primary-shadow;
+        overflow: hidden;
+      }
       
-      ::ng-deep {
-        .mat-mdc-text-field-wrapper {
-          background-color: #FFFFFF !important;
-          border-radius: $border-radius;
-          border: none !important;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
+      .mat-mdc-form-field-flex {
+        background-color: #FFFFFF !important;
+        height: 48px;
+        overflow: hidden;
+        border-radius: $border-radius;
+      }
+      
+      .mat-mdc-form-field-infix {
+        min-height: 48px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      
+      .mdc-line-ripple {
+        display: none;
+      }
+      
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      
+      .mat-mdc-form-field-bottom-align::before {
+        display: none;
+      }
+      
+      .mat-mdc-select-value {
+        font-family: $primary-font !important;
+        line-height: 24px;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mdc-list-item__primary-text {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-select-arrow-wrapper {
+        background-color: #FFFFFF !important;
+      }
+
+      .mat-mdc-form-field-focus-overlay {
+        opacity: 0 !important;
+      }
+      
+      .mat-mdc-select {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-option {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-option-text {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+      }
+      
+      .mat-mdc-form-field-label {
+        font-family: $primary-font !important;
+      }
+      
+      .mdc-menu-surface {
+        border-radius: $border-radius !important;
+        
+        .mat-mdc-option {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
         }
         
-        .mat-mdc-form-field-flex {
-          background-color: #FFFFFF !important;
-          height: 40px;
-          overflow: hidden;
-          border-radius: $border-radius;
-          border: none !important;
+        .mdc-list-item__primary-text {
+          font-family: $primary-font !important;
+          font-size: 15px !important;
+          font-weight: normal !important;
         }
-        
-        .mat-mdc-form-field-infix {
-          min-height: 40px;
-          padding-top: 8px;
-          padding-bottom: 8px;
-          padding-left: 6px;
-          padding-right: 6px;
-          width: 100% !important;
-          display: flex;
-          justify-content: center;
-        }
+      }
+      .mat-mdc-select,
+      .mat-mdc-select *,
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text,
+      .mat-mdc-select-arrow,
+      .mat-mdc-form-field-infix {
+        font-family: $primary-font !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
       }
     }
   }

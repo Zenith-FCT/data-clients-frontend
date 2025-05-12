@@ -8,39 +8,30 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 .main-wrapper {
   display: flex;
   flex-direction: column;
-  position: absolute; 
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 98vh;
   width: 100%;
-  overflow: hidden;
   background-color: #E5E5E5;
   font-family: $primary-font;
 }
 
 .orders-container {
   flex: 1;
-  overflow-y: auto;
-  padding: $spacing-unit;
-  padding-bottom: 5rem;
   box-sizing: border-box;
-  width: 100%;
-  height: calc(100vh - 20px);
+  width: 96%;
+  margin: 0 2%;
+  padding-top: $spacing-unit;
   background-color: #E5E5E5;
 }
 
 .sticky-header-container {
   position: sticky;
-  top: -20px;
+  top: -22px;
   z-index: 10000;
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 16px;
-  padding: 0;
-  background-color: transparent; 
-
+  padding: 10px 0 0 0;
+  background-color: transparent;
+  transition: all $transition-speed ease;
 }
 
 .date-selectors-left {
@@ -49,9 +40,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   justify-content: space-between;  
   background-color: #a5a5a5;
   border-radius: $border-radius;
-  
   padding: 12px 20px;
-  box-shadow: $primary-shadow;  width: 100%;
+  box-shadow: $primary-shadow;
+  width: 100%;
   box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
@@ -86,29 +77,13 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     width: 105px;
     margin: 0;
     transform: scale(0.85);
-    transform-origin: right center;
-      ::ng-deep {
+    transform-origin: right center;      ::ng-deep {
       .mat-mdc-text-field-wrapper {
         background-color: #FFFFFF !important;
-        border-radius: $border-radius;
-        border: none !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-      }
-      
-      .mat-mdc-form-field-flex {
-        background-color: #FFFFFF !important;
-        height: 48px;
-        overflow: hidden;
-        border-radius: $border-radius;
-      }
-      
-      .mat-mdc-text-field-wrapper {
-        background-color: #FFFFFF !important;
-        overflow: hidden;
         border-radius: $border-radius;
         border: none !important;
         box-shadow: $primary-shadow;
+        overflow: hidden;
       }
       
       .mat-mdc-form-field-flex {
@@ -229,9 +204,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       font-size: 15px !important;
       font-weight: normal !important;
       padding: 2px 4px;
+      background-color: #FFFFFF !important;
       
       &:first-child {
-        margin-top: 2px;
+        margin-top: 4px;
       }
     }
   }
@@ -239,11 +215,13 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   .mat-mdc-select-panel {
     font-family: $primary-font !important;
     padding: 1px 0;
+    background-color: #FFFFFF !important;
     
     .mat-mdc-option {
       font-family: $primary-font !important;
       font-size: 15px !important;
       font-weight: normal !important;
+      background-color: #FFFFFF !important;
       
       .mdc-list-item__primary-text {
         text-transform: capitalize;
@@ -253,7 +231,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       }
       
       &:first-child {
-        margin-top: 2px;
+        margin-top: 4px;
       }
     }
   }
@@ -262,15 +240,17 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     font-family: $primary-font !important;
     border-radius: $border-radius !important;
     padding: 1px 0;
+    background-color: #FFFFFF !important;
     
     .mat-mdc-option {
       font-family: $primary-font !important;
       font-size: 15px !important;
       font-weight: normal !important;
       padding: 2px 4px;
+      background-color: #FFFFFF !important;
       
       &:first-child {
-        margin-top: 2px;
+        margin-top: 4px;
       }
     }
     
@@ -288,18 +268,19 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   flex-direction: column;
   gap: $spacing-unit;
   width: 100%;
-  margin: 0 auto;
-  padding: 0 16px;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   transition: all $transition-speed ease;
   font-family: $primary-font;
-  background-color: #E5E5E5;  .summary-cards {
+  background-color: #E5E5E5;
+  .summary-cards {
     display: flex;
     width: 100%;
     justify-content: space-between;
     app-information-box {
-      width: 24%;
-      margin: 0 0.5%;
+      width: 23.8%;
+      margin: 0;
       box-sizing: border-box;
       display: flex;
       height: 100%;
@@ -383,6 +364,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   flex-direction: column;
   width: 100%;
   gap: 16px;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .charts-section {
@@ -456,7 +439,8 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   box-sizing: border-box;
   transition: all $transition-speed ease;  margin-bottom: 0;
   margin-top: 0.5rem;
-  gap: $spacing-unit;
+  justify-content: space-between;
+  gap: 1.5%;
 
   @media (max-width: 992px) {
     flex-direction: column;
@@ -467,8 +451,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   
   @media (max-width: 576px) {
     gap: 1rem;
-  }  app-chart-tm {
-    width: 75%;
+  }  
+  app-chart-tm {
+    width: 74%;
     height: 100%;
     margin-bottom: 16px;
     flex: 1;
@@ -501,6 +486,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .chart-tm-container {
   display: flex;
+  justify-content: space-between;
   gap: $spacing-unit;
   
   @media (max-width: 992px) {
@@ -508,7 +494,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   }
 
   .chart-tm {
-    flex: 0 0 75%;
+    flex: 0 0 7%;
     
     @media (max-width: 992px) {
       flex: 0 0 100%;
@@ -518,11 +504,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .tm-info-container {
-  flex: 0 0 25%;
   display: flex;
   flex-direction: column;
   gap: $spacing-unit;
-  width: 25%;
+  width: 24%;
   height: 100%;
   
   @media (max-width: 992px) {
@@ -560,7 +545,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .info-container {
-  width: 25%;
+  width: 23.8%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -667,7 +652,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .clients-charts-container {
   display: flex;
-  gap: 2rem;
+  gap: 1.5%;
   width: 100%;
   margin: 0.5rem 0 2rem 0;
   height: 650px;
@@ -713,7 +698,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 
 .product-charts-container {
   display: flex;
-  gap: 20px;
+  gap: 1.5%;
   margin-top: 0;
   width: 100%;
   
@@ -724,13 +709,14 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 }
 
 .product-type-chart-container {
-  width: 50%;
+  width: 49.2%;
   height: 650px;
   margin-top: 0; 
   background: transparent;
   border-radius: $border-radius;
   box-sizing: border-box;
   display: flex;
+  justify-content: space-between;
 
   app-chart-invoice-product-type,
   app-chart-orders-product-type {
@@ -746,7 +732,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   gap: 2rem;
   min-height: 650px;
   height: 650px;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
   overflow: visible;
   padding-top: 10px;
   .chart-container {

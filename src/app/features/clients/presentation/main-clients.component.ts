@@ -60,8 +60,19 @@ interface FilterConfig {
 })
 export class ClientsComponent implements OnInit {
   dataSource = new MatTableDataSource<ClientsList>([]);
-  displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];  globalYear = new Date().getFullYear().toString();
-  globalMonth = (new Date().getMonth() + 1).toString();  onGlobalYearChange(event: MatSelectChange): void {
+  displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];
+  
+  // Paginación
+  pageSize = 7; // 7 elementos por página
+  currentPage = 0;
+  totalItems = 0;
+  totalPages = 0;
+  displayData: ClientsList[] = [];
+  paginationDots: number[] = [];
+  emptyRows: number[] = [];
+  
+  globalYear = new Date().getFullYear().toString();
+  globalMonth = (new Date().getMonth() + 1).toString();onGlobalYearChange(event: MatSelectChange): void {
     this.globalYear = event.value;
     
     // Solo actualizar los filtros que no tienen selectores específicos
@@ -146,6 +157,11 @@ export class ClientsComponent implements OnInit {
 
     effect(() => {
       this.dataSource.data = this.viewModel.clients();
+      this.totalItems = this.viewModel.clients().length;
+      this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+      this.paginationDots = Array(this.totalPages).fill(0).map((_, i) => i);
+      this.updateDisplayData();
+      
       if (this.dataSource.paginator) {
         this.dataSource.paginator.firstPage();
       }
@@ -156,7 +172,26 @@ export class ClientsComponent implements OnInit {
         this.updateMonthlyOrdersChartOption();
       }
     });
-  }  ngOnInit(): void {
+  }  // Método para cambiar de página
+  changePage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      this.updateDisplayData();
+    }
+  }
+  
+  // Método para actualizar los datos mostrados en la tabla
+  updateDisplayData(): void {
+    const start = this.currentPage * this.pageSize;
+    const end = start + this.pageSize;
+    this.displayData = this.dataSource.data.slice(start, end);
+    
+    // Calcular filas vacías para mantener altura constante
+    const emptyRowCount = this.pageSize - this.displayData.length;
+    this.emptyRows = emptyRowCount > 0 ? Array(emptyRowCount).fill(0).map((_, i) => i) : [];
+  }
+  
+  ngOnInit(): void {
     if (this.isBrowser) {
       // Activar pantalla de carga
       this.loadingView = true;
