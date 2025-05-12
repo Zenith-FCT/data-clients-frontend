@@ -96,6 +96,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       @media (max-width: 400px) {
         width: 90px; 
         transform: scale(0.8);
+
+      .mdc-list-item__primary-text {
+        font-size: 16px !important;
+
       }
 
       ::ng-deep {
@@ -149,6 +153,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
           font-weight: normal !important;
         }
 
+        .mdc-text-field {
+          padding: 0 16px;
+        }
+
         .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
           border: none;
         }
@@ -188,7 +196,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
       }
     }
   }
-}
+
 
 .coupon-element {
   background-color: #a5a5a5;
