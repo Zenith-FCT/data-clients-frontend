@@ -16,7 +16,7 @@
         {{ viewModel.totalCoupons() }}
       </p>
       <p>
-        Cantidad total de cupones utilizados
+        {{ getDescription() }}
       </p>
 
     </div>
@@ -38,7 +38,7 @@
         {{ viewModel.totalDiscount() }}€
       </p>
       <p>
-        Total descuento realizado
+        {{ getDescription() }}
       </p>
     </div>
   </ng-container>
@@ -61,7 +61,7 @@
         {{ viewModel.totalCouponsMonth() }}
       </p>
       <p>
-        Cantidad total de cupones utilizados por mes
+        {{ getDescription() }}
       </p>
 
     </div>
@@ -84,7 +84,7 @@
         {{ viewModel.totalDiscountMonth() }}€
       </p>
       <p>
-        Total descuento por mes
+        {{ getDescription() }}
       </p>
 
     </div>

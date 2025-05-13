@@ -14,6 +14,12 @@ export interface TotalUIState {
   total: number;
 }
 
+export interface TotalDateUIState {
+  year: string;
+  month: string;
+  totalYears: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,6 +40,12 @@ export class BoxCouponsViewModel {
     this.getTotalCouponsByYearUseCase = new GetTotalCouponsByYearUseCase(this.couponsDataRepository);
     this.getTotalDiscountByYearUseCase = new GetTotalDiscountByYearUseCase(this.couponsDataRepository);
   }
+
+  private uiStateDate = signal<TotalDateUIState>({
+    year: "",
+    month: "",
+    totalYears: false
+  });
 
 
   private uiStateTotalCoupons = signal<TotalUIState>({
@@ -60,6 +72,10 @@ export class BoxCouponsViewModel {
     error: null
   })
 
+  readonly year = computed(() => this.uiStateDate().year);
+  readonly month = computed(() => this.uiStateDate().month);
+  readonly totalYears = computed(() => this.uiStateDate().totalYears);
+
   readonly totalCoupons = computed(() => this.uiStateTotalCoupons().total);
   readonly isLoadingCoupons= computed(() => this.uiStateTotalCoupons().isLoading);
   readonly errorCoupons = computed(() => this.uiStateTotalCoupons().error);
@@ -75,6 +91,14 @@ export class BoxCouponsViewModel {
   readonly totalDiscountMonth = computed(() => this.uiStateDiscountByMonth().total);
   readonly isLoadingDiscountMonth = computed(() => this.uiStateDiscountByMonth().isLoading);
   readonly errorDiscountMonth = computed(() => this.uiStateDiscountByMonth().error);
+
+  changeDate(month: string, year: string, totalYears: boolean): void {
+    this.uiStateDate.update(() => ({
+      year: year,
+      month: month,
+      totalYears: totalYears
+    }))
+  }
 
   getTotalCoupons(): void {
     this.uiStateTotalCoupons.update(() => ({
@@ -181,6 +205,58 @@ export class BoxCouponsViewModel {
   }
 
   getTotalCouponsByYear(year: string): void {
+    this.uiStateTotalCoupons.update(() => ({
+      total: 0,
+      isLoading: true,
+      error: null
+    }));
+    this.getTotalCouponsByYearUseCase.execute(year).subscribe(
+      {
+        next: (total) => {
+          this.uiStateTotalCoupons.update(() => ({
+            total: total,
+            isLoading: false,
+            error: null
+          }));
+        },
+        error: (error) => {
+          this.uiStateTotalCoupons.update(() => ({
+            total: 0,
+            isLoading: false,
+            error: error.message
+          }));
+        }
+      }
+    )
+  }
+
+  getTotalDiscountByYear(year: string): void {
+    this.uiStateTotalDiscount.update(() => ({
+      total: 0,
+      isLoading: true,
+      error: null
+    }));
+    this.getTotalDiscountByYearUseCase.execute(year).subscribe(
+      {
+        next: (total) => {
+          this.uiStateTotalDiscount.update(() => ({
+            total: total,
+            isLoading: false,
+            error: null
+          }));
+        },
+        error: (error) => {
+          this.uiStateTotalDiscount.update(() => ({
+            total: 0,
+            isLoading: false,
+            error: error.message
+          }));
+        }
+      }
+    )
+  }
+
+  getCouponsByYear(year: string): void {
     this.uiStateCouponsByMonth.update(() => ({
       total: 0,
       isLoading: true,
@@ -206,65 +282,13 @@ export class BoxCouponsViewModel {
     )
   }
 
-  getTotalDiscountByYear(year: string): void {
+  getDiscountByYear(year: string): void {
     this.uiStateDiscountByMonth.update(() => ({
       total: 0,
       isLoading: true,
       error: null
     }));
     this.getTotalDiscountByYearUseCase.execute(year).subscribe(
-      {
-        next: (total) => {
-          this.uiStateDiscountByMonth.update(() => ({
-            total: total,
-            isLoading: false,
-            error: null
-          }));
-        },
-        error: (error) => {
-          this.uiStateDiscountByMonth.update(() => ({
-            total: 0,
-            isLoading: false,
-            error: error.message
-          }));
-        }
-      }
-    )
-  }
-
-  getTotalCouponsAll(): void {
-    this.uiStateCouponsByMonth.update(() => ({
-      total: 0,
-      isLoading: true,
-      error: null
-    }));
-    this.getTotalCouponsUseCase.execute().subscribe(
-      {
-        next: (total) => {
-          this.uiStateCouponsByMonth.update(() => ({
-            total: total,
-            isLoading: false,
-            error: null
-          }));
-        },
-        error: (error) => {
-          this.uiStateCouponsByMonth.update(() => ({
-            total: 0,
-            isLoading: false,
-            error: error.message
-          }));
-        }
-      }
-    )
-  }
-
-  getTotalDiscountAll(): void {
-    this.uiStateDiscountByMonth.update(() => ({
-      total: 0,
-      isLoading: true,
-      error: null
-    }));
-    this.getTotalDiscountCouponsUseCase.execute().subscribe(
       {
         next: (total) => {
           this.uiStateDiscountByMonth.update(() => ({

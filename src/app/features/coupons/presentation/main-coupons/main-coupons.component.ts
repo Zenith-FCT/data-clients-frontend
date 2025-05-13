@@ -27,6 +27,7 @@ import {MainCouponsViewModel} from './main-coupons.viewModel';
 export class MainCouponsComponent  {
   selectedMonth: number | string = new Date().getMonth() + 1;
   selectedYear: string = new Date().getFullYear().toString();
+  lastSelectedYear: string = this.selectedYear;
   years: string[] = [];
   months: number[] = Array.from({length: 12}, (_, i) => i + 1);
 
@@ -48,23 +49,44 @@ export class MainCouponsComponent  {
 
   onDateChange(): void {
 
+    this.changeBoxTotals()
+    this.changeBox()
+
+    if (this.selectedYear.toString() != "0") {
+      this.countGraphicViewModel.getTotalCoupons(this.selectedYear)
+    }
+  }
+
+  changeBoxTotals(): void {
     if (this.selectedYear.toString() == "0") {
-      this.selectedMonth = 0
-      this.boxViewModel.getTotalCouponsAll()
-      this.boxViewModel.getTotalDiscountAll()
+      this.boxViewModel.getTotalCoupons()
+      this.boxViewModel.getTotalDiscount()
+    } else {
+      this.boxViewModel.getTotalCouponsByYear(this.selectedYear.toString())
+      this.boxViewModel.getTotalDiscountByYear(this.selectedYear.toString())
+    }
+  }
+
+  changeBox():void {
+    var year = this.selectedYear.toString()
+    if(year == "0") {
+      year = this.lastSelectedYear.toString()
+      this.boxViewModel.changeDate(this.selectedMonth.toString(), year, true)
+    } else {
+      this.lastSelectedYear = this.selectedYear
+      this.boxViewModel.changeDate(this.selectedMonth.toString(), year, false)
+    }
+
+    if (this.selectedMonth.toString() == "0") {
+      this.boxViewModel.getCouponsByYear(year)
+      this.boxViewModel.getDiscountByYear(year)
 
     } else {
+      const monthString = this.selectedMonth.toString().padStart(2, '0');
 
-      if (this.selectedMonth.toString() == "0") {
-        this.boxViewModel.getTotalCouponsByYear(this.selectedYear.toString())
-        this.boxViewModel.getTotalDiscountByYear(this.selectedYear.toString())
-      } else {
-        const monthString = this.selectedMonth.toString().padStart(2, '0');
+      this.boxViewModel.getTotalCouponsByMonth(monthString, year)
+      this.boxViewModel.getTotalDiscountByMonth(monthString, year)
 
-        this.boxViewModel.getTotalCouponsByMonth(monthString, this.selectedYear.toString())
-        this.boxViewModel.getTotalDiscountByMonth(monthString, this.selectedYear.toString())
-      }
-      this.countGraphicViewModel.getTotalCoupons(this.selectedYear)
     }
   }
 }
