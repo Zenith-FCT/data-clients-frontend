@@ -19,8 +19,8 @@
         </ng-container>
 
         <ng-container matColumnDef="count">
-          <th mat-header-cell *matHeaderCellDef class="black-header" style="color: #000000 !important; font-weight: bold !important;">Nº Veces utilizado</th>
-          <td mat-cell *matCellDef="let coupons">{{coupons.count}}</td>
+          <th mat-header-cell *matHeaderCellDef class="black-header" style="color: #000000 !important; font-weight: bold !important; text-align: center !important;">Nº Veces utilizado</th>
+          <td mat-cell *matCellDef="let coupons" style="text-align: center !important;">{{coupons.count}}</td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

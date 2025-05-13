@@ -76,11 +76,15 @@ $accent-color: #dfff03;
       font-weight: bold;
       font-size: 14px;
       color: #333333;
-      border-bottom: 2px solid #777777;
+      border-bottom: 1px solid white;
       font-family: $primary-font;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      
+      &:nth-child(n+3) {
+        text-align: center;
+      }
     }
   }
   
@@ -104,6 +108,10 @@ $accent-color: #dfff03;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        
+        &:nth-child(n+3) {
+          text-align: center;
+        }
       }
     }
   }

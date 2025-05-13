@@ -43,6 +43,14 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     /* Estilos para el contenido de las celdas con margen izquierdo */
   .cell-content {
     margin-left: 8px;
+    
+    &:has(+ td:nth-child(n+2)), 
+    &:parent(td:nth-child(n+2)) {
+      justify-content: center !important;
+      text-align: center !important;
+      margin-left: 0 !important;
+      width: 100% !important;
+    }
   }
   /* Estilos para la paginación con puntos */  
   .dot-pagination {
@@ -334,6 +342,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     z-index: 3;
     text-align: left;
     margin-left: 8px;
+
+    &:nth-child(n+2) {
+      text-align: center !important;
+    }
   }
     td.mat-mdc-cell {
     padding: 12px 12px;
@@ -341,6 +353,18 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     color: #FFFFFF; /* Cambiado a blanco para los datos */
     text-align: left; /* Centrar el texto en las celdas */
     margin-left: 8px;
+
+    &:nth-child(n+2) {
+      text-align: center !important;
+      
+      .cell-content {
+        justify-content: center !important;
+        text-align: center !important;
+        display: flex !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+      }
+    }
   }
     tr.mat-mdc-row {
     height: 48px;
@@ -354,6 +378,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     margin: 0;
     display: flex;
     align-items: center;
+
+    &:nth-child(n+2) {
+      justify-content: center !important;
+    }
   }
 }
 
