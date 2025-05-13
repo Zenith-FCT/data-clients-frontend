@@ -161,16 +161,18 @@ export class ProductsApiService {
               product.totalBilling += orderTotal;
               productBillingMap.set(sku, product);
             }
-          } 
-          // Si tiene múltiples productos, distribuir de manera equitativa
+          }          // Si tiene múltiples productos, distribuir de manera proporcional a la cantidad
           else if (orderProducts.length > 1) {
-            // Dividir el total entre todos los productos del pedido
-            const amountPerProduct = orderTotal / orderProducts.length;
+            // Calcular la cantidad total de productos en el pedido
+            const totalQuantity = orderProducts.reduce((sum, product) => sum + (product.cantidad || 1), 0);
             
+            // Distribuir el total según la proporción de cada producto
             orderProducts.forEach(orderProduct => {
               const product = productBillingMap.get(orderProduct.sku);
               if (product) {
-                product.totalBilling += amountPerProduct;
+                const quantity = orderProduct.cantidad || 1;
+                const productShare = orderTotal * (quantity / totalQuantity);
+                product.totalBilling += productShare;
                 productBillingMap.set(orderProduct.sku, product);
               }
             });
@@ -299,13 +301,13 @@ export class ProductsApiService {
               month,
               productName,
               salesCount
-            }));
-          
+            }));          
           // Añadir los productos al resultado
           result.push(...topProducts);
         });
         
-        return result;
+        // Ordenar por mes antes de devolver para facilitar la visualización cronológica
+        return result.sort((a, b) => a.month.localeCompare(b.month));
       }),
       tap(result => {
         console.log(`Obtenidos ${result.length} productos más vendidos por mes`);

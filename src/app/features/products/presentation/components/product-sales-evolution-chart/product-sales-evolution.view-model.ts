@@ -138,8 +138,7 @@ export class ProductSalesEvolutionViewModel {
     
     return Array.from(years).sort();
   }
-  
-  // Obtener los productos con más ventas totales
+    // Obtener los productos con más ventas totales
   private getTopProducts(limit: number): ProductSalesEvolutionModel[] {
     const products = [...this.productSalesEvolution$()];
       // Calcular ventas totales por producto
@@ -154,6 +153,7 @@ export class ProductSalesEvolutionViewModel {
     // Ordenar por ventas totales y tomar los primeros 'limit'
     return productsWithTotalSales
       .sort((a, b) => b.totalSales - a.totalSales)
+      .slice(0, limit);
   }
   
   // Método privado para actualizar el estado

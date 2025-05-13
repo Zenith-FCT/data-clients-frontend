@@ -260,24 +260,27 @@ export class ClientsApiService {
       catchError(this.handleError)
     );
   }
-
   getLTVByYearMonth(year: string, month: string): Observable<number> {
-    // Para LTV vamos a usar datos de clientes y pedidos
-    return this.getFullClientData().pipe(
-      map(clients => {
-        // Filtramos clientes que tuvieron su primer pedido en el año/mes indicado
-        const filteredClients = clients.filter(client => {
-          const firstOrderDate = new Date(client.fecha_1er_pedido);
-          const orderYear = firstOrderDate.getFullYear().toString();
-          const orderMonth = (firstOrderDate.getMonth() + 1).toString();
-          return orderYear === year && orderMonth === month;
-        });
+    // Usamos datos de pedidos para calcular el LTV del mes, no solo clientes nuevos
+    return this.getFullOrdersData().pipe(
+      map(orders => {      // Filtramos pedidos que se realizaron en el año/mes indicado
+      const monthOrders = orders.filter(order => {
+        const orderDate = new Date(order.fecha_pedido);
+        const orderYear = orderDate.getFullYear().toString();
+        const orderMonth = (orderDate.getMonth() + 1).toString();
+        return orderYear === year && orderMonth === month;
+      });
+      
+      if (monthOrders.length === 0) return 0;
+      
+      // Calculamos el valor total de los pedidos del mes
+      const totalValue = monthOrders.reduce((acc, order) => acc + Number(order.total_pedido), 0);
+      
+      // Agrupamos por cliente para saber cuántos clientes únicos hicieron pedidos
+      const uniqueClients = new Set(monthOrders.map(order => order.email)).size;
         
-        if (filteredClients.length === 0) return 0;
-        
-        // Calculamos el LTV promedio de estos clientes
-        const sum = filteredClients.reduce((acc, client) => acc + Number(client.ltv), 0);
-        return sum / filteredClients.length;
+        // LTV del mes: valor total dividido por número de clientes únicos
+        return uniqueClients > 0 ? totalValue / uniqueClients : 0;
       }),
       tap(ltv => console.log(`ClientsApiService: LTV for ${year}/${month}:`, ltv)),
       catchError(this.handleError)

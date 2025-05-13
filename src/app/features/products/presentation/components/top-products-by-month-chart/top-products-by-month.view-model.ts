@@ -24,12 +24,11 @@ export class TopProductsByMonthViewModel {
     error: null,
     initialized: false
   });
-
   // Señales computadas
   public readonly topProductsByMonth$ = computed(() => this.uiState().topProductsByMonth);
   public readonly loading$ = computed(() => this.uiState().loading);
   public readonly error$ = computed(() => this.uiState().error);
-  public readonly initialized = computed(() => this.uiState().initialized);
+  public readonly initialized$ = computed(() => this.uiState().initialized);
 
   constructor(
     private getTopProductsByMonthUseCase: GetTopProductsByMonthUseCase,
