@@ -2,6 +2,9 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
 $row-height: 48px;
 $header-height: 56px;
 $table-height: ($row-height * 10) + $header-height;
+$primary-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+$border-radius: 16px;
+$transition-speed: 0.3s;
 
 .coupons-container {
   display: flex;
@@ -10,6 +13,16 @@ $table-height: ($row-height * 10) + $header-height;
   min-height: 100%;
   height: 100%;
   overflow: visible;
+  padding: 0;
+  width: 100%;
+}
+
+.black-header.mat-header-cell,
+th.black-header.mat-header-cell {
+  color: #000000 !important;
+  font-weight: bold !important;
+  font-family: $primary-font !important;
+  font-size: 18px !important;
 }
 
 .loading-state {
@@ -25,7 +38,7 @@ $table-height: ($row-height * 10) + $header-height;
   width: 16px;
   height: 16px;
   border: 2px solid #f3f3f3;
-  border-top: 2px solid #3498db;
+  border-top: 2px solid #dfff03;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 
@@ -37,7 +50,7 @@ $table-height: ($row-height * 10) + $header-height;
 
 h3 {
   display: block;
-  font-size: 1.25em;
+  font-size: 18px;
   margin: 6px 0 16px 0;
   font-weight: bold;
   unicode-bidi: isolate;
@@ -45,7 +58,14 @@ h3 {
 }
 
 .coupons-table-title {
+  margin: 0;
+  padding: 22px 20px;
+  text-align: left;
+  font-size: 18px;
+  font-weight: bold;
   font-family: $primary-font;
+  background: #a5a5a5;
+  border-radius: $border-radius $border-radius 0 0;
 }
 
 .coupons-table-container {
@@ -57,21 +77,31 @@ h3 {
   position: relative;
   height: 660px;
   overflow-y: auto; 
+  position: relative;
+  border-radius: 0 0 $border-radius $border-radius;
+  padding: 0 0 42px 0;
+  width: 100%;
 }
 
 .coupons-table {
   font-family: $primary-font;
   flex: 1;
+  width: 100%;
   
   table {
     width: 100%;
     table-layout: fixed;
     background-color: #a5a5a5;
+    border-collapse: separate;
+    border-spacing: 0;
   }
 }
 
 .mat-mdc-table {
   color: white;
+  width: 100%;
+  background: #a5a5a5;
+  min-width: 600px;
   
   th, td {
     font-family: $primary-font;
@@ -80,10 +110,29 @@ h3 {
   
   th.mat-header-cell {
     height: $header-height;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    background: #909090;
+    padding: 12px 20px;
+    font-weight: bold;
+    font-family: $primary-font;
+    color: #000000 !important;
+    font-weight: bold;
   }
   
   tr.mat-mdc-row {
     height: $row-height;
+    transition: background-color $transition-speed;
+    
+    &:hover {
+      background: rgba(223, 255, 3, 0.1);
+    }
+    
+    &:last-of-type {
+      border-bottom: 0.4px solid #FFFFFF;
+    }
   }
   
   tr.empty-row {
@@ -94,18 +143,35 @@ h3 {
       background-color: #a5a5a5;
     }
   }
-}
-
-th {
-  font-weight: bold;
-  font-size: 1rem;
-  font-family: $primary-font;
-  color: white;
-}
-
-td {
-  color: white;
-  font-family: $primary-font;
+  
+  td.mat-mdc-cell {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #FFFFFF;
+    text-align: left;
+    margin-left: 0;
+  }
+  
+  tr.mat-mdc-row:last-child td.mat-mdc-cell {
+    border-bottom: 0.5px solid #FFFFFF !important;
+  }
+  
+  .mat-mdc-cell > * {
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  tr.empty-row:last-child td {
+    border-bottom: 0.5px solid #FFFFFF !important;
+  }
+  
+  .mat-mdc-header-row {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #909090;
+  }
 }
 
 .error-text {
@@ -121,7 +187,7 @@ td {
   background-color: transparent;
   width: 100%;
   position: absolute;
-  bottom: 0px;
+  bottom: 16px;
   left: 0;
   right: 0;
   z-index: 10;
@@ -204,6 +270,38 @@ td {
     }
   }
   
+  .mat-mdc-select-panel,
+  .mat-select-panel,
+  .mat-mdc-select-panel-wrap,
+  .cdk-overlay-pane,
+  .mat-mdc-select-panel,
+  .mat-select-panel-wrap {
+    background-color: #FFFFFF !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  .mat-mdc-option, 
+  .mat-option,
+  .mdc-list-item {
+    background-color: #FFFFFF !important;
+    color: #333333 !important;
+  }
+  
+  .mat-mdc-option:hover,
+  .mat-option:hover,
+  .mdc-list-item:hover {
+    background-color: #f5f5f5 !important;
+  }
+  
+  .mat-mdc-option.mat-mdc-option-active,
+  .mat-option.mat-selected,
+  .mat-mdc-option.mat-selected {
+    background-color: #dfff03 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+  }
+  
   .mat-mdc-paginator-page-number-buttons {
     display: flex;
     justify-content: center;
@@ -225,5 +323,19 @@ td {
         background-color: rgba(255, 255, 255, 0.1);
       }
     }
+  }
+  
+  .mat-mdc-cell,
+  .mat-mdc-table .mdc-data-table__cell,
+  .mat-mdc-table .mat-mdc-cell {
+    color: #FFFFFF !important;
+  }
+  
+  tbody, td, tfoot, th, thead, tr {
+    border-color: #EEEEEE !important;
+  }
+  
+  .cell-content {
+    margin-left: 0;
   }
 }
