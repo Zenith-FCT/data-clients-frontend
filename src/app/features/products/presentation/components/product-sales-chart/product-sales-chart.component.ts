@@ -172,7 +172,8 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
             borderRadius: 8,
             borderColor: '#fff',
             borderWidth: 2
-          },          emphasis: {
+          },          
+          emphasis: {
             label: {
               show: true,
               fontSize: 22,
@@ -207,17 +208,18 @@ export class ProductSalesChartComponent implements OnInit, OnDestroy {
               
               return `${name}: ${formattedValue}`;
             },
-            color: '#000',
+            color: '#fff',
             fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',            fontWeight: 'bold',
             fontSize: 20,
             overflow: 'truncate',
-            width: 200,          },          labelLine: {
+            width: 200,          },          
+            labelLine: {
             show: true,
             length: 15,
             length2: 20,
             smooth: true,
             lineStyle: {
-              color: '#666',
+              color: '#fff',
               width: 1.5,
             },
           },color: ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69'],

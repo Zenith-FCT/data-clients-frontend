@@ -1,5 +1,5 @@
 import {CommonModule,isPlatformBrowser} from '@angular/common';
-import {AfterViewInit,Component,ElementRef,Inject,PLATFORM_ID,ViewChild,effect,inject} from '@angular/core';
+import {AfterViewInit,Component,ElementRef,Inject,PLATFORM_ID,ViewChild,effect,inject, HostListener} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import Chart from 'chart.js/auto';
 import {CouponCountGraphicViewModel} from './coupon-count-graphic.view-model';
@@ -32,15 +32,34 @@ export class CouponCountGraphicComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    if (this.isPlatformBrowser && this.chartCanvas) {
+      this.setCanvasSize();
+    }
+  }
 
+  @HostListener('window:resize')
+  onResize() {
+    if (this.chart) {
+      this.createChart();
+    }
+  }
+
+  private setCanvasSize() {
+    const canvas = this.chartCanvas.nativeElement;
+    const container = canvas.parentElement;
+    if (container) {
+      canvas.width = container.clientWidth;
+      canvas.height = Math.max(350, container.clientHeight);
+    }
   }
 
   createChart() {
     if (this.chart) {
       this.chart.destroy();
     }
-    if(!isPlatformBrowser) return;
-
+    if(!this.isPlatformBrowser) return;
+    
+    this.setCanvasSize();
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
 
     this.chart = new Chart(ctx, {
@@ -59,18 +78,34 @@ export class CouponCountGraphicComponent implements AfterViewInit {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
-          y: { title: { display: true, text: 'Cupones usados'}, min: 0, ticks: {precision: 0} },
+          y: { 
+            title: { display: true, text: 'Cupones usados'}, 
+            min: 0, 
+            ticks: {precision: 0} 
+          },
+          x: {
+            grid: {
+              display: true,
+              drawOnChartArea: true
+            }
+          }
         },
-
         plugins: {
           legend: {
             display: false
           },
-
+        },
+        layout: {
+          padding: {
+            top: 10,
+            right: 20,
+            bottom: 10,
+            left: 10
+          }
         }
       }
     });
   }
-
 }

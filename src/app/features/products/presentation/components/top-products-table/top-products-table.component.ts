@@ -14,7 +14,7 @@ export class TopProductsTableComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   isBrowser: boolean;
   currentPageSignal = signal(0);
-  itemsPerPage = 8;
+  itemsPerPage = 9;
   
   get currentPage(): number {
     return this.currentPageSignal();

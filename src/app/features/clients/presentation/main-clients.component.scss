@@ -43,6 +43,14 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     /* Estilos para el contenido de las celdas con margen izquierdo */
   .cell-content {
     margin-left: 8px;
+    
+    &:has(+ td:nth-child(n+2)), 
+    &:parent(td:nth-child(n+2)) {
+      justify-content: center !important;
+      text-align: center !important;
+      margin-left: 0 !important;
+      width: 100% !important;
+    }
   }
   /* Estilos para la paginación con puntos */  
   .dot-pagination {
@@ -298,7 +306,7 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
   border-radius: 0 0 $border-radius $border-radius;
   padding: 0 0 42px 0;
   height: calc(100% - 41px);
-  min-height: 0;
+  min-height: 400px;
   width: 100%;
   margin: 0;
   box-sizing: border-box;
@@ -334,6 +342,10 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     z-index: 3;
     text-align: left;
     margin-left: 8px;
+
+    &:nth-child(n+2) {
+      text-align: center !important;
+    }
   }
     td.mat-mdc-cell {
     padding: 12px 12px;
@@ -341,6 +353,18 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     color: #FFFFFF; /* Cambiado a blanco para los datos */
     text-align: left; /* Centrar el texto en las celdas */
     margin-left: 8px;
+
+    &:nth-child(n+2) {
+      text-align: center !important;
+      
+      .cell-content {
+        justify-content: center !important;
+        text-align: center !important;
+        display: flex !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+      }
+    }
   }
     tr.mat-mdc-row {
     height: 48px;
@@ -354,8 +378,68 @@ $primary-font: 'Swiss 721 BT EX Roman', 'Swiss721BT-ExRoman', Arial, sans-serif;
     margin: 0;
     display: flex;
     align-items: center;
+
+    &:nth-child(n+2) {
+      justify-content: center !important;
+    }
   }
-}.info-panel {
+}
+
+// Estilos para rows vacíos en la tabla
+tr.empty-row td {
+  border-bottom: none;
+  height: 48px;
+}
+
+// Estilos para la paginación con puntos
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  height: 20px;
+}
+
+.pagination-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.pagination-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  position: relative;
+  
+  &.active {
+    background-color: white;
+    transform: scale(1.2);
+  }
+  
+  &:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+  }
+}
+.info-panel {
   width: 49.25%; /* Simplificado para usar exactamente 48% del espacio disponible */
   display: flex;  
   flex-direction: column;

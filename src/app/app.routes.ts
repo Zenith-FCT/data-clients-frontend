@@ -11,7 +11,7 @@ export const routes: Routes = [
         children : [
             {
                 path: '',
-                redirectTo: 'general',
+                redirectTo: 'orders-invoices',
                 pathMatch: 'full'
             },
             {

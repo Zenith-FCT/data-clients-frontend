@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy, effect, signal, PLATFORM_ID, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, effect, signal, PLATFORM_ID, Inject, ChangeDetectorRef, ElementRef, Renderer2, AfterViewInit } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -58,7 +58,7 @@ interface FilterConfig {
   styleUrls: ['./main-clients.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class ClientsComponent implements OnInit {
+export class ClientsComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<ClientsList>([]);
   displayedColumns: string[] = ['email', 'orderCount', 'ltv', 'averageOrderValue'];
   
@@ -152,7 +152,10 @@ export class ClientsComponent implements OnInit {
   public getNewClientsByYearMonthUseCase = inject(GetNewClientsByYearMonthUseCase);
   public getTotalOrdersByYearMonthUseCase = inject(GetTotalOrdersByYearMonthUseCase);
   
-  constructor(@Inject(PLATFORM_ID) platformId: Object, private changeDetector: ChangeDetectorRef) {
+  constructor(@Inject(PLATFORM_ID) platformId: Object, 
+              private changeDetector: ChangeDetectorRef,
+              private elementRef: ElementRef,
+              private renderer: Renderer2) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     effect(() => {
@@ -172,12 +175,32 @@ export class ClientsComponent implements OnInit {
         this.updateMonthlyOrdersChartOption();
       }
     });
-  }  // Método para cambiar de página
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      const headerCells = this.elementRef.nativeElement.querySelectorAll('th.mat-header-cell');
+      headerCells.forEach((cell: HTMLElement) => {
+        this.renderer.setStyle(cell, 'color', '#000000');
+        this.renderer.setStyle(cell, 'font-weight', 'bold');
+        cell.style.setProperty('color', '#000000', 'important');
+        cell.style.setProperty('font-weight', 'bold', 'important');
+      });
+      
+      this.applyBorderToLastRow();
+    }, 0);
+  }
+
   changePage(page: number): void {
     if (page >= 0 && page < this.totalPages) {
       this.currentPage = page;
       this.updateDisplayData();
     }
+  }
+  
+  // Método para crear un rango de números (necesario para la paginación)
+  createRange(number: number): number[] {
+    return Array.from({ length: number }, (_, i) => i);
   }
   
   // Método para actualizar los datos mostrados en la tabla
@@ -189,6 +212,21 @@ export class ClientsComponent implements OnInit {
     // Calcular filas vacías para mantener altura constante
     const emptyRowCount = this.pageSize - this.displayData.length;
     this.emptyRows = emptyRowCount > 0 ? Array(emptyRowCount).fill(0).map((_, i) => i) : [];
+    
+    setTimeout(() => this.applyBorderToLastRow(), 100);
+  }
+
+  private applyBorderToLastRow(): void {
+    const rows = this.elementRef.nativeElement.querySelectorAll('tr.mat-mdc-row:not(.empty-row)');
+    
+    if (rows.length > 0) {
+      const lastRow = rows[rows.length - 1];
+      
+      const cells = lastRow.querySelectorAll('td');
+      cells.forEach((cell: HTMLElement) => {
+        cell.style.setProperty('border-bottom', '1px solid #FFFFFF', 'important');
+      });
+    }
   }
   
   ngOnInit(): void {
@@ -395,10 +433,11 @@ export class ClientsComponent implements OnInit {
       if (otherValue > 0) {
         topCategories.push({ name: 'Otros', value: otherValue });
       }
-    }    // Definimos la paleta de colores de acuerdo a orders-invoices
+    }    
     const colors = ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69'];
     
-    this.chartOption = {      tooltip: {
+    this.chartOption = {
+      tooltip: {
         trigger: 'item',
         formatter: function(params: any) {
           return params.name + ': ' + Math.floor(params.value) + ' clientes (' + Math.floor(params.percent) + '%)';
@@ -413,24 +452,38 @@ export class ClientsComponent implements OnInit {
         data: topCategories.map(item => item.name),
         textStyle: {
           color: '#ffffff'
-        }      },
-      color: colors,      series: [{
+        }
+      },
+      color: colors,
+      series: [{
         name: 'Clientes por Categoría',
         type: 'pie',
-        radius: '75%', // Aumentado para hacer el gráfico más grande
-        center: ['50%', '40%'], // Ajustado para subir el gráfico en el contenedor
-        avoidLabelOverlap: false,
+        radius: '75%',
+        center: ['50%', '45%'],
+        avoidLabelOverlap: true,
         itemStyle: {
           borderRadius: 8,
           borderColor: '#fff',
           borderWidth: 2
-        },        label: {
+        },
+        label: {
           show: true,
-          position: 'outside', // Cambiado para mostrar etiquetas fuera del sector
+          position: 'outside', 
           formatter: '{b}: {c}',
           color: '#ffffff',
           fontSize: 12,
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          overflow: 'truncate',
+          width: 80,
+          distance: 15,
+          align: 'center',
+          lineHeight: 14
+        },
+        labelLine: {
+          show: true,
+          length: 10,
+          length2: 10,
+          smooth: true
         },
         emphasis: {
           itemStyle: {

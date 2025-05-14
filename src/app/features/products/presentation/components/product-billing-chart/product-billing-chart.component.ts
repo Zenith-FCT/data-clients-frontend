@@ -163,7 +163,9 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
             borderRadius: 8,
             borderColor: '#fff',
             borderWidth: 2
-          },          emphasis: {            label: {
+          },          
+          emphasis: {            
+            label: {
               show: true,
               fontSize: 22,
               fontWeight: 'bold',              
@@ -196,7 +198,8 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
               }
               
               return `${name}: ${formattedValue}`;
-            },              color: '#000',
+            },              
+            color: '#fff',
             fontFamily: 'Swiss 721 BT EX Roman, Swiss721BT-ExRoman, Arial, sans-serif',
             fontWeight: 'bold',
             fontSize: 22,
@@ -208,7 +211,7 @@ export class ProductBillingChartComponent implements OnInit, OnDestroy {
             length2: 20,
             smooth: true,
             lineStyle: {
-              color: '#666',
+              color: '#fff',
               width: 1.5,
             },
           },

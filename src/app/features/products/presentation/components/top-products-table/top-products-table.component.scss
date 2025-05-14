@@ -7,7 +7,7 @@ $accent-color: #dfff03;
   background-color: #a5a5a5;
   border-radius: $border-radius;
   box-shadow: $primary-shadow;
-  padding: 16px;
+  padding: 16px 0;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -17,11 +17,6 @@ $accent-color: #dfff03;
   position: relative;
   color: #333333;
   overflow: hidden;
-  padding-top: 16px;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
 .products-header {
@@ -29,8 +24,8 @@ $accent-color: #dfff03;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  flex-shrink: 0;
-  margin-top: 16px;
+  width: 100%;
+  padding: 0 16px;
   
   h3 {
     margin: 0;
@@ -39,39 +34,31 @@ $accent-color: #dfff03;
     color: #333333;
     font-family: $primary-font;
     text-align: center;
+    width: 100%;
   }
 }
 
 .table-container {
-  position: relative;
+  width: 100%;
   flex: 1;
   min-height: 480px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 10px;
-  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
-  background: #a5a5a5;
-  border-radius: 0 0 $border-radius $border-radius;
 }
 
 .table-content {
   width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 40px;
+  height: calc(100% - 60px);
+  margin: 0;
+  padding: 0;
 }
 
 .products-table {
   width: 100%;
-  border-collapse: separate;
+  border-collapse: collapse;
   border-spacing: 0;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+  margin: 0;
   
   thead {
     background-color: #909090;
@@ -79,37 +66,59 @@ $accent-color: #dfff03;
     top: 0;
     z-index: 3;
     
+    tr {
+      width: 100%;
+    }
+    
     th {
-      padding: 10px 12px;
+      padding: 10px 8px 10px 16px;
       text-align: left;
       font-weight: bold;
       font-size: 14px;
       color: #333333;
-      border-bottom: 2px solid #777777;
+      border-bottom: 1px solid white;
       font-family: $primary-font;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      
+      &:nth-child(n+3) {
+        text-align: center;
+      }
     }
   }
-    tbody {
+  
+  tbody {
     tr {
       height: 42px;
       transition: background-color 0.3s;
-      user-select: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
+      width: 100%;
       
       &:hover {
         background: rgba(223, 255, 3, 0.2);
       }
-        td {
-        padding: 8px 12px;
+      
+      td {
+        padding: 8px 8px 8px 16px;
         font-size: 14px;
         border-bottom: 1px solid #EEEEEE;
         color: #FFFFFF;
         text-align: left;
         font-family: $primary-font;
-        outline: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        
+        &:nth-child(n+3) {
+          text-align: center;
+        }
       }
     }
+  }
+  
+  th, td {
+    box-sizing: border-box;
+    width: 20%;
   }
 }
 
