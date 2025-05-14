@@ -433,10 +433,11 @@ export class ClientsComponent implements OnInit, AfterViewInit {
       if (otherValue > 0) {
         topCategories.push({ name: 'Otros', value: otherValue });
       }
-    }    // Definimos la paleta de colores de acuerdo a orders-invoices
+    }    
     const colors = ['#ccf200', '#f2f3ec', '#a8c300', '#bfc1b8', '#40403f', '#1a1c00', '#6a6b69'];
     
-    this.chartOption = {      tooltip: {
+    this.chartOption = {
+      tooltip: {
         trigger: 'item',
         formatter: function(params: any) {
           return params.name + ': ' + Math.floor(params.value) + ' clientes (' + Math.floor(params.percent) + '%)';
@@ -451,24 +452,38 @@ export class ClientsComponent implements OnInit, AfterViewInit {
         data: topCategories.map(item => item.name),
         textStyle: {
           color: '#ffffff'
-        }      },
-      color: colors,      series: [{
+        }
+      },
+      color: colors,
+      series: [{
         name: 'Clientes por Categoría',
         type: 'pie',
-        radius: '75%', // Aumentado para hacer el gráfico más grande
-        center: ['50%', '40%'], // Ajustado para subir el gráfico en el contenedor
-        avoidLabelOverlap: false,
+        radius: '75%',
+        center: ['50%', '45%'],
+        avoidLabelOverlap: true,
         itemStyle: {
           borderRadius: 8,
           borderColor: '#fff',
           borderWidth: 2
-        },        label: {
+        },
+        label: {
           show: true,
-          position: 'outside', // Cambiado para mostrar etiquetas fuera del sector
+          position: 'outside', 
           formatter: '{b}: {c}',
           color: '#ffffff',
           fontSize: 12,
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          overflow: 'truncate',
+          width: 80,
+          distance: 15,
+          align: 'center',
+          lineHeight: 14
+        },
+        labelLine: {
+          show: true,
+          length: 10,
+          length2: 10,
+          smooth: true
         },
         emphasis: {
           itemStyle: {
