@@ -128,6 +128,7 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
           avoidLabelOverlap: true,
           itemStyle: {
             borderRadius: 8,
+            borderColor: '#fff',
             borderWidth: 2,
           },
           emphasis: {
@@ -162,13 +163,13 @@ export class ChartInvoiceProductTypeComponent implements OnInit, AfterViewInit, 
               
               return isSmallScreen ? `${formattedValue}` : `${name}: ${formattedValue}`;
             },
-            color: '#000',
+            color: '#fff',
             fontSize: isSmallScreen ? 10 : 14,
           },
           labelLine: {
             show: true,
             lineStyle: {
-              color: '#000',
+              color: '#fff',
             },
           },
           data: chartData

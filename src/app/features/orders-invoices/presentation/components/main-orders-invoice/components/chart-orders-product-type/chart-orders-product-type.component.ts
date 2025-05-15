@@ -128,7 +128,8 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
           avoidLabelOverlap: true,
           itemStyle: {
             borderRadius: 8,
-            borderWidth: 4,
+            borderColor: '#fff',
+            borderWidth: 2,
           },
           emphasis: {
             label: {
@@ -156,7 +157,6 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
                 formattedValue = params.value;
               }
               
-              // Truncar el nombre en pantallas pequeñas
               let name = params.name;
               if (isSmallScreen && name.length > 8) {
                 name = name.substring(0, 6) + '...';
@@ -164,13 +164,13 @@ export class ChartOrdersProductTypeComponent implements OnInit, AfterViewInit, O
               
               return isSmallScreen ? `${formattedValue}` : `${name}: ${formattedValue}`;
             },
-            color: '#000',
+            color: '#fff',
             fontSize: isSmallScreen ? 10 : 14,
           },
           labelLine: {
             show: true,
             lineStyle: {
-              color: '#000',
+              color: '#fff',
             },
           },
           data: chartData
